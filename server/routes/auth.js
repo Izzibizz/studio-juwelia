@@ -10,6 +10,14 @@ const { sendResetPasswordMail } = require("../utils/email");
 const router = express.Router();
 
 const normalizeEmail = (email = "") => email.trim().toLowerCase();
+const escapeRegex = (value = "") =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const findUserByEmail = async (email) => {
+  const normalizedEmail = normalizeEmail(email);
+  return User.findOne({
+    email: { $regex: `^${escapeRegex(normalizedEmail)}$`, $options: "i" },
+  });
+};
 
 const createToken = (user) => {
   const secret = process.env.JWT_SECRET || "your_jwt_secret_here";
@@ -24,7 +32,7 @@ router.post("/signup", async (req, res) => {
   if (!email || !password)
     return res.status(400).json({ message: "Email and password are required" });
 
-  const existing = await User.findOne({ email: normalizedEmail });
+  const existing = await findUserByEmail(normalizedEmail);
   if (existing)
     return res.status(400).json({ message: "Email is already registered" });
 
@@ -46,11 +54,10 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const normalizedEmail = normalizeEmail(email);
   if (!email || !password)
     return res.status(400).json({ message: "Email and password are required" });
 
-  const user = await User.findOne({ email: normalizedEmail });
+  const user = await findUserByEmail(email);
   if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
   const valid = await bcrypt.compare(password, user.password);
@@ -90,11 +97,12 @@ router.delete("/delete", auth, async (req, res) => {
 
 router.post("/request-reset", async (req, res) => {
   const { email } = req.body;
-  const normalizedEmail = normalizeEmail(email);
   if (!email) return res.status(400).json({ message: "Email is required" });
 
-  const user = await User.findOne({ email: normalizedEmail });
-  if (!user) return res.status(404).json({ message: "User not found" });
+  const user = await findUserByEmail(email);
+  if (!user) {
+    return res.json({ message: "Reset email sent if user exists" });
+  }
 
   const token = crypto.randomBytes(32).toString("hex");
   user.resetPasswordToken = token;

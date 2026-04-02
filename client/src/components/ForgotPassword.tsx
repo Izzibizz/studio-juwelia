@@ -16,7 +16,7 @@ export function ForgotPassword() {
     setSuccessMessage("");
 
     try {
-      await requestPasswordReset(email);
+      await requestPasswordReset(email.trim().toLowerCase());
       setShowEmail(true);
       setSuccessMessage(
         "Check your email for a password reset link. It will expire in 1 hour.",

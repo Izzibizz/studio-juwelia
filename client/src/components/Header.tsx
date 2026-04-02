@@ -2,8 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { MenuToggle } from "./MenuToggle";
-import logo from "/Juwelia.jpg"
-import textLogo from "/studio-juwelia-tattoo-name-2.svg"
+import { useAuthStore } from "../stores/authStore";
+import logo from "/Juwelia.jpg";
+import textLogo from "/studio-juwelia-tattoo-name-2.svg";
 /* import { usePageStore } from "../stores/pageStore"; */
 
 export const Header: React.FC = () => {
@@ -15,15 +16,21 @@ export const Header: React.FC = () => {
   const isHome = location.pathname === "/";
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-/*   const { isEnglish } = usePageStore()  */
-const isEnglish= false
+  /*   const { isEnglish } = usePageStore()  */
+  const isEnglish = false;
+
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   const navlinks = [
     { fr: "Tatouage", eng: "Tattoos", path: "/tatouages" },
     { fr: "Oeuvres", eng: "Art", path: "/oevres" },
     { fr: "A propos", eng: "About", path: "/a-propos" },
     { fr: "Contact", eng: "Contact", path: "/contact" },
-    { fr: "Prendre rendez-vous", eng: "Book appointment", path: "/prendre-rendez-vous" },
+    {
+      fr: "Prendre rendez-vous",
+      eng: "Book appointment",
+      path: "/prendre-rendez-vous",
+    },
   ];
 
   const logoClick = () => {
@@ -44,20 +51,19 @@ const isEnglish= false
 
   const [scrolled, setScrolled] = useState(false);
 
-const formatFrenchOE = (text: string) => {
-  return text.split(/(oe)/gi).map((part, i, arr) => {
-    if (part.toLowerCase() === "oe") {
-      return (
-        <span key={i} className="oe-pair">
-          <span className="oe-o">o</span>
-          <span className="oe-e">e</span>
-        </span>
-      );
-    }
-    return part;
-  });
-};
-
+  const formatFrenchOE = (text: string) => {
+    return text.split(/(oe)/gi).map((part, i) => {
+      if (part.toLowerCase() === "oe") {
+        return (
+          <span key={i} className="oe-pair">
+            <span className="oe-o">o</span>
+            <span className="oe-e">e</span>
+          </span>
+        );
+      }
+      return part;
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -127,13 +133,7 @@ const formatFrenchOE = (text: string) => {
       >
         {" "}
         <img
-          src={
-            isMobile && smallerHeader
-              ? logo
-              : isMobile
-              ? logo
-              : logo
-          }
+          src={isMobile && smallerHeader ? logo : isMobile ? logo : logo}
           className={` ${
             smallerHeader
               ? "w-[60px] transform transition-transform duration-200"
@@ -168,7 +168,7 @@ const formatFrenchOE = (text: string) => {
                 className={`fixed top-0 right-0 h-screen w-screen overflow-hidden bg-lightRed text-xl backdrop-blur-xl flex justify-end px-10 `}
                 ref={dropdownRef}
               >
-                <ul className="flex flex-col laptop:flex-row items-end gap-5 text-darkRed absolute bottom-28 tablet:bottom-40 animate-fadeIn">
+                <ul className="flex flex-col items-end gap-5 text-darkRed absolute bottom-28 tablet:bottom-40 animate-fadeIn">
                   {navlinks.map((link) => (
                     <NavLink
                       key={link.path}
@@ -179,6 +179,23 @@ const formatFrenchOE = (text: string) => {
                       {formatFrenchOE(isEnglish ? link.eng : link.fr)}
                     </NavLink>
                   ))}
+                  {isAuthenticated ? (
+                    <>
+                      <div className="border-t border-darkRed w-full pt-5 mt-5 text-center">
+                        <p className="text-sm mb-3">Welcome, {user?.name}</p>
+                        <button
+                          onClick={async () => {
+                            await logout();
+                            closeMenu();
+                            navigate("/");
+                          }}
+                          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition-colors"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
                 </ul>
               </motion.div>
             )}
@@ -187,7 +204,7 @@ const formatFrenchOE = (text: string) => {
       ) : (
         <>
           <ul
-            className={`flex gap-10 pr-6 text-lg
+            className={`flex gap-10 pr-6 text-lg items-center
             `}
           >
             {navlinks.map((link) => (
@@ -197,9 +214,25 @@ const formatFrenchOE = (text: string) => {
                 onClick={closeMenu}
                 className="hover:scale-105 hover:text-white text-2xl transform transition-transform duration-100"
               >
-              {formatFrenchOE(isEnglish ? link.eng : link.fr)}
+                {formatFrenchOE(isEnglish ? link.eng : link.fr)}
               </NavLink>
             ))}
+            {isAuthenticated ? (
+              <>
+                <span className="text-sm text-gray-300">
+                  Welcome, {user?.name}
+                </span>
+                <button
+                  onClick={async () => {
+                    await logout();
+                    navigate("/");
+                  }}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-lg transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : null}
           </ul>
         </>
       )}

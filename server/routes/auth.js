@@ -9,6 +9,8 @@ const { sendResetPasswordMail } = require("../utils/email");
 
 const router = express.Router();
 
+const normalizeEmail = (email = "") => email.trim().toLowerCase();
+
 const createToken = (user) => {
   const secret = process.env.JWT_SECRET || "your_jwt_secret_here";
   return jwt.sign({ id: user._id, name: user.name }, secret, {
@@ -18,15 +20,20 @@ const createToken = (user) => {
 
 router.post("/signup", async (req, res) => {
   const { name, password, email } = req.body;
-  if (!name || !password)
-    return res.status(400).json({ message: "Name and password are required" });
+  const normalizedEmail = normalizeEmail(email);
+  if (!email || !password)
+    return res.status(400).json({ message: "Email and password are required" });
 
-  const existing = await User.findOne({ name });
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing)
-    return res.status(400).json({ message: "User name is already taken" });
+    return res.status(400).json({ message: "Email is already registered" });
 
   const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, password: hashed, email });
+  const user = await User.create({
+    name: name || normalizedEmail.split("@")[0],
+    password: hashed,
+    email: normalizedEmail,
+  });
 
   const token = createToken(user);
   res.cookie("token", token, {
@@ -38,11 +45,12 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { name, password } = req.body;
-  if (!name || !password)
-    return res.status(400).json({ message: "Name and password are required" });
+  const { email, password } = req.body;
+  const normalizedEmail = normalizeEmail(email);
+  if (!email || !password)
+    return res.status(400).json({ message: "Email and password are required" });
 
-  const user = await User.findOne({ name });
+  const user = await User.findOne({ email: normalizedEmail });
   if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
   const valid = await bcrypt.compare(password, user.password);
@@ -63,6 +71,14 @@ router.post("/logout", (req, res) => {
   res.json({ message: "Logged out" });
 });
 
+router.get("/users", auth, async (req, res) => {
+  const users = await User.find({}, { password: 0, resetPasswordToken: 0 })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  res.json({ count: users.length, users });
+});
+
 router.delete("/delete", auth, async (req, res) => {
   const user = await User.findById(req.user.id);
   if (!user) return res.status(404).json({ message: "User not found" });
@@ -73,16 +89,12 @@ router.delete("/delete", auth, async (req, res) => {
 });
 
 router.post("/request-reset", async (req, res) => {
-  const { name, email } = req.body;
-  if (!name && !email)
-    return res.status(400).json({ message: "Provide name or email" });
+  const { email } = req.body;
+  const normalizedEmail = normalizeEmail(email);
+  if (!email) return res.status(400).json({ message: "Email is required" });
 
-  const query = name ? { name } : { email };
-  const user = await User.findOne(query);
+  const user = await User.findOne({ email: normalizedEmail });
   if (!user) return res.status(404).json({ message: "User not found" });
-
-  if (!user.email)
-    return res.status(400).json({ message: "User has no email configured" });
 
   const token = crypto.randomBytes(32).toString("hex");
   user.resetPasswordToken = token;

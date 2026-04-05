@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "../pages/HomePage";
 import { About } from "../pages/About";
 import { Contact } from "../pages/Contact";
@@ -10,8 +10,11 @@ import { NotFound } from "../pages/NotFound.tsx";
 import { Login } from "../components/Login";
 import { ForgotPassword } from "../components/ForgotPassword";
 import { ResetPassword } from "../components/ResetPassword";
+import { useAuthStore } from "../stores/authStore";
 
 const AppRoutes: React.FC = () => {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -20,7 +23,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/oevres" element={<Art />} />
       <Route path="/tatouages" element={<Tattoos />} />
       <Route path="/prendre-rendez-vous" element={<Booking />} />
-      <Route path="/connexion" element={<Login />} />
+      <Route
+        path="/connexion"
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
+      />
       <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
       <Route path="/reinitialiser-mot-de-passe" element={<ResetPassword />} />
       <Route path="*" element={<NotFound />} />

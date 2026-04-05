@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { MenuToggle } from "./MenuToggle";
 import { useAuthStore } from "../stores/authStore";
-import logo from "/Juwelia.jpg";
+import logo from "/juwelia-tattoo-logo.png";
 import textLogo from "/studio-juwelia-tattoo-name-2.svg";
 /* import { usePageStore } from "../stores/pageStore"; */
 
@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
   /*   const { isEnglish } = usePageStore()  */
   const isEnglish = false;
 
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const {  isAuthenticated, logout } = useAuthStore();
 
   const navlinks = [
     { fr: "Tatouage", eng: "Tattoos", path: "/tatouages" },
@@ -124,7 +124,7 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:px-8 items-center z-70
+      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-70 h-[100px]
        text-black  ${scrolled ? "bg-red-500" : "bg-none"} animate-fadeIn`}
     >
       <div
@@ -165,7 +165,7 @@ export const Header: React.FC = () => {
                 animate={{ clipPath: "circle(150% at 50% 50%)" }}
                 exit={{ clipPath: "circle(5% at 100% 0%)" }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
-                className={`fixed top-0 right-0 h-screen w-screen overflow-hidden bg-lightRed text-xl backdrop-blur-xl flex justify-end px-10 `}
+                className={`fixed top-0 right-0 h-screen w-screen overflow-hidden bg-beige text-xl backdrop-blur-xl flex justify-end px-10 `}
                 ref={dropdownRef}
               >
                 <ul className="flex flex-col items-end gap-5 text-darkRed absolute bottom-28 tablet:bottom-40 animate-fadeIn">
@@ -181,17 +181,16 @@ export const Header: React.FC = () => {
                   ))}
                   {isAuthenticated ? (
                     <>
-                      <div className="border-t border-darkRed w-full pt-5 mt-5 text-center">
-                        <p className="text-sm mb-3">Welcome, {user?.name}</p>
+                      <div className="border-t border-white w-full pt-5 mt-5 text-center">
                         <button
                           onClick={async () => {
                             await logout();
                             closeMenu();
                             navigate("/");
                           }}
-                          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition-colors"
+                          className="w-full px-4 py-2 bg-black hover:bg-white text-white hover:text-black rounded-lg text-sm transition-colors"
                         >
-                          Logout
+                          Déconnecter
                         </button>
                       </div>
                     </>
@@ -219,17 +218,15 @@ export const Header: React.FC = () => {
             ))}
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-300">
-                  Welcome, {user?.name}
-                </span>
+
                 <button
                   onClick={async () => {
                     await logout();
                     navigate("/");
                   }}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-lg transition-colors"
+                  className="px-4 py-2 bg-darkBrown hover:bg-white text-white hover:text-darkBrown hover:scale-110 transform transition-transform rounded-4xl text-lg cursor-pointer font-sans transition-colors"
                 >
-                  Logout
+                  Deconnecter
                 </button>
               </>
             ) : null}

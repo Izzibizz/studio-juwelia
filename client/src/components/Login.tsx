@@ -18,7 +18,7 @@ export function Login() {
 
     try {
       await login(email.trim().toLowerCase(), password);
-      setSuccessMessage("Login successful! Redirecting...");
+      setSuccessMessage("connexion réussie, redirection...");
       setTimeout(() => navigate("/"), 1500);
     } catch {
       // Error is handled by store
@@ -26,9 +26,9 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-beige py-12 px-4 text-brownBlack">
+      <div className="w-full max-w-md bg-warmWhite rounded-lg shadow-md p-8 ">
+        <h2 className="text-3xl font-bold text-brownBlack text-center mb-6">Connexion</h2>
 
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -42,11 +42,11 @@ export function Login() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium"
             >
               Email
             </label>
@@ -64,7 +64,7 @@ export function Login() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium"
             >
               Password
             </label>
@@ -91,26 +91,22 @@ export function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+            className="w-fit px-4 py-2 cursor-pointer self-center bg-darkBrown text-white rounded-4xl hover:scale-110 transform transition-transform hover:bg-mediumGreen disabled:opacity-50"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Connexion en cours..." : "Connexion"}
           </button>
         </form>
 
         <div className="mt-6 space-y-3 text-center text-sm">
           <div>
             <a
-              href="/forgot-password"
-              className="text-blue-600 hover:text-blue-800"
+              href="/mot-de-passe-oublie"
+              className="text-brown hover:text-mediumGreen transition-colors"
             >
-              Forgot password?
+              Mot de passe oublié?
             </a>
           </div>
           <div>
-            Don't have an account?{" "}
-            <a href="/signup" className="text-blue-600 hover:text-blue-800">
-              Sign up
-            </a>
           </div>
         </div>
       </div>

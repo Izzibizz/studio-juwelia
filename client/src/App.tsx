@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <Header />
-      <main className={`flex-grow ${"pt-38 laptop:pt-24"} min-h-[97vh] `}>
+      <main className={`flex-grow ${"pt-[110px]"} min-h-[97vh] `}>
         <AppRoutes />
       </main>
       <Footer />

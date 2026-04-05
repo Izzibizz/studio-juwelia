@@ -25,8 +25,14 @@
   --breakpoint-laptop: 1025px;
   --breakpoint-desktop: 1280px;
 
+  --color-warmWhite: rgb(251, 245, 236);
   --color-beige: rgb(228, 221, 211);
-  --color-darkRed: rgba(93,33,33);
+  --color-lightBrown: rgb(148, 95, 65);
+  --color-brown: rgb(121, 60, 41);
+  --color-darkBrown: rgb(91, 44, 36);
+  --color-darkRed: rgb(93,33,33);
+  --color-brownBlack: rgb(54, 19, 13);
+  --color-mediumGreen: rgb(79, 101, 63);
 
   --animate-fadeIn: fadeIn 1s ease-in both;
   --animate-longFadeIn: fadeIn 2.3s ease-in both;

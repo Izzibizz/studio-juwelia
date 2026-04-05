@@ -30,8 +30,10 @@ export function ResetPassword() {
 
     try {
       await resetPassword(token, password);
-      setSuccessMessage("Password reset successful! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 1500);
+      setSuccessMessage(
+        "Mot de passe reinitialise avec succes, redirection...",
+      );
+      setTimeout(() => navigate("/connexion"), 1500);
     } catch {
       // Error is handled by store
     }
@@ -39,17 +41,19 @@ export function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-3xl font-bold text-center mb-6">Invalid Link</h2>
-          <p className="text-center text-gray-600 mb-6">
-            The password reset link is invalid or has expired.
+      <div className="min-h-screen flex items-center justify-center bg-beige py-12 px-4 text-brownBlack">
+        <div className="w-full max-w-md bg-warmWhite rounded-lg shadow-md p-8">
+          <h2 className="text-3xl font-bold text-center mb-6 text-brownBlack">
+            Lien invalide
+          </h2>
+          <p className="text-center text-brown mb-6">
+            Le lien de reinitialisation est invalide ou a expire.
           </p>
           <a
-            href="/forgot-password"
-            className="block w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-center"
+            href="/mot-de-passe-oublie"
+            className="block w-fit px-4 py-2 mx-auto cursor-pointer bg-darkBrown text-white rounded-4xl hover:scale-110 transform transition-transform hover:bg-mediumGreen text-center"
           >
-            Request a new link
+            Demander un nouveau lien
           </a>
         </div>
       </div>
@@ -59,10 +63,10 @@ export function ResetPassword() {
   const passwordsMatch = password === confirmPassword;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+    <div className="min-h-screen flex items-center justify-center bg-beige py-12 px-4 text-brownBlack">
+      <div className="w-full max-w-md bg-warmWhite rounded-lg shadow-md p-8">
         <h2 className="text-3xl font-bold text-center mb-6">
-          Set New Password
+          Definir un nouveau mot de passe
         </h2>
 
         {error && (
@@ -79,11 +83,8 @@ export function ResetPassword() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              New Password
+            <label htmlFor="password" className="block text-sm font-medium">
+              Nouveau mot de passe
             </label>
             <div className="relative mt-1">
               <input
@@ -99,7 +100,7 @@ export function ResetPassword() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-2.5 text-gray-600 hover:text-gray-900"
+                className="absolute right-4 top-2.5 text-gray-600 hover:text-gray-900 cursor-pointer"
               >
                 {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
@@ -109,9 +110,9 @@ export function ResetPassword() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium"
             >
-              Confirm Password
+              Confirmer le mot de passe
             </label>
             <input
               id="confirmPassword"
@@ -129,7 +130,7 @@ export function ResetPassword() {
             />
             {confirmPassword && !passwordsMatch && (
               <p className="text-red-600 text-sm mt-1">
-                Passwords do not match
+                Les mots de passe ne correspondent pas
               </p>
             )}
           </div>
@@ -137,15 +138,18 @@ export function ResetPassword() {
           <button
             type="submit"
             disabled={isLoading || !passwordsMatch}
-            className="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
+            className="w-fit px-4 py-2 cursor-pointer self-center bg-darkBrown text-white rounded-4xl hover:scale-110 transform transition-transform hover:bg-mediumGreen disabled:opacity-50"
           >
-            {isLoading ? "Resetting..." : "Reset Password"}
+            {isLoading ? "Reinitialisation..." : "Reinitialiser"}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm">
-          <a href="/login" className="text-blue-600 hover:text-blue-800">
-            Back to Login
+          <a
+            href="/connexion"
+            className="text-brown hover:text-mediumGreen transition-colors"
+          >
+            Retour a la connexion
           </a>
         </div>
       </div>

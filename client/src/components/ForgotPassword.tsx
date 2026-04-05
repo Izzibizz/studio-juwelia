@@ -29,7 +29,7 @@ export function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-beige py-12 px-4 text-brownBlack">
-      <div className="w-full max-w-md bg-warmWhite rounded-lg shadow-md p-8">
+      <div className="w-full max-w-[500px] bg-warmWhite rounded-lg shadow-md p-8">
         <h2 className="text-3xl font-bold text-center mb-4 text-brownBlack">
           Reinitialiser le mot de passe
         </h2>

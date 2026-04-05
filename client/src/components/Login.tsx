@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -81,9 +82,9 @@ export function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-2.5 text-gray-600 hover:text-gray-900"
+                className="absolute right-4 top-2.5 text-gray-600 hover:text-gray-900 cursor-pointer"
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                {showPassword ?  <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>

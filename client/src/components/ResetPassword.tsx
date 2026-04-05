@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 
 export function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -102,7 +103,7 @@ export function ResetPassword() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-2.5 text-gray-600 hover:text-gray-900 cursor-pointer"
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>

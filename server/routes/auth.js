@@ -101,20 +101,22 @@ router.post("/request-reset", async (req, res) => {
 
   const user = await findUserByEmail(email);
   if (!user) {
-    return res.json({ message: "Reset email sent if user exists" });
+    return res.status(404).json({ message: "Aucun compte associé à cet email" });
   }
 
   const token = crypto.randomBytes(32).toString("hex");
+
+  // Respond immediately — never block client on DB write or email delivery.
+  res.json({ message: "Reset email sent if user exists" });
+
   user.resetPasswordToken = token;
   user.resetPasswordExpires = Date.now() + 3600000;
-  await user.save();
-
-  // Do not block API response on SMTP/network delays.
-  sendResetPasswordMail(user.email, token).catch((err) => {
-    console.error("Reset email send failed:", err.message);
-  });
-
-  res.json({ message: "Reset email sent if user exists" });
+  user
+    .save()
+    .then(() => sendResetPasswordMail(user.email, token))
+    .catch((err) => {
+      console.error("Reset process failed:", err.message);
+    });
 });
 
 router.post("/reset-password", async (req, res) => {

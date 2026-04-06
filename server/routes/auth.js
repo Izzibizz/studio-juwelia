@@ -109,7 +109,11 @@ router.post("/request-reset", async (req, res) => {
   user.resetPasswordExpires = Date.now() + 3600000;
   await user.save();
 
-  await sendResetPasswordMail(user.email, token);
+  // Do not block API response on SMTP/network delays.
+  sendResetPasswordMail(user.email, token).catch((err) => {
+    console.error("Reset email send failed:", err.message);
+  });
+
   res.json({ message: "Reset email sent if user exists" });
 });
 

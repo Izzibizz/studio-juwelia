@@ -211,7 +211,7 @@ export const Header: React.FC = () => {
                 key={link.path}
                 to={link.path}
                 onClick={closeMenu}
-                className="hover:scale-105 hover:text-white text-2xl transform transition-transform duration-100"
+                className="hover:scale-105 hover:text-brown text-2xl transform transition-transform duration-100"
               >
                 {formatFrenchOE(isEnglish ? link.eng : link.fr)}
               </NavLink>
@@ -226,7 +226,7 @@ export const Header: React.FC = () => {
                   }}
                   className="px-4 py-2 bg-darkBrown hover:bg-white text-white hover:text-darkBrown hover:scale-110 transform transition-transform rounded-4xl text-lg cursor-pointer font-sans transition-colors"
                 >
-                  Deconnecter
+                  Déconnecter
                 </button>
               </>
             ) : null}

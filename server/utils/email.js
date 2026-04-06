@@ -15,8 +15,7 @@ const sendResetPasswordMail = async (to, token) => {
     },
     to: [{ email: to }],
     subject: "Studio Juwelia - Réinitialisation du mot de passe",
-    textContent: `Réinitialisez votre mot de passe: ${resetUrl}`,
-    htmlContent: `<p>Cliquez pour réinitialiser votre mot de passe: <a href="${resetUrl}">${resetUrl}</a></p>`,
+    textContent: `Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe:\n\n${resetUrl}\n\nCe lien expire dans 1 heure.\n\nStudio Juwelia`,
     trackClicks: false,
     trackOpens: false,
   });

@@ -101,7 +101,9 @@ router.post("/request-reset", async (req, res) => {
 
   const user = await findUserByEmail(email);
   if (!user) {
-    return res.status(404).json({ message: "Aucun compte associé à cet email" });
+    return res
+      .status(404)
+      .json({ message: "Aucun compte associé à cet email" });
   }
 
   const token = crypto.randomBytes(32).toString("hex");

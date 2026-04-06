@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { MenuToggle } from "./MenuToggle";
-import { useAuthStore } from "../stores/authStore";
 import logo from "/juwelia-tattoo-logo.png";
 import textLogo from "/studio-juwelia-tattoo-name-2.svg";
 /* import { usePageStore } from "../stores/pageStore"; */
@@ -18,8 +17,6 @@ export const Header: React.FC = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   /*   const { isEnglish } = usePageStore()  */
   const isEnglish = false;
-
-  const {  isAuthenticated, logout } = useAuthStore();
 
   const navlinks = [
     { fr: "Tatouage", eng: "Tattoos", path: "/tatouages" },
@@ -179,22 +176,6 @@ export const Header: React.FC = () => {
                       {formatFrenchOE(isEnglish ? link.eng : link.fr)}
                     </NavLink>
                   ))}
-                  {isAuthenticated ? (
-                    <>
-                      <div className="border-t border-white w-full pt-5 mt-5 text-center">
-                        <button
-                          onClick={async () => {
-                            await logout();
-                            closeMenu();
-                            navigate("/");
-                          }}
-                          className="w-full px-4 py-2 bg-black hover:bg-white text-white hover:text-black rounded-lg text-sm transition-colors"
-                        >
-                          Déconnecter
-                        </button>
-                      </div>
-                    </>
-                  ) : null}
                 </ul>
               </motion.div>
             )}
@@ -216,20 +197,6 @@ export const Header: React.FC = () => {
                 {formatFrenchOE(isEnglish ? link.eng : link.fr)}
               </NavLink>
             ))}
-            {isAuthenticated ? (
-              <>
-
-                <button
-                  onClick={async () => {
-                    await logout();
-                    navigate("/");
-                  }}
-                  className="px-4 py-2 bg-darkBrown hover:bg-white text-white hover:text-darkBrown hover:scale-110 transform transition-transform rounded-4xl text-lg cursor-pointer font-sans transition-colors"
-                >
-                  Déconnecter
-                </button>
-              </>
-            ) : null}
           </ul>
         </>
       )}

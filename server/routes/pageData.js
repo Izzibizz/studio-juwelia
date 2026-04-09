@@ -4,7 +4,6 @@ const { randomUUID } = require("crypto");
 const PageData = require("../models/PageData");
 const auth = require("../middleware/auth");
 const { PAGE_KEYS, validatePageData } = require("../models/pageSchemas");
-const testPageData = require("../data/testPageData.json");
 const { uploadImageBuffer } = require("../lib/cloudinary");
 
 const router = express.Router();
@@ -20,13 +19,7 @@ const upload = multer({
 router.get("/:page", async (req, res) => {
   const page = req.params.page.toLowerCase();
   const doc = await PageData.findOne({ page });
-  if (!doc) {
-    const testDataForPage = testPageData[page];
-    if (testDataForPage) {
-      return res.json({ page, data: testDataForPage });
-    }
-    return res.status(404).json({ message: "Page not found" });
-  }
+  if (!doc) return res.status(404).json({ message: "Page not found" });
   res.json(doc);
 });
 

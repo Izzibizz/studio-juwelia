@@ -1,27 +1,42 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../stores/authStore";
+import { EditorField } from "./editor";
+import type { EditorFieldType } from "./editor";
 
 interface EditablePageWrapperProps {
   pageName: string;
   children: React.ReactNode;
   onSave?: (data: Record<string, unknown>) => void;
+  editorType?: EditorFieldType;
+  initialValue?: string;
+  label?: string;
+  placeholder?: string;
+  multiline?: boolean;
 }
 
 export function EditablePageWrapper({
   pageName,
   children,
   onSave,
+  editorType = "plain",
+  initialValue = "",
+  label = "Content",
+  placeholder = "Edit page content here...",
+  multiline = false,
 }: EditablePageWrapperProps) {
   const { isAuthenticated } = useAuthStore();
   const [editMode, setEditMode] = useState(false);
-  const [editText, setEditText] = useState("");
+  const [editText, setEditText] = useState(initialValue);
 
   useEffect(() => {
-    // Reset edit mode when user logs out
     if (!isAuthenticated && editMode) {
       setEditMode(false);
     }
   }, [isAuthenticated, editMode]);
+
+  useEffect(() => {
+    setEditText(initialValue);
+  }, [initialValue]);
 
   const handleEditClick = () => {
     if (isAuthenticated) {
@@ -41,30 +56,32 @@ export function EditablePageWrapper({
       {isAuthenticated && (
         <button
           onClick={handleEditClick}
-          className="fixed top-24 right-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          className="fixed top-24 right-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           {editMode ? "Cancel" : "Edit Page"}
         </button>
       )}
 
       {editMode && isAuthenticated ? (
-        <div className="p-6 bg-yellow-50 border-2 border-yellow-400 rounded-lg">
-          <textarea
+        <div className="rounded-lg border-2 border-yellow-400 bg-yellow-50 p-6">
+          <EditorField
+            type={editorType}
+            label={label}
             value={editText}
-            onChange={(e) => setEditText(e.target.value)}
-            className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono"
-            placeholder="Edit page content here..."
+            onChange={setEditText}
+            placeholder={placeholder}
+            multiline={multiline}
           />
-          <div className="flex gap-4 mt-4">
+          <div className="mt-4 flex gap-4">
             <button
               onClick={handleSave}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+              className="rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700"
             >
               Save Changes
             </button>
             <button
               onClick={() => setEditMode(false)}
-              className="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg"
+              className="rounded-lg bg-gray-400 px-6 py-2 text-white hover:bg-gray-500"
             >
               Cancel
             </button>
@@ -74,7 +91,7 @@ export function EditablePageWrapper({
         <>
           {children}
           {isAuthenticated && !editMode && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-300 rounded-lg text-sm text-blue-900">
+            <div className="mt-6 rounded-lg border border-blue-300 bg-blue-50 p-4 text-sm text-blue-900">
               ℹ️ Click the "Edit Page" button to modify this page's content.
             </div>
           )}

@@ -1,30 +1,46 @@
 const express = require("express");
+const multer = require("multer");
+const { randomUUID } = require("crypto");
 const PageData = require("../models/PageData");
 const auth = require("../middleware/auth");
+const { PAGE_KEYS, validatePageData } = require("../models/pageSchemas");
+const testPageData = require("../data/testPageData.json");
+const { uploadImageBuffer } = require("../lib/cloudinary");
 
 const router = express.Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+    files: 10,
+  },
+});
 
 router.get("/:page", async (req, res) => {
   const page = req.params.page.toLowerCase();
   const doc = await PageData.findOne({ page });
-  if (!doc) return res.status(404).json({ message: "Page not found" });
+  if (!doc) {
+    const testDataForPage = testPageData[page];
+    if (testDataForPage) {
+      return res.json({ page, data: testDataForPage });
+    }
+    return res.status(404).json({ message: "Page not found" });
+  }
   res.json(doc);
 });
 
 router.post("/:page", auth, async (req, res) => {
   const page = req.params.page.toLowerCase();
-  const allowedPages = [
-    "about",
-    "art",
-    "booking",
-    "contact",
-    "homepage",
-    "tattoos",
-  ];
-  if (!allowedPages.includes(page))
+  if (!PAGE_KEYS.includes(page))
     return res.status(400).json({ message: "Invalid page id" });
 
   const data = req.body.data || {};
+
+  const validationError = validatePageData(page, data);
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
+  }
 
   const updated = await PageData.findOneAndUpdate(
     { page },
@@ -34,6 +50,44 @@ router.post("/:page", auth, async (req, res) => {
 
   res.json(updated);
 });
+
+router.post(
+  "/media/upload",
+  auth,
+  upload.array("images", 10),
+  async (req, res) => {
+    const files = Array.isArray(req.files) ? req.files : [];
+
+    if (files.length === 0) {
+      return res.status(400).json({ message: "No images were uploaded." });
+    }
+
+    const altText = typeof req.body.alt === "string" ? req.body.alt.trim() : "";
+    const captionText =
+      typeof req.body.caption === "string" ? req.body.caption.trim() : "";
+    const uploadedAt = new Date().toISOString();
+
+    const uploadedImages = await Promise.all(
+      files.map(async (file) => {
+        const fallbackAlt =
+          file.originalname.replace(/\.[^.]+$/, "") || "image";
+        const uploaded = await uploadImageBuffer(file.buffer, fallbackAlt);
+
+        return {
+          id: randomUUID(),
+          publicId: uploaded.publicId,
+          url: uploaded.url,
+          thumbnailUrl: uploaded.thumbnailUrl,
+          alt: altText || captionText || fallbackAlt,
+          caption: captionText || altText || fallbackAlt,
+          uploadedAt,
+        };
+      }),
+    );
+
+    res.status(201).json({ images: uploadedImages });
+  },
+);
 
 router.delete("/:page", auth, async (req, res) => {
   const page = req.params.page.toLowerCase();

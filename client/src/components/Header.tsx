@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [smallerHeader, setSmallerHeader] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1025);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1280);
   const isHome = location.pathname === "/";
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1025);
+    const handleResize = () => setIsMobile(window.innerWidth < 1280);
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -122,7 +122,7 @@ export const Header: React.FC = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-70 h-[100px]
-       text-black  ${scrolled ? "bg-red-500" : "bg-none"} animate-fadeIn`}
+       text-black  ${scrolled ? "bg-beige" : "bg-none"} animate-fadeIn`}
     >
       <div
         className="flex gap-6 items-center cursor-pointer"
@@ -144,11 +144,15 @@ export const Header: React.FC = () => {
         {!isMobile && (
           <img
             src={textLogo}
-            className={`w-[150px] ${
+            className={` ${
               !isHome &&
               "hover:scale-105 transform transition-transform duration-100"
-            }`}
-            alt="hagsätra collective"
+            } ${
+            smallerHeader
+              ? "w-[120px] transform transition-transform duration-200"
+              : "w-[170px] transform transition-transform duration-200"
+          }`}
+            alt="Studio Juwelia"
           />
         )}
       </div>

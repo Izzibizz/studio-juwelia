@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { PAGE_KEYS } = require("./pageSchemas");
 
 const pageSchema = new mongoose.Schema(
   {
@@ -6,12 +7,12 @@ const pageSchema = new mongoose.Schema(
       type: String,
       required: true,
       lowercase: true,
-      enum: ["about", "art", "booking", "contact", "homepage", "tattoos"],
+      enum: PAGE_KEYS,
       unique: true,
     },
     data: {
       type: mongoose.Schema.Types.Mixed,
-      default: {},
+      default: () => ({}),
     },
   },
   { timestamps: true },

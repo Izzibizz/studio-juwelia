@@ -6,10 +6,10 @@ interface ArtIntroProps {
   isEditing?: boolean;
   onChange?: (nextData: GalleryIntroSectionData) => void;
   onUploadImage?: (index: number, file: File) => Promise<void>;
-  onAddImage?: () => void;
+  onAddImageUpload?: (file: File) => Promise<void>;
   onRemoveImage?: (index: number) => void;
 }
 
 export function ArtIntro(props: ArtIntroProps) {
-  return <SectionIntro {...props} />;
+  return <SectionIntro {...props} useSliderLightbox />;
 }

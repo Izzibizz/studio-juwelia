@@ -16,6 +16,78 @@ const upload = multer({
   },
 });
 
+router.post(
+  "/homepage/gallery/:section/add",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    const section = req.params.section;
+    if (section !== "artIntro" && section !== "tattooIntro") {
+      return res.status(400).json({ message: "Invalid gallery section" });
+    }
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No image was uploaded." });
+    }
+
+    const altText = typeof req.body.alt === "string" ? req.body.alt.trim() : "";
+    const nameText =
+      typeof req.body.name === "string" ? req.body.name.trim() : "";
+    const fallbackName = file.originalname.replace(/\.[^.]+$/, "") || "image";
+
+    const uploaded = await uploadImageBuffer(
+      file.buffer,
+      nameText || altText || fallbackName,
+    );
+
+    const newGalleryItem = {
+      image: uploaded.url,
+      alt: altText || nameText || fallbackName,
+      name: nameText || altText || fallbackName,
+    };
+
+    const existingDoc = await PageData.findOne({ page: "homepage" });
+    const existingData =
+      existingDoc && existingDoc.data && typeof existingDoc.data === "object"
+        ? existingDoc.data
+        : {};
+    const existingSection =
+      existingData[section] && typeof existingData[section] === "object"
+        ? existingData[section]
+        : {};
+    const existingGallery = Array.isArray(existingSection.imageGallery)
+      ? existingSection.imageGallery
+      : [];
+
+    const nextData = {
+      ...existingData,
+      [section]: {
+        ...existingSection,
+        imageGallery: [...existingGallery, newGalleryItem],
+      },
+    };
+
+    const validationError = validatePageData("homepage", nextData);
+    if (validationError) {
+      return res.status(400).json({ message: validationError });
+    }
+
+    const updated = await PageData.findOneAndUpdate(
+      { page: "homepage" },
+      { data: nextData },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
+
+    res.status(201).json({
+      page: "homepage",
+      section,
+      item: newGalleryItem,
+      data: updated.data,
+    });
+  },
+);
+
 router.get("/:page", async (req, res) => {
   const page = req.params.page.toLowerCase();
   const doc = await PageData.findOne({ page });

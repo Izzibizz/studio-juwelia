@@ -8,6 +8,7 @@ import { TattooIntro } from "../components/home/TattooIntro";
 import { TestimonialsSection } from "../components/home/TestimonialsSection";
 import { contentAPI, defaultHomeContent } from "../api/contentAPI";
 import type { HomePageContent } from "../api/contentAPI";
+import type { HomeGallerySectionKey } from "../api/contentAPI";
 import { useAdminStore } from "../stores/adminStore";
 import { useAuthStore } from "../stores/authStore";
 
@@ -92,6 +93,25 @@ export const HomePage: React.FC = () => {
     await saveHomePageContent(nextContent);
   };
 
+  const addGalleryImage = async (
+    section: HomeGallerySectionKey,
+    file: File,
+  ) => {
+    const response = await contentAPI.addHomepageGalleryImage(
+      section,
+      file,
+      token ?? undefined,
+    );
+
+    setContent((current) => ({
+      ...current,
+      [section]: {
+        ...current[section],
+        ...response.data?.[section],
+      },
+    }));
+  };
+
   const uploadAboutImage = async (index: number, field: string, file: File) => {
     const imageUrl = await uploadSingleImage(file, `${field}-${index + 1}`);
     const nextContent = {
@@ -156,18 +176,7 @@ export const HomePage: React.FC = () => {
           onChange={(artIntro) =>
             setContent((current) => ({ ...current, artIntro }))
           }
-          onAddImage={() =>
-            setContent((current) => ({
-              ...current,
-              artIntro: {
-                ...current.artIntro,
-                imageGallery: [
-                  ...current.artIntro.imageGallery,
-                  { image: "", alt: "", name: "" },
-                ],
-              },
-            }))
-          }
+          onAddImageUpload={(file) => addGalleryImage("artIntro", file)}
           onRemoveImage={(index) =>
             setContent((current) => ({
               ...current,
@@ -189,18 +198,7 @@ export const HomePage: React.FC = () => {
           onChange={(tattooIntro) =>
             setContent((current) => ({ ...current, tattooIntro }))
           }
-          onAddImage={() =>
-            setContent((current) => ({
-              ...current,
-              tattooIntro: {
-                ...current.tattooIntro,
-                imageGallery: [
-                  ...current.tattooIntro.imageGallery,
-                  { image: "", alt: "", name: "" },
-                ],
-              },
-            }))
-          }
+          onAddImageUpload={(file) => addGalleryImage("tattooIntro", file)}
           onRemoveImage={(index) =>
             setContent((current) => ({
               ...current,

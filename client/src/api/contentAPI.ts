@@ -92,6 +92,13 @@ interface PageDataResponse {
   data: Partial<HomePageContent>;
 }
 
+interface GalleryAppendResponse {
+  page: string;
+  section: HomeGallerySectionKey;
+  item: ImageGalleryItemData;
+  data: Partial<HomePageContent>;
+}
+
 export type PageKey =
   | "homepage"
   | "shared"
@@ -100,6 +107,8 @@ export type PageKey =
   | "booking"
   | "contact"
   | "tattoos";
+
+export type HomeGallerySectionKey = "artIntro" | "tattooIntro";
 
 export interface UploadedCloudinaryImage {
   id: string;
@@ -303,5 +312,42 @@ export const contentAPI = {
       images?: UploadedCloudinaryImage[];
     };
     return payload.images || [];
+  },
+
+  addHomepageGalleryImage: async (
+    section: HomeGallerySectionKey,
+    file: File,
+    token?: string,
+    options?: { alt?: string; name?: string },
+  ): Promise<GalleryAppendResponse> => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    if (options?.alt) {
+      formData.append("alt", options.alt);
+    }
+
+    if (options?.name) {
+      formData.append("name", options.name);
+    }
+
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/page/homepage/gallery/${section}/add`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.message || `Failed adding image to ${section}`);
+    }
+
+    return res.json();
   },
 };

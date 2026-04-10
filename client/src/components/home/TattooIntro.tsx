@@ -6,7 +6,7 @@ interface TattooIntroProps {
   isEditing?: boolean;
   onChange?: (nextData: GalleryIntroSectionData) => void;
   onUploadImage?: (index: number, file: File) => Promise<void>;
-  onAddImage?: () => void;
+  onAddImageUpload?: (file: File) => Promise<void>;
   onRemoveImage?: (index: number) => void;
 }
 

@@ -1,16 +1,19 @@
+import { useMemo } from "react";
 import type { GalleryIntroSectionData } from "../../api/contentAPI";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
-import { InlineUploadButton } from "./InlineUploadButton";
+import { ImageGallerySwiper } from "./ImageGallerySwiper";
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface SectionIntroProps {
   data: GalleryIntroSectionData;
   isEditing?: boolean;
   onChange?: (nextData: GalleryIntroSectionData) => void;
   onUploadImage?: (index: number, file: File) => Promise<void>;
-  onAddImage?: () => void;
+  onAddImageUpload?: (file: File) => Promise<void>;
   onRemoveImage?: (index: number) => void;
+  useSliderLightbox?: boolean;
 }
 
 export function SectionIntro({
@@ -18,9 +21,15 @@ export function SectionIntro({
   isEditing = false,
   onChange,
   onUploadImage,
-  onAddImage,
+  onAddImageUpload,
   onRemoveImage,
+  useSliderLightbox = false,
 }: SectionIntroProps) {
+  const galleryImages = useMemo(
+    () => data.imageGallery.filter((item) => Boolean(item.image)),
+    [data.imageGallery],
+  );
+
   const updateField = (field: keyof GalleryIntroSectionData, value: string) => {
     onChange?.({ ...data, [field]: value });
   };
@@ -39,7 +48,7 @@ export function SectionIntro({
   };
 
   return (
-    <section className="rounded-2xl p-6 md:p-8 bg-warmWhite border border-[#e7dfd5]">
+    <section className="min-w-0 rounded-2xl border border-[#e7dfd5] bg-warmWhite p-6 md:p-8">
       {isEditing ? (
         <div className="grid gap-4">
           <EditorField
@@ -76,86 +85,95 @@ export function SectionIntro({
 
       {(data.imageGallery.length > 0 || isEditing) && (
         <div className="mt-4 grid gap-3">
-          {isEditing && onAddImage && (
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={onAddImage}
-                className="inline-flex items-center gap-2 rounded-full border border-darkBrown px-4 py-2 text-sm font-semibold text-darkBrown transition hover:bg-darkBrown hover:text-white"
-              >
-                <FiPlus size={16} />
-                Add image
-              </button>
+          {isEditing && onAddImageUpload && (
+            <div className="rounded-lg bg-white p-3">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-darkBrown">
+                <FiPlus size={15} />
+                Add image to gallery
+              </div>
+              <ImageUploadDropzone
+                label="Drop image to add a new gallery item"
+                onUpload={onAddImageUpload}
+              />
             </div>
           )}
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {data.imageGallery.map((item, index) => (
-              <div
-                key={`${item.name}-${index}`}
-                className="grid gap-3 rounded-lg bg-white p-3"
-              >
-                {item.image ? (
+          {isEditing ? (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {data.imageGallery.map((item, index) => (
+                <div
+                  key={`${item.name}-${index}`}
+                  className="grid gap-3 rounded-lg bg-white p-3"
+                >
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.alt || item.name}
+                      className="h-20 w-full rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-[#d8cfc1] text-xs text-brown">
+                      No image
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-darkBrown">
+                      Image {index + 1}
+                    </span>
+                    {onRemoveImage && (
+                      <button
+                        type="button"
+                        onClick={() => onRemoveImage(index)}
+                        className="text-darkRed transition hover:opacity-70"
+                      >
+                        <FiTrash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                  <EditorField
+                    type="plain"
+                    label="Image URL"
+                    value={item.image}
+                    onChange={(value) => updateGalleryField(index, "image", value)}
+                  />
+                  <EditorField
+                    type="plain"
+                    label="Alt text"
+                    value={item.alt}
+                    onChange={(value) => updateGalleryField(index, "alt", value)}
+                  />
+                  <EditorField
+                    type="plain"
+                    label="Name"
+                    value={item.name}
+                    onChange={(value) => updateGalleryField(index, "name", value)}
+                  />
+                  {onUploadImage && (
+                    <ImageUploadDropzone
+                      label="Drop to replace this image"
+                      onUpload={(file) => onUploadImage(index, file)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : useSliderLightbox ? (
+            <ImageGallerySwiper images={galleryImages} />
+          ) : (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {galleryImages.map((item, index) => (
+                <div
+                  key={`${item.name}-${index}`}
+                  className="grid gap-3 rounded-lg bg-white p-3"
+                >
                   <img
                     src={item.image}
                     alt={item.alt || item.name}
                     className="h-20 w-full rounded-lg object-cover"
                   />
-                ) : (
-                  <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-[#d8cfc1] text-xs text-brown">
-                    No image
-                  </div>
-                )}
-                {isEditing ? (
-                  <>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-darkBrown">
-                        Image {index + 1}
-                      </span>
-                      {onRemoveImage && (
-                        <button
-                          type="button"
-                          onClick={() => onRemoveImage(index)}
-                          className="text-darkRed transition hover:opacity-70"
-                        >
-                          <FiTrash2 size={16} />
-                        </button>
-                      )}
-                    </div>
-                    <EditorField
-                      type="plain"
-                      label="Image URL"
-                      value={item.image}
-                      onChange={(value) =>
-                        updateGalleryField(index, "image", value)
-                      }
-                    />
-                    <EditorField
-                      type="plain"
-                      label="Alt text"
-                      value={item.alt}
-                      onChange={(value) =>
-                        updateGalleryField(index, "alt", value)
-                      }
-                    />
-                    <EditorField
-                      type="plain"
-                      label="Name"
-                      value={item.name}
-                      onChange={(value) =>
-                        updateGalleryField(index, "name", value)
-                      }
-                    />
-                    {onUploadImage && (
-                      <InlineUploadButton
-                        label="Upload image"
-                        onUpload={(file) => onUploadImage(index, file)}
-                      />
-                    )}
-                  </>
-                ) : null}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </section>

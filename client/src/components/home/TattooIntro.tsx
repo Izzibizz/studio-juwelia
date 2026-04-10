@@ -3,8 +3,13 @@ import { SectionIntro } from "./SectionIntro";
 
 interface TattooIntroProps {
   data: GalleryIntroSectionData;
+  isEditing?: boolean;
+  onChange?: (nextData: GalleryIntroSectionData) => void;
+  onUploadImage?: (index: number, file: File) => Promise<void>;
+  onAddImage?: () => void;
+  onRemoveImage?: (index: number) => void;
 }
 
-export function TattooIntro({ data }: TattooIntroProps) {
-  return <SectionIntro data={data} />;
+export function TattooIntro(props: TattooIntroProps) {
+  return <SectionIntro {...props} />;
 }

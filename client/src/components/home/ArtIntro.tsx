@@ -3,8 +3,13 @@ import { SectionIntro } from "./SectionIntro";
 
 interface ArtIntroProps {
   data: GalleryIntroSectionData;
+  isEditing?: boolean;
+  onChange?: (nextData: GalleryIntroSectionData) => void;
+  onUploadImage?: (index: number, file: File) => Promise<void>;
+  onAddImage?: () => void;
+  onRemoveImage?: (index: number) => void;
 }
 
-export function ArtIntro({ data }: ArtIntroProps) {
-  return <SectionIntro data={data} />;
+export function ArtIntro(props: ArtIntroProps) {
+  return <SectionIntro {...props} />;
 }

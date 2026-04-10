@@ -7,7 +7,6 @@ require("express-async-errors");
 dotenv.config();
 
 const connectDB = require("./config/db");
-const { seedPageDataIfMissing } = require("./config/seedPageData");
 const authRoutes = require("./routes/auth");
 const pageDataRoutes = require("./routes/pageData");
 
@@ -53,13 +52,6 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
-
-    const seedResult = await seedPageDataIfMissing();
-    if (seedResult.inserted > 0) {
-      console.log(
-        `Seeded ${seedResult.inserted} page documents from test data (${seedResult.skipped} already existed).`,
-      );
-    }
 
     app.listen(PORT, () => {
       console.log(`Backend listening on port ${PORT}`);

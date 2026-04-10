@@ -1,20 +1,71 @@
 import { useState } from "react";
 import type { ContactFormSectionData } from "../../api/contentAPI";
+import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 
 interface ContactFormSectionProps {
   data: ContactFormSectionData;
+  isEditing?: boolean;
+  onChange?: (nextData: ContactFormSectionData) => void;
 }
 
-export function ContactFormSection({ data }: ContactFormSectionProps) {
+export function ContactFormSection({
+  data,
+  isEditing = false,
+  onChange,
+}: ContactFormSectionProps) {
   const [sent, setSent] = useState(false);
+
+  const updateField = (field: keyof ContactFormSectionData, value: string) => {
+    onChange?.({ ...data, [field]: value });
+  };
 
   return (
     <section className="rounded-2xl p-6 md:p-8 bg-beige border border-[#e7dfd5]">
-      <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-2">
-        {data.title}
-      </h2>
-      <RichTextContent html={data.subtitle} className="text-brownBlack mb-6" />
+      {isEditing ? (
+        <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
+          <EditorField
+            type="plain"
+            label="Title"
+            value={data.title}
+            onChange={(value) => updateField("title", value)}
+          />
+          <EditorField
+            type="rich"
+            label="Subtitle"
+            value={data.subtitle}
+            onChange={(value) => updateField("subtitle", value)}
+          />
+          <EditorField
+            type="plain"
+            label="Button text"
+            value={data.buttonText}
+            onChange={(value) => updateField("buttonText", value)}
+          />
+          <EditorField
+            type="plain"
+            label="Success message"
+            value={data.successMessage}
+            onChange={(value) => updateField("successMessage", value)}
+          />
+          <EditorField
+            type="rich"
+            label="Terms and conditions"
+            value={data.termsAndConditions}
+            onChange={(value) => updateField("termsAndConditions", value)}
+          />
+        </div>
+      ) : (
+        <>
+          <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-2">
+            {data.title}
+          </h2>
+          <RichTextContent
+            html={data.subtitle}
+            className="text-brownBlack mb-6"
+          />
+        </>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();

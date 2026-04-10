@@ -92,6 +92,15 @@ interface PageDataResponse {
   data: Partial<HomePageContent>;
 }
 
+export type PageKey =
+  | "homepage"
+  | "shared"
+  | "about"
+  | "art"
+  | "booking"
+  | "contact"
+  | "tattoos";
+
 export interface UploadedCloudinaryImage {
   id: string;
   publicId: string;
@@ -227,6 +236,34 @@ export const contentAPI = {
     }
 
     return mergeHomeContent(defaultHomeContent, pageData, sharedData);
+  },
+
+  savePageContent: async <TData extends object>(
+    page: PageKey,
+    data: TData,
+    token?: string,
+  ): Promise<{ page: string; data: TData }> => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/page/${page}`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify({ data }),
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.message || `Failed saving page ${page}`);
+    }
+
+    return res.json();
   },
 
   uploadImages: async (

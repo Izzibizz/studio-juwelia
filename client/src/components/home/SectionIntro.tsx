@@ -133,19 +133,25 @@ export function SectionIntro({
                     type="plain"
                     label="Image URL"
                     value={item.image}
-                    onChange={(value) => updateGalleryField(index, "image", value)}
+                    onChange={(value) =>
+                      updateGalleryField(index, "image", value)
+                    }
                   />
                   <EditorField
                     type="plain"
                     label="Alt text"
                     value={item.alt}
-                    onChange={(value) => updateGalleryField(index, "alt", value)}
+                    onChange={(value) =>
+                      updateGalleryField(index, "alt", value)
+                    }
                   />
                   <EditorField
                     type="plain"
                     label="Name"
                     value={item.name}
-                    onChange={(value) => updateGalleryField(index, "name", value)}
+                    onChange={(value) =>
+                      updateGalleryField(index, "name", value)
+                    }
                   />
                   {onUploadImage && (
                     <ImageUploadDropzone

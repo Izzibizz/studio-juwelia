@@ -336,16 +336,46 @@ export const contentAPI = {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE}/page/homepage/gallery/${section}/add`, {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: formData,
-    });
+    const res = await fetch(
+      `${API_BASE}/page/homepage/gallery/${section}/add`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers,
+        body: formData,
+      },
+    );
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({}));
       throw new Error(error.message || `Failed adding image to ${section}`);
+    }
+
+    return res.json();
+  },
+
+  removeHomepageGalleryImage: async (
+    section: HomeGallerySectionKey,
+    index: number,
+    token?: string,
+  ): Promise<{ data: Record<string, unknown> }> => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const res = await fetch(
+      `${API_BASE}/page/homepage/gallery/${section}/${index}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers,
+      },
+    );
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.message || `Failed removing image from ${section}`);
     }
 
     return res.json();

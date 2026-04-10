@@ -112,6 +112,25 @@ export const HomePage: React.FC = () => {
     }));
   };
 
+  const removeGalleryImage = async (
+    section: HomeGallerySectionKey,
+    index: number,
+  ) => {
+    const response = await contentAPI.removeHomepageGalleryImage(
+      section,
+      index,
+      token ?? undefined,
+    );
+
+    setContent((current) => ({
+      ...current,
+      [section]: {
+        ...current[section],
+        ...((response.data as Record<string, unknown>)?.[section] ?? {}),
+      },
+    }));
+  };
+
   const uploadAboutImage = async (index: number, field: string, file: File) => {
     const imageUrl = await uploadSingleImage(file, `${field}-${index + 1}`);
     const nextContent = {
@@ -177,17 +196,7 @@ export const HomePage: React.FC = () => {
             setContent((current) => ({ ...current, artIntro }))
           }
           onAddImageUpload={(file) => addGalleryImage("artIntro", file)}
-          onRemoveImage={(index) =>
-            setContent((current) => ({
-              ...current,
-              artIntro: {
-                ...current.artIntro,
-                imageGallery: current.artIntro.imageGallery.filter(
-                  (_, itemIndex) => itemIndex !== index,
-                ),
-              },
-            }))
-          }
+          onRemoveImage={(index) => removeGalleryImage("artIntro", index)}
           onUploadImage={(index, file) =>
             uploadGalleryImage("artIntro", index, file)
           }
@@ -199,17 +208,7 @@ export const HomePage: React.FC = () => {
             setContent((current) => ({ ...current, tattooIntro }))
           }
           onAddImageUpload={(file) => addGalleryImage("tattooIntro", file)}
-          onRemoveImage={(index) =>
-            setContent((current) => ({
-              ...current,
-              tattooIntro: {
-                ...current.tattooIntro,
-                imageGallery: current.tattooIntro.imageGallery.filter(
-                  (_, itemIndex) => itemIndex !== index,
-                ),
-              },
-            }))
-          }
+          onRemoveImage={(index) => removeGalleryImage("tattooIntro", index)}
           onUploadImage={(index, file) =>
             uploadGalleryImage("tattooIntro", index, file)
           }

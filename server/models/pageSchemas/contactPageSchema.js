@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const {
   introSectionSchema,
   contactFormSchema,
+  testimonialsSchema,
+  faqSchema,
   seoSchema,
 } = require("../components/reusableComponentSchemas");
 
@@ -15,6 +17,8 @@ const contactPageSchema = new mongoose.Schema(
     address: { type: String, required: false },
     instagramName: { type: String, required: false },
     instagramLink: { type: String, required: false },
+    testimonials: { type: testimonialsSchema, required: false },
+    faq: { type: faqSchema, required: false },
   },
   { _id: false, strict: true },
 );

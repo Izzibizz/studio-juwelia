@@ -97,6 +97,52 @@ export interface FaqSectionData {
   items: FaqItem[];
 }
 
+export interface TattoosTechniqueImage {
+  image?: PlainText;
+  alt?: PlainText;
+  text?: RichTextHtml;
+}
+
+export interface TattoosTechniqueCategory {
+  title?: PlainText;
+  mainImage?: {
+    image?: PlainText;
+    alt?: PlainText;
+    description?: RichTextHtml;
+  };
+  description?: RichTextHtml;
+  contentText?: RichTextHtml;
+  images?: TattoosTechniqueImage[];
+}
+
+export interface TattoosPageContent {
+  seo?: {
+    title?: PlainText;
+    description?: RichTextHtml;
+  };
+  hero?: HeroSectionData;
+  introduction?: {
+    h2?: PlainText;
+    h3?: PlainText;
+    description?: RichTextHtml;
+    introImage?: PlainText;
+  };
+  techniques?: {
+    h2?: PlainText;
+    h3?: PlainText;
+    description?: RichTextHtml;
+    categories?: TattoosTechniqueCategory[];
+  };
+  details?: {
+    decorImage?: PlainText;
+    h2?: PlainText;
+    cta?: PlainText;
+    h3?: PlainText;
+    description?: RichTextHtml;
+    contentText?: RichTextHtml;
+  };
+}
+
 export interface ContactPageContent {
   seo?: {
     title?: PlainText;
@@ -114,6 +160,8 @@ export interface ContactPageContent {
   address?: PlainText;
   instagramName?: PlainText;
   instagramLink?: PlainText;
+  testimonials?: TestimonialsSectionData;
+  faq?: FaqSectionData;
 }
 
 export interface HomePageContent {
@@ -125,6 +173,40 @@ export interface HomePageContent {
   testimonials: TestimonialsSectionData;
   faq: FaqSectionData;
 }
+
+export const defaultTattoosContent: TattoosPageContent = {
+  seo: { title: "", description: "" },
+  hero: {
+    title: "",
+    subtitle: "",
+    description: "",
+    primaryCtaText: "",
+    primaryCtaLink: "",
+    imageRight: "",
+    imageLeft: "",
+    poem: "",
+  },
+  introduction: {
+    h2: "",
+    h3: "",
+    description: "",
+    introImage: "",
+  },
+  techniques: {
+    h2: "",
+    h3: "",
+    description: "",
+    categories: [],
+  },
+  details: {
+    decorImage: "",
+    h2: "",
+    cta: "",
+    h3: "",
+    description: "",
+    contentText: "",
+  },
+};
 
 interface PageDataResponse<T = Record<string, unknown>> {
   page: string;
@@ -299,6 +381,10 @@ export const contentAPI = {
 
   getContactPageContent: async (): Promise<ContactPageContent> => {
     return getPageData<ContactPageContent>("contact");
+  },
+
+  getTattoosPageContent: async (): Promise<TattoosPageContent> => {
+    return getPageData<TattoosPageContent>("tattoos");
   },
 
   savePageContent: async <TData extends object>(

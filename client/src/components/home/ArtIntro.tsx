@@ -11,5 +11,5 @@ interface ArtIntroProps {
 }
 
 export function ArtIntro(props: ArtIntroProps) {
-  return <SectionIntro {...props} useSliderLightbox />;
+  return <SectionIntro {...props} useSliderLightbox swiperVariant="art" />;
 }

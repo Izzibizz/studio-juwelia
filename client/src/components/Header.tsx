@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { MenuToggle } from "./MenuToggle";
+import { RiEnglishInput } from "react-icons/ri";
+import { IoIosArrowDown } from "react-icons/io";
 import logo from "/juwelia-tattoo-logo.png";
 import textLogo from "/studio-juwelia-tattoo-name-2.svg";
 /* import { usePageStore } from "../stores/pageStore"; */
@@ -12,11 +14,13 @@ export const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [smallerHeader, setSmallerHeader] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1280);
+  const [isEnglish, setIsEnglish] = useState(false);
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const [mobileLanguageExpanded, setMobileLanguageExpanded] = useState(false);
   const isHome = location.pathname === "/";
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  /*   const { isEnglish } = usePageStore()  */
-  const isEnglish = false;
+  const languageRef = useRef<HTMLLIElement>(null);
 
   const navlinks = [
     { fr: "Tatouage", eng: "Tattoos", path: "/tatouages" },
@@ -44,6 +48,14 @@ export const Header: React.FC = () => {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const toggleLanguageDropdown = () => {
+    setLanguageDropdownOpen(!languageDropdownOpen);
+  };
+
+  const toggleMobileLanguage = () => {
+    setMobileLanguageExpanded(!mobileLanguageExpanded);
   };
 
   const [scrolled, setScrolled] = useState(false);
@@ -103,9 +115,17 @@ export const Header: React.FC = () => {
       ) {
         closeMenu();
       }
+      if (
+        languageRef.current &&
+        event.target instanceof Node &&
+        !languageRef.current.contains(event.target)
+      ) {
+        setLanguageDropdownOpen(false);
+        setMobileLanguageExpanded(false);
+      }
     };
 
-    if (isOpen) {
+    if (isOpen || languageDropdownOpen || mobileLanguageExpanded) {
       document.body.style.overflow = "hidden";
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -117,11 +137,11 @@ export const Header: React.FC = () => {
       document.body.style.overflow = "";
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, languageDropdownOpen, mobileLanguageExpanded]);
 
   return (
     <header
-      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-70 h-[100px]
+      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[70] h-[100px]
        text-black  ${scrolled ? "bg-beige" : "bg-none"} animate-fadeIn`}
     >
       <div
@@ -148,10 +168,10 @@ export const Header: React.FC = () => {
               !isHome &&
               "hover:scale-105 transform transition-transform duration-100"
             } ${
-            smallerHeader
-              ? "w-[120px] transform transition-transform duration-200"
-              : "w-[170px] transform transition-transform duration-200"
-          }`}
+              smallerHeader
+                ? "w-[120px] transform transition-transform duration-200"
+                : "w-[170px] transform transition-transform duration-200"
+            }`}
             alt="Studio Juwelia"
           />
         )}
@@ -170,6 +190,15 @@ export const Header: React.FC = () => {
                 ref={dropdownRef}
               >
                 <ul className="flex flex-col items-end gap-5 text-darkRed absolute bottom-28 tablet:bottom-40 animate-fadeIn">
+                  {!isHome && (
+                    <NavLink
+                      to="/"
+                      onClick={closeMenu}
+                      className="hover:scale-105 transform transition-transform duration-100"
+                    >
+                      {formatFrenchOE(isEnglish ? "Home" : "Accueil")}
+                    </NavLink>
+                  )}
                   {navlinks.map((link) => (
                     <NavLink
                       key={link.path}
@@ -181,6 +210,56 @@ export const Header: React.FC = () => {
                     </NavLink>
                   ))}
                 </ul>
+                <div className="absolute bottom-10 right-10 flex items-center">
+                  <AnimatePresence>
+                    {mobileLanguageExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex gap-2 mr-2"
+                      >
+                        <button
+                          onClick={() => {
+                            setIsEnglish(!isEnglish);
+                            setMobileLanguageExpanded(false);
+                          }}
+                          className="flex items-center gap-2 bg-beige px-3 py-2 rounded hover:bg-gray-100 whitespace-nowrap"
+                        >
+                          {isEnglish ? (
+                            "🇫🇷 Français"
+                          ) : (
+                            <>
+                              <RiEnglishInput /> English
+                            </>
+                          )}
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <button
+                    onClick={toggleMobileLanguage}
+                    className="flex items-center gap-2 text-2xl hover:scale-105 transform transition-transform duration-100 min-h-[2rem]"
+                  >
+                    <span className="flex items-center">
+                      {isEnglish ? <RiEnglishInput /> : "🇫🇷"}
+                    </span>
+                    <AnimatePresence>
+                      {mobileLanguageExpanded && (
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: "auto" }}
+                          exit={{ opacity: 0, width: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="ml-1 text-lg whitespace-nowrap overflow-hidden"
+                        >
+                          {isEnglish ? "English" : "Français"}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -191,6 +270,15 @@ export const Header: React.FC = () => {
             className={`flex gap-10 pr-6 text-lg items-center
             `}
           >
+            {!isHome && (
+              <NavLink
+                to="/"
+                onClick={closeMenu}
+                className="hover:scale-105 hover:text-brown text-2xl transform transition-transform duration-100"
+              >
+                {formatFrenchOE(isEnglish ? "Home" : "Accueil")}
+              </NavLink>
+            )}
             {navlinks.map((link) => (
               <NavLink
                 key={link.path}
@@ -201,6 +289,39 @@ export const Header: React.FC = () => {
                 {formatFrenchOE(isEnglish ? link.eng : link.fr)}
               </NavLink>
             ))}
+            <li className="relative ml-12" ref={languageRef}>
+              <button
+                onClick={toggleLanguageDropdown}
+                className="flex items-center gap-2 hover:scale-105 transform transition-transform duration-100 text-2xl"
+              >
+                {isEnglish ? <RiEnglishInput /> : "🇫🇷"}
+                <span className="text-sm">
+                  <IoIosArrowDown />
+                </span>
+              </button>
+              {languageDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-beige border border-gray-300 rounded shadow-lg z-80">
+                  <button
+                    onClick={() => {
+                      setIsEnglish(false);
+                      setLanguageDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    🇫🇷 Français
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEnglish(true);
+                      setLanguageDropdownOpen(false);
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    <RiEnglishInput /> English
+                  </button>
+                </div>
+              )}
+            </li>
           </ul>
         </>
       )}

@@ -13,6 +13,8 @@ const contactPageSchema = new mongoose.Schema(
     email: { type: String, required: false },
     phone: { type: String, required: false },
     address: { type: String, required: false },
+    instagramName: { type: String, required: false },
+    instagramLink: { type: String, required: false },
   },
   { _id: false, strict: true },
 );

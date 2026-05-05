@@ -24,6 +24,8 @@ export const contactEditorSchema: PageEditorSchema = {
   },
   contactDetails: {
     email: { label: "Email", type: "plain" },
+    instagramName: { label: "Instagram Name", type: "plain" },
+    instagramLink: { label: "Instagram Link", type: "plain" },
     phone: { label: "Phone", type: "plain" },
     address: { label: "Address", type: "plain", multiline: true },
   },

@@ -188,71 +188,68 @@ export const HomePage: React.FC = () => {
         onUploadImage={uploadHeroImage}
       />
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <ArtIntro
-          data={content.artIntro}
-          isEditing={isAuthenticated && isEditMode}
-          onChange={(artIntro) =>
-            setContent((current) => ({ ...current, artIntro }))
-          }
-          onAddImageUpload={(file) => addGalleryImage("artIntro", file)}
-          onRemoveImage={(index) => removeGalleryImage("artIntro", index)}
-          onUploadImage={(index, file) =>
-            uploadGalleryImage("artIntro", index, file)
-          }
-        />
-        <TattooIntro
-          data={content.tattooIntro}
-          isEditing={isAuthenticated && isEditMode}
-          onChange={(tattooIntro) =>
-            setContent((current) => ({ ...current, tattooIntro }))
-          }
-          onAddImageUpload={(file) => addGalleryImage("tattooIntro", file)}
-          onRemoveImage={(index) => removeGalleryImage("tattooIntro", index)}
-          onUploadImage={(index, file) =>
-            uploadGalleryImage("tattooIntro", index, file)
-          }
-        />
-        <AboutIntro
-          data={content.aboutIntro}
-          isEditing={isAuthenticated && isEditMode}
-          onChange={(aboutIntro) =>
-            setContent((current) => ({ ...current, aboutIntro }))
-          }
-          onAddItem={() =>
-            setContent((current) => ({
-              ...current,
-              aboutIntro: {
-                ...current.aboutIntro,
-                items: [
-                  ...current.aboutIntro.items,
-                  {
-                    title: "",
-                    description: "",
-                    ctaText: "",
-                    ctaLink: "",
-                    illustrationImage: "",
-                    valuesImage: "",
-                  },
-                ],
-              },
-            }))
-          }
-          onRemoveItem={(index) =>
-            setContent((current) => ({
-              ...current,
-              aboutIntro: {
-                ...current.aboutIntro,
-                items: current.aboutIntro.items.filter(
-                  (_, itemIndex) => itemIndex !== index,
-                ),
-              },
-            }))
-          }
-          onUploadImage={uploadAboutImage}
-        />
-      </div>
-
+      <ArtIntro
+        data={content.artIntro}
+        isEditing={isAuthenticated && isEditMode}
+        onChange={(artIntro) =>
+          setContent((current) => ({ ...current, artIntro }))
+        }
+        onAddImageUpload={(file) => addGalleryImage("artIntro", file)}
+        onRemoveImage={(index) => removeGalleryImage("artIntro", index)}
+        onUploadImage={(index, file) =>
+          uploadGalleryImage("artIntro", index, file)
+        }
+      />
+      <TattooIntro
+        data={content.tattooIntro}
+        isEditing={isAuthenticated && isEditMode}
+        onChange={(tattooIntro) =>
+          setContent((current) => ({ ...current, tattooIntro }))
+        }
+        onAddImageUpload={(file) => addGalleryImage("tattooIntro", file)}
+        onRemoveImage={(index) => removeGalleryImage("tattooIntro", index)}
+        onUploadImage={(index, file) =>
+          uploadGalleryImage("tattooIntro", index, file)
+        }
+      />
+      <AboutIntro
+        data={content.aboutIntro}
+        isEditing={isAuthenticated && isEditMode}
+        onChange={(aboutIntro) =>
+          setContent((current) => ({ ...current, aboutIntro }))
+        }
+        onAddItem={() =>
+          setContent((current) => ({
+            ...current,
+            aboutIntro: {
+              ...current.aboutIntro,
+              items: [
+                ...current.aboutIntro.items,
+                {
+                  title: "",
+                  description: "",
+                  ctaText: "",
+                  ctaLink: "",
+                  illustrationImage: "",
+                  valuesImage: "",
+                },
+              ],
+            },
+          }))
+        }
+        onRemoveItem={(index) =>
+          setContent((current) => ({
+            ...current,
+            aboutIntro: {
+              ...current.aboutIntro,
+              items: current.aboutIntro.items.filter(
+                (_, itemIndex) => itemIndex !== index,
+              ),
+            },
+          }))
+        }
+        onUploadImage={uploadAboutImage}
+      />
       <TestimonialsSection
         data={content.testimonials}
         isEditing={isAuthenticated && isEditMode}

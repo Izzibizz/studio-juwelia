@@ -1,5 +1,25 @@
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
+// Import auth store for token expiration handling
+import { useAuthStore } from "../stores/authStore";
+
+const handleApiResponse = async (res: Response, operation: string) => {
+  if (res.status === 401) {
+    // Token expired or invalid, trigger logout
+    const authStore = useAuthStore.getState();
+    authStore.logout();
+    authStore.checkTokenExpiration(); // This will show the popup
+    throw new Error("Votre session a expiré. Vous avez été déconnecté.");
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || `Failed ${operation}`);
+  }
+
+  return res;
+};
+
 export type PlainText = string;
 export type RichTextHtml = string;
 
@@ -77,6 +97,25 @@ export interface FaqSectionData {
   items: FaqItem[];
 }
 
+export interface ContactPageContent {
+  seo?: {
+    title?: PlainText;
+    description?: RichTextHtml;
+  };
+  intro?: {
+    title?: PlainText;
+    description?: RichTextHtml;
+    ctaText?: PlainText;
+    imageGallery?: ImageGalleryItemData[];
+  };
+  contactForm?: ContactFormSectionData;
+  email?: PlainText;
+  phone?: PlainText;
+  address?: PlainText;
+  instagramName?: PlainText;
+  instagramLink?: PlainText;
+}
+
 export interface HomePageContent {
   hero: HeroSectionData;
   artIntro: GalleryIntroSectionData;
@@ -87,9 +126,9 @@ export interface HomePageContent {
   faq: FaqSectionData;
 }
 
-interface PageDataResponse {
+interface PageDataResponse<T = Record<string, unknown>> {
   page: string;
-  data: Partial<HomePageContent>;
+  data: T;
 }
 
 interface GalleryAppendResponse {
@@ -227,6 +266,15 @@ const mergeHomeContent = (
   };
 };
 
+const getPageData = async <TData extends object>(
+  page: PageKey,
+): Promise<TData> => {
+  const res = await fetch(`${API_BASE}/page/${page}`);
+  await handleApiResponse(res, `loading page ${page}`);
+  const json = (await res.json()) as PageDataResponse<TData>;
+  return json.data || ({} as TData);
+};
+
 export const contentAPI = {
   getHomePageContent: async (): Promise<HomePageContent> => {
     let pageData: Partial<HomePageContent> = {};
@@ -234,17 +282,23 @@ export const contentAPI = {
 
     const homeRes = await fetch(`${API_BASE}/page/homepage`);
     if (homeRes.ok) {
-      const homeJson = (await homeRes.json()) as PageDataResponse;
+      const homeJson =
+        (await homeRes.json()) as PageDataResponse<HomePageContent>;
       pageData = homeJson.data || {};
     }
 
     const sharedRes = await fetch(`${API_BASE}/page/shared`);
     if (sharedRes.ok) {
-      const sharedJson = (await sharedRes.json()) as PageDataResponse;
+      const sharedJson =
+        (await sharedRes.json()) as PageDataResponse<HomePageContent>;
       sharedData = sharedJson.data || {};
     }
 
     return mergeHomeContent(defaultHomeContent, pageData, sharedData);
+  },
+
+  getContactPageContent: async (): Promise<ContactPageContent> => {
+    return getPageData<ContactPageContent>("contact");
   },
 
   savePageContent: async <TData extends object>(
@@ -267,11 +321,7 @@ export const contentAPI = {
       body: JSON.stringify({ data }),
     });
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || `Failed saving page ${page}`);
-    }
-
+    await handleApiResponse(res, `saving page ${page}`);
     return res.json();
   },
 
@@ -303,10 +353,7 @@ export const contentAPI = {
       body: formData,
     });
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || "Image upload failed");
-    }
+    await handleApiResponse(res, "uploading images");
 
     const payload = (await res.json()) as {
       images?: UploadedCloudinaryImage[];
@@ -346,11 +393,7 @@ export const contentAPI = {
       },
     );
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || `Failed adding image to ${section}`);
-    }
-
+    await handleApiResponse(res, `adding image to ${section}`);
     return res.json();
   },
 
@@ -373,11 +416,7 @@ export const contentAPI = {
       },
     );
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || `Failed removing image from ${section}`);
-    }
-
+    await handleApiResponse(res, `removing image from ${section}`);
     return res.json();
   },
 };

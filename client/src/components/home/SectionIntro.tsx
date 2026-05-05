@@ -14,6 +14,7 @@ interface SectionIntroProps {
   onAddImageUpload?: (file: File) => Promise<void>;
   onRemoveImage?: (index: number) => void;
   useSliderLightbox?: boolean;
+  swiperVariant?: "art" | "default";
 }
 
 export function SectionIntro({
@@ -24,6 +25,7 @@ export function SectionIntro({
   onAddImageUpload,
   onRemoveImage,
   useSliderLightbox = false,
+  swiperVariant = "default",
 }: SectionIntroProps) {
   const galleryImages = useMemo(
     () => data.imageGallery.filter((item) => Boolean(item.image)),
@@ -163,7 +165,10 @@ export function SectionIntro({
               ))}
             </div>
           ) : useSliderLightbox ? (
-            <ImageGallerySwiper images={galleryImages} />
+            <ImageGallerySwiper
+              images={galleryImages}
+              variant={swiperVariant}
+            />
           ) : (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {galleryImages.map((item, index) => (

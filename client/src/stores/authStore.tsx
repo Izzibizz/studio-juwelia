@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authAPI } from "../api/authAPI";
+import { isTokenExpired } from "../utils/jwt";
 import type { User, AuthResponse } from "../api/authAPI";
 
 interface AuthState {
@@ -9,6 +10,8 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  showLogoutPopup: boolean;
+  logoutMessage: string;
 
   // Actions
   signup: (name: string, email: string, password: string) => Promise<void>;
@@ -18,6 +21,8 @@ interface AuthState {
   resetPassword: (token: string, password: string) => Promise<void>;
   deleteUser: () => Promise<void>;
   clearError: () => void;
+  checkTokenExpiration: () => void;
+  hideLogoutPopup: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -28,6 +33,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      showLogoutPopup: false,
+      logoutMessage: "",
 
       signup: async (name: string, email: string, password: string) => {
         set({ isLoading: true, error: null });
@@ -89,6 +96,8 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
             error: null,
+            showLogoutPopup: false,
+            logoutMessage: "",
           });
         } catch (err) {
           set({
@@ -149,6 +158,23 @@ export const useAuthStore = create<AuthState>()(
       },
 
       clearError: () => set({ error: null }),
+
+      checkTokenExpiration: () => {
+        const { token, isAuthenticated } = get();
+        if (token && isAuthenticated && isTokenExpired(token)) {
+          // Token is expired, logout automatically
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            showLogoutPopup: true,
+            logoutMessage:
+              "Vous avez été déconnecté en raison d'une inactivité prolongée. Veuillez vous reconnecter.",
+          });
+        }
+      },
+
+      hideLogoutPopup: () => set({ showLogoutPopup: false, logoutMessage: "" }),
     }),
     {
       name: "auth-storage",

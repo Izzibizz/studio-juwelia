@@ -1,5 +1,4 @@
 import type { HeroSectionData } from "../../api/contentAPI";
-import { Link } from "react-router-dom";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 /* import { InlineUploadButton } from "./InlineUploadButton"; */
@@ -52,40 +51,6 @@ export function Hero({
             value={data.poem}
             onChange={(value) => updateField("poem", value)}
           />
-        </div>
-      ) : (
-        <div className="grid tablet:grid-cols-5 tablet:justify-between">
-          <div className="flex flex-col gap-4 tablet:col-span-2">
-            <div className="flex flex-col gap-4 tablet:ml-38 tablet:mt-14">
-            <h1 className="text-3xl font-juwelia">{data.title}</h1>
-            <RichTextContent
-              html={data.subtitle}
-              className="text-4xl mb-4 font-tropical"
-            />
-            <RichTextContent html={data.description} className="" />
-            </div>
-            {data.imageLeft && (
-              <img
-                src={data.imageLeft}
-                alt="Hero left"
-                className="object-cover tablet:mt-14"
-              />
-            )}
-          </div>
-          <div className="flex flex-col tablet:flex-row tablet:col-span-2 gap-4 ">
-            <RichTextContent html={data.poem} className="" />
-            {data.imageRight && (
-              <img
-                src={data.imageRight}
-                alt="Hero right"
-                className="object-cover tablet:absolute tablet:right-0 tablet:top-0"
-              />
-            )}
-          </div>
-        </div>
-      )}
-      <div className="flex flex-wrap gap-3">
-        {isEditing ? (
           <div className="grid w-full gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 md:max-w-lg">
             <EditorField
               type="plain"
@@ -100,15 +65,50 @@ export function Hero({
               onChange={(value) => updateField("primaryCtaLink", value)}
             />
           </div>
-        ) : (
-          <Link
-            to={data.primaryCtaLink}
-            className="px-5 py-3 rounded-full bg-white text-darkBrown font-semibold hover:opacity-90"
-          >
-            {data.primaryCtaText}
-          </Link>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="grid tablet:grid-cols-5 tablet:justify-between">
+          <div className="flex flex-col gap-4 tablet:col-span-2">
+            <div className="flex flex-col gap-8 tablet:ml-38 tablet:mt-14">
+              <h1 className="text-3xl font-juwelia">{data.title}</h1>
+              <RichTextContent
+                html={data.subtitle}
+                className="text-4xl font-tropical"
+              />
+              <RichTextContent html={data.description} className="" />
+              <div className="flex flex-wrap gap-3">
+                <button
+                  className="px-5 py-3 rounded-full bg-white text-darkBrown font-semibold hover:opacity-90"
+                  onClick={() =>
+                    document
+                      .getElementById("artIntro")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  {data.primaryCtaText}
+                </button>
+              </div>
+            </div>
+            {data.imageLeft && (
+              <img
+                src={data.imageLeft}
+                alt="Hero left"
+                className="object-cover tablet:mt-2"
+              />
+            )}
+          </div>
+          <div className="flex flex-col tablet:flex-row tablet:col-span-2 gap-4 ">
+            <RichTextContent html={data.poem} className="self-end" />
+            {data.imageRight && (
+              <img
+                src={data.imageRight}
+                alt="Hero right"
+                className="object-cover tablet:absolute tablet:right-[-100px] tablet:top-0 tablet:max-w-[500px] laptop:max-w-[800px]"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

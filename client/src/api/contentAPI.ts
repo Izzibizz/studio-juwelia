@@ -380,24 +380,9 @@ const getPageData = async <TData extends object>(
 
 export const contentAPI = {
   getHomePageContent: async (): Promise<HomePageContent> => {
-    let pageData: Partial<HomePageContent> = {};
-    let sharedData: Partial<HomePageContent> = {};
+    const pageData = await getPageData<Partial<HomePageContent>>("homepage");
 
-    const homeRes = await fetch(`${API_BASE}/page/homepage`);
-    if (homeRes.ok) {
-      const homeJson =
-        (await homeRes.json()) as PageDataResponse<HomePageContent>;
-      pageData = homeJson.data || {};
-    }
-
-    const sharedRes = await fetch(`${API_BASE}/page/shared`);
-    if (sharedRes.ok) {
-      const sharedJson =
-        (await sharedRes.json()) as PageDataResponse<HomePageContent>;
-      sharedData = sharedJson.data || {};
-    }
-
-    return mergeHomeContent(defaultHomeContent, pageData, sharedData);
+    return mergeHomeContent(defaultHomeContent, pageData, {});
   },
 
   getContactPageContent: async (): Promise<ContactPageContent> => {
@@ -405,10 +390,7 @@ export const contentAPI = {
   },
 
   getTattoosPageContent: async (): Promise<TattoosPageContent> => {
-    const [pageData] = await Promise.all([
-      getPageData<Partial<TattoosPageContent>>("tattoos"),
-      getPageData<Partial<HomePageContent>>("shared"),
-    ]);
+    const pageData = await getPageData<Partial<TattoosPageContent>>("tattoos");
 
     return {
       ...defaultTattoosContent,
@@ -446,33 +428,33 @@ export const contentAPI = {
     >,
     token?: string,
   ): Promise<{ page: string; data: Partial<HomePageContent> }> => {
-    const sharedData = await getPageData<Partial<HomePageContent>>("shared");
+    const pageData = await getPageData<Partial<HomePageContent>>("homepage");
     const mergedData = {
-      ...sharedData,
+      ...pageData,
       ...data,
       contactForm: {
-        ...sharedData.contactForm,
+        ...pageData.contactForm,
         ...(data.contactForm || {}),
       },
       testimonials: {
-        ...sharedData.testimonials,
+        ...pageData.testimonials,
         ...(data.testimonials || {}),
         items:
           data.testimonials?.items ||
-          sharedData.testimonials?.items ||
+          pageData.testimonials?.items ||
           defaultHomeContent.testimonials.items,
       },
       faq: {
-        ...sharedData.faq,
+        ...pageData.faq,
         ...(data.faq || {}),
         items:
           data.faq?.items ||
-          sharedData.faq?.items ||
+          pageData.faq?.items ||
           defaultHomeContent.faq.items,
       },
     };
 
-    return contentAPI.savePageContent("shared", mergedData, token);
+    return contentAPI.savePageContent("homepage", mergedData, token);
   },
 
   uploadImages: async (

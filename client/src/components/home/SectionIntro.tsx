@@ -15,6 +15,7 @@ interface SectionIntroProps {
   onRemoveImage?: (index: number) => void;
   useSliderLightbox?: boolean;
   swiperVariant?: "art" | "default";
+  id?: string;
 }
 
 export function SectionIntro({
@@ -26,6 +27,7 @@ export function SectionIntro({
   onRemoveImage,
   useSliderLightbox = false,
   swiperVariant = "default",
+  id,
 }: SectionIntroProps) {
   const galleryImages = useMemo(
     () => data.imageGallery.filter((item) => Boolean(item.image)),
@@ -50,7 +52,10 @@ export function SectionIntro({
   };
 
   return (
-    <section className="min-w-0 rounded-2xl border border-[#e7dfd5] bg-warmWhite p-6 md:p-8">
+    <section
+      id={id}
+      className="min-w-0 rounded-2xl border border-[#e7dfd5] bg-warmWhite p-6 md:p-8"
+    >
       {isEditing ? (
         <div className="grid gap-4">
           <EditorField

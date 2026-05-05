@@ -402,7 +402,7 @@ export const contentAPI = {
   },
 
   getTattoosPageContent: async (): Promise<TattoosPageContent> => {
-    const [pageData, sharedData] = await Promise.all([
+    const [pageData] = await Promise.all([
       getPageData<Partial<TattoosPageContent>>("tattoos"),
       getPageData<Partial<HomePageContent>>("shared"),
     ]);
@@ -410,23 +410,6 @@ export const contentAPI = {
     return {
       ...defaultTattoosContent,
       ...pageData,
-      contactForm: {
-        ...defaultTattoosContent.contactForm,
-        ...(sharedData?.contactForm || {}),
-      },
-      testimonials: {
-        ...defaultTattoosContent.testimonials,
-        ...(sharedData?.testimonials || {}),
-        items:
-          sharedData?.testimonials?.items ||
-          defaultTattoosContent.testimonials.items,
-      },
-      faq: {
-        ...defaultTattoosContent.faq,
-        ...(sharedData?.faq || {}),
-        items:
-          sharedData?.faq?.items || defaultTattoosContent.faq.items,
-      },
     };
   },
 

@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 const {
+  heroSchema,
+  introSectionSchema,
+  contactFormSchema,
+  testimonialsSchema,
+  faqSchema,
+  seoSchema,
   plainTextField,
   richTextHtmlField,
 } = require("../components/reusableComponentSchemas");
@@ -36,6 +42,7 @@ const techniqueCategorySchema = new mongoose.Schema(
 
 const tattoosPageSchema = new mongoose.Schema(
   {
+    seo: { type: seoSchema, required: false },
     hero: { type: heroSchema, required: false },
     introduction: {
       type: new mongoose.Schema(
@@ -61,7 +68,7 @@ const tattoosPageSchema = new mongoose.Schema(
       ),
       required: false,
     },
-    process: {
+    details: {
       type: new mongoose.Schema(
         {
           decorImage: plainTextField(false),
@@ -75,6 +82,9 @@ const tattoosPageSchema = new mongoose.Schema(
       ),
       required: false,
     },
+    contactForm: { type: contactFormSchema, required: false },
+    testimonials: { type: testimonialsSchema, required: false },
+    faq: { type: faqSchema, required: false },
   },
   { _id: false, strict: true },
 );

@@ -371,7 +371,7 @@ export const Tattoos: React.FC = () => {
                 />
               )}
               {content.details?.h2 && (
-                <h2 className="mt-6 text-3xl font-semibold">
+                <h2 className="mt-6 text-3faqxl font-semibold">
                   {content.details.h2}
                 </h2>
               )}
@@ -397,106 +397,11 @@ export const Tattoos: React.FC = () => {
               )}
             </section>
           )}
-
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
-              <h2 className="text-2xl font-semibold">Prendre rendez-vous</h2>
-              <p className="mt-3 text-brown">
-                Découvrez nos tatouages et réservez votre séance en ligne.
-              </p>
-              <Link
-                to="/prendre-rendez-vous"
-                className="mt-6 inline-flex rounded-full bg-darkBrown px-6 py-3 text-sm font-semibold text-white hover:bg-brown"
-              >
-                Réserver maintenant
-              </Link>
-            </div>
-
-            {(content.contactForm || isAuthenticated) && (
-              <ContactFormSection
-                data={content.contactForm ?? defaultTattoosContent.contactForm!}
-                isEditing={isAuthenticated && isEditMode}
-                onChange={(nextData) =>
-                  setContent((current) => ({
-                    ...current,
-                    contactForm: nextData,
-                  }))
-                }
-              />
-            )}
-          </div>
-
-          {(content.testimonials?.items.length || isAuthenticated) && (
-            <TestimonialsSection
-              data={content.testimonials ?? defaultTattoosContent.testimonials!}
-              isEditing={isAuthenticated && isEditMode}
-              onChange={(nextData) =>
-                setContent((current) => ({
-                  ...current,
-                  testimonials: nextData,
-                }))
-              }
-              onAddItem={() =>
-                setContent((current) => ({
-                  ...current,
-                  testimonials: {
-                    ...current.testimonials,
-                    items: [
-                      ...(current.testimonials?.items ?? []),
-                      { name: "", quote: "", role: "" },
-                    ],
-                  },
-                }))
-              }
-              onRemoveItem={(index) =>
-                setContent((current) => ({
-                  ...current,
-                  testimonials: {
-                    ...current.testimonials,
-                    items: (current.testimonials?.items ?? []).filter(
-                      (_, i) => i !== index,
-                    ),
-                  },
-                }))
-              }
-            />
-          )}
-
-          {(content.faq?.items.length || isAuthenticated) && (
-            <FAQSection
-              data={content.faq ?? defaultTattoosContent.faq!}
-              isEditing={isAuthenticated && isEditMode}
-              onChange={(nextData) =>
-                setContent((current) => ({
-                  ...current,
-                  faq: nextData,
-                }))
-              }
-              onAddItem={() =>
-                setContent((current) => ({
-                  ...current,
-                  faq: {
-                    ...current.faq,
-                    items: [
-                      ...(current.faq?.items ?? []),
-                      { question: "", answer: "" },
-                    ],
-                  },
-                }))
-              }
-              onRemoveItem={(index) =>
-                setContent((current) => ({
-                  ...current,
-                  faq: {
-                    ...current.faq,
-                    items: (current.faq?.items ?? []).filter((_, i) => i !== index),
-                  },
-                }))
-              }
-            />
-          )}
         </div>
       )}
+      <ContactFormSection content={content.contactForm} isEditMode={isAuthenticated && isEditMode} />
+      <TestimonialsSection content={content.testimonials} isEditMode={isAuthenticated && isEditMode} />
+      <FAQSection content={content.faq} isEditMode={isAuthenticated && isEditMode} />
     </div>
   );
 };

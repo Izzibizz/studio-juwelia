@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const {
-  contactFormSchema,
-  testimonialsSchema,
-  faqSchema,
   plainTextField,
   richTextHtmlField,
 } = require("../components/reusableComponentSchemas");
@@ -76,10 +73,7 @@ const tattoosPageSchema = new mongoose.Schema(
         { _id: false },
       ),
       required: false,
-    },
-    contactForm: { type: contactFormSchema, required: false },
-    testimonials: { type: testimonialsSchema, required: false },
-    faq: { type: faqSchema, required: false },
+    }
   },
   { _id: false, strict: true },
 );

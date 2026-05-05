@@ -70,7 +70,6 @@ export const Tattoos: React.FC = () => {
   }, [content, isAuthenticated, isEditMode, registerSaveAction, token]);
 
   const hasContent =
-    isSectionFilled(content.hero) ||
     isSectionFilled(content.introduction) ||
     isSectionFilled(content.techniques) ||
     isSectionFilled(content.details);
@@ -100,56 +99,6 @@ export const Tattoos: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-14 text-darkBrown">
       {isAuthenticated && isEditMode ? (
         <div className="grid gap-10">
-          <ContentSectionEditor
-            title="SEO"
-            fields={tattoosEditorSchema.seo}
-            value={{
-              title: content.seo?.title ?? "",
-              description: content.seo?.description ?? "",
-            }}
-            onChange={(nextValue) =>
-              setContent((current) => ({
-                ...current,
-                seo: {
-                  ...current.seo,
-                  title: nextValue.title,
-                  description: nextValue.description,
-                },
-              }))
-            }
-          />
-
-          <ContentSectionEditor
-            title="Hero section"
-            fields={tattoosEditorSchema.hero}
-            value={{
-              title: content.hero?.title ?? "",
-              subtitle: content.hero?.subtitle ?? "",
-              description: content.hero?.description ?? "",
-              primaryCtaText: content.hero?.primaryCtaText ?? "",
-              primaryCtaLink: content.hero?.primaryCtaLink ?? "",
-              imageLeft: content.hero?.imageLeft ?? "",
-              imageRight: content.hero?.imageRight ?? "",
-              poem: content.hero?.poem ?? "",
-            }}
-            onChange={(nextValue) =>
-              setContent((current) => ({
-                ...current,
-                hero: {
-                  ...current.hero,
-                  title: nextValue.title,
-                  subtitle: nextValue.subtitle,
-                  description: nextValue.description,
-                  primaryCtaText: nextValue.primaryCtaText,
-                  primaryCtaLink: nextValue.primaryCtaLink,
-                  imageLeft: nextValue.imageLeft,
-                  imageRight: nextValue.imageRight,
-                  poem: nextValue.poem,
-                },
-              }))
-            }
-          />
-
           <ContentSectionEditor
             title="Introduction"
             fields={tattoosEditorSchema.introduction}
@@ -236,24 +185,6 @@ export const Tattoos: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-12">
-          {content.hero?.title && (
-            <section className="space-y-4">
-              <h1 className="text-4xl font-semibold">{content.hero.title}</h1>
-              {content.hero.subtitle && (
-                <RichTextContent
-                  html={content.hero.subtitle}
-                  className="text-lg text-darkBrown"
-                />
-              )}
-              {content.hero.description && (
-                <RichTextContent
-                  html={content.hero.description}
-                  className="text-base text-brown"
-                />
-              )}
-            </section>
-          )}
-
           {isSectionFilled(content.introduction) && (
             <section className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
               {content.introduction?.h2 && (

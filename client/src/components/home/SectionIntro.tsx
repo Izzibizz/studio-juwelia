@@ -150,7 +150,7 @@ export function SectionIntro({
                   <EditorField
                     type="plain"
                     label="Name"
-                    value={item.name}
+                    value={item.name || ""}
                     onChange={(value) =>
                       updateGalleryField(index, "name", value)
                     }

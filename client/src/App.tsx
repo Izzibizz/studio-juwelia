@@ -33,7 +33,7 @@ function App() {
   return (
     <Router>
       <Header />
-      <main className={`flex-grow ${"pt-[110px]"} min-h-[97vh] max-w-screen overflow-hidden`}>
+      <main className={`flex-grow ${"pt-[130px]"} min-h-[97vh] max-w-screen overflow-hidden`}>
         <AppRoutes />
       </main>
       <Footer />

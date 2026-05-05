@@ -23,10 +23,16 @@ const handleApiResponse = async (res: Response, operation: string) => {
 export type PlainText = string;
 export type RichTextHtml = string;
 
-export interface ImageGalleryItemData {
-  image: PlainText;
-  alt: PlainText;
-  name: PlainText;
+export interface TechniqueCategory {
+  title?: PlainText;
+  mainImage?: {
+    image?: PlainText;
+    alt?: PlainText;
+    description?: RichTextHtml;
+  };
+  description?: RichTextHtml;
+  contentText?: RichTextHtml;
+  images: ImageGalleryItemData[];
 }
 
 export interface GalleryIntroSectionData {
@@ -201,9 +207,9 @@ export interface TattoosDetailsData {
 }
 
 export interface TattoosPageContent {
-  introduction: TattoosIntroductionData;
-  techniques: TattoosTechniquesData;
-  details: TattoosDetailsData;
+  introduction?: TattoosIntroductionData;
+  techniques?: TattoosTechniquesData;
+  details?: TattoosDetailsData;
   contactForm?: ContactFormSectionData;
   testimonials?: TestimonialsSectionData;
   faq?: FaqSectionData;

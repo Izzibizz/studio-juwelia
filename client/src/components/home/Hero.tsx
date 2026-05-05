@@ -25,8 +25,7 @@ export function Hero({
   };
 
   return (
-    <section className="rounded-2xl p-8 md:p-12 bg-darkBrown text-white">
-      <div className="max-w-3xl">
+    <section className="flex flex-col gap-6 w-screen max-w-screen">
         {isEditing ? (
           <div className="mb-8 grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4">
             <EditorField
@@ -55,66 +54,35 @@ export function Hero({
             />
           </div>
         ) : (
-          <>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+          <div className="min-h-screen">
+            <h1 className="text-3xl font-juwelia">
               {data.title}
             </h1>
             <RichTextContent
               html={data.subtitle}
-              className="text-lg md:text-xl text-beige mb-4"
+              className="text-4xl mb-4 font-tropical"
             />
             <RichTextContent
               html={data.description}
-              className="text-beige mb-6"
+              className=""
             />
             <RichTextContent
               html={data.poem}
-              className="italic text-beige/90 mb-8"
+              className="italic mb-8"
             />
-          </>
-        )}
-        <div className="flex flex-wrap gap-3">
-          {isEditing ? (
-            <div className="grid w-full gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 md:max-w-lg">
-              <EditorField
-                type="plain"
-                label="CTA text"
-                value={data.primaryCtaText}
-                onChange={(value) => updateField("primaryCtaText", value)}
-              />
-              <EditorField
-                type="plain"
-                label="CTA link"
-                value={data.primaryCtaLink}
-                onChange={(value) => updateField("primaryCtaLink", value)}
-              />
-            </div>
-          ) : (
-            <Link
-              to={data.primaryCtaLink}
-              className="px-5 py-3 rounded-full bg-white text-darkBrown font-semibold hover:opacity-90"
-            >
-              {data.primaryCtaText}
-            </Link>
-          )}
-        </div>
-        {(data.imageLeft || data.imageRight || isEditing) && (
-          <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+             {(data.imageLeft || data.imageRight || isEditing) && (
+          <div className="">
             {(["imageLeft", "imageRight"] as const).map((field) => (
               <div
                 key={field}
-                className="grid gap-3 rounded-xl border border-white/15 bg-white/10 p-3"
+                className=""
               >
-                {data[field] ? (
+                {data[field] && (
                   <img
                     src={data[field]}
                     alt={field === "imageLeft" ? "Hero left" : "Hero right"}
-                    className="h-40 w-full rounded-xl object-cover"
+                    className={` ${field === "imageLeft" ? "left-0 bottom-0" : "right-0 top-4"} absolute object-cover`}
                   />
-                ) : (
-                  <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-white/30 text-sm text-beige/80">
-                    No image selected
-                  </div>
                 )}
                 {isEditing && (
                   <>
@@ -144,7 +112,33 @@ export function Hero({
             ))}
           </div>
         )}
-      </div>
+          </div>
+        )}
+        <div className="flex flex-wrap gap-3">
+          {isEditing ? (
+            <div className="grid w-full gap-4 rounded-2xl border border-white/15 bg-white/10 p-4 md:max-w-lg">
+              <EditorField
+                type="plain"
+                label="CTA text"
+                value={data.primaryCtaText}
+                onChange={(value) => updateField("primaryCtaText", value)}
+              />
+              <EditorField
+                type="plain"
+                label="CTA link"
+                value={data.primaryCtaLink}
+                onChange={(value) => updateField("primaryCtaLink", value)}
+              />
+            </div>
+          ) : (
+            <Link
+              to={data.primaryCtaLink}
+              className="px-5 py-3 rounded-full bg-white text-darkBrown font-semibold hover:opacity-90"
+            >
+              {data.primaryCtaText}
+            </Link>
+          )}
+        </div>
     </section>
   );
 }

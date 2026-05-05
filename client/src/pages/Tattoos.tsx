@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ContactFormSection } from "../components/home/ContactFormSection";
 import { FAQSection } from "../components/home/FAQSection";
 import { TestimonialsSection } from "../components/home/TestimonialsSection";
 import { ContentSectionEditor } from "../components/editor";
@@ -58,7 +56,14 @@ export const Tattoos: React.FC = () => {
     }
 
     registerSaveAction(async () => {
-      await contentAPI.savePageContent("tattoos", content, token ?? undefined);
+      const { contactForm, testimonials, faq, ...tattoosData } = content;
+      await Promise.all([
+        contentAPI.savePageContent("tattoos", tattoosData, token ?? undefined),
+        contentAPI.saveSharedPageContent(
+          { contactForm, testimonials, faq },
+          token ?? undefined,
+        ),
+      ]);
     });
 
     return () => registerSaveAction(null);
@@ -88,6 +93,8 @@ export const Tattoos: React.FC = () => {
       </div>
     );
   }
+
+  console.log("Current tattoos page content:", content);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-14 text-darkBrown">
@@ -399,9 +406,75 @@ export const Tattoos: React.FC = () => {
           )}
         </div>
       )}
-      <ContactFormSection content={content.contactForm} isEditMode={isAuthenticated && isEditMode} />
-      <TestimonialsSection content={content.testimonials} isEditMode={isAuthenticated && isEditMode} />
-      <FAQSection content={content.faq} isEditMode={isAuthenticated && isEditMode} />
+
+      {(content.testimonials?.items.length || isAuthenticated) && (
+        <TestimonialsSection
+          isEditing={isAuthenticated && isEditMode}
+          onChange={(testimonials) =>
+            setContent((current) => ({ ...current, testimonials }))
+          }
+          onAddItem={() =>
+            setContent((current) => ({
+              ...current,
+              testimonials: {
+                title:
+                  current.testimonials?.title ||
+                  defaultTattoosContent.testimonials!.title,
+                items: [
+                  ...(current.testimonials?.items ?? []),
+                  { name: "", quote: "", role: "" },
+                ],
+              },
+            }))
+          }
+          onRemoveItem={(index) =>
+            setContent((current) => ({
+              ...current,
+              testimonials: {
+                title:
+                  current.testimonials?.title ||
+                  defaultTattoosContent.testimonials!.title,
+                items: (current.testimonials?.items ?? []).filter(
+                  (_, itemIndex) => itemIndex !== index,
+                ),
+              },
+            }))
+          }
+        />
+      )}
+      {(content.faq?.items.length || isAuthenticated) && (
+        <FAQSection
+          data={content.faq ?? defaultTattoosContent.faq!}
+          isEditing={isAuthenticated && isEditMode}
+          onChange={(nextData) =>
+            setContent((current) => ({
+              ...current,
+              faq: nextData,
+            }))
+          }
+          onAddItem={() =>
+            setContent((current) => ({
+              ...current,
+              faq: {
+                title: current.faq?.title || defaultTattoosContent.faq!.title,
+                items: [
+                  ...(current.faq?.items ?? []),
+                  { question: "", answer: "" },
+                ],
+              },
+            }))
+          }
+          onRemoveItem={(index) =>
+            setContent((current) => ({
+              ...current,
+              faq: {
+                title: current.faq?.title || defaultTattoosContent.faq!.title,
+                items: (current.faq?.items ?? []).filter((_, i) => i !== index),
+              },
+            }))
+          }
+        />
+      )}
     </div>
   );
 };

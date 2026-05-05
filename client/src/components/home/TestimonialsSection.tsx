@@ -4,7 +4,7 @@ import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 
 interface TestimonialsSectionProps {
-  data: TestimonialsSectionData;
+  data?: TestimonialsSectionData;
   isEditing?: boolean;
   onChange?: (nextData: TestimonialsSectionData) => void;
   onAddItem?: () => void;
@@ -19,7 +19,7 @@ export function TestimonialsSection({
   onRemoveItem,
 }: TestimonialsSectionProps) {
   const updateField = (field: keyof TestimonialsSectionData, value: string) => {
-    onChange?.({ ...data, [field]: value });
+    onChange?.({ ...(data || { items: [] }), [field]: value });
   };
 
   const updateItem = (
@@ -28,8 +28,8 @@ export function TestimonialsSection({
     value: string,
   ) => {
     onChange?.({
-      ...data,
-      items: data.items.map((item, itemIndex) =>
+      ...(data || { items: [] }),
+      items: (data?.items ?? []).map((item, itemIndex) =>
         itemIndex === index ? { ...item, [field]: value } : item,
       ),
     });
@@ -42,7 +42,7 @@ export function TestimonialsSection({
           <EditorField
             type="plain"
             label="Section title"
-            value={data.title}
+            value={data?.title || ""}
             onChange={(value) => updateField("title", value)}
           />
           {onAddItem && (
@@ -60,11 +60,11 @@ export function TestimonialsSection({
         </div>
       ) : (
         <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-6">
-          {data.title}
+          {data?.title || ""}
         </h2>
       )}
       <div className="grid md:grid-cols-2 gap-4">
-        {data.items.map((item, index) => (
+        {(data?.items ?? []).map((item, index) => (
           <article
             key={`${item.name}-${index}`}
             className="p-4 rounded-xl bg-white border border-[#efe7dc]"

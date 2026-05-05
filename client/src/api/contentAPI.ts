@@ -69,11 +69,11 @@ export interface AboutIntroData {
 }
 
 export interface ContactFormSectionData {
-  title: PlainText;
-  subtitle: RichTextHtml;
-  buttonText: PlainText;
-  successMessage: PlainText;
-  termsAndConditions: RichTextHtml;
+  title?: PlainText;
+  subtitle?: RichTextHtml;
+  buttonText?: PlainText;
+  successMessage?: PlainText;
+  termsAndConditions?: RichTextHtml;
 }
 
 export interface TestimonialItem {
@@ -83,7 +83,7 @@ export interface TestimonialItem {
 }
 
 export interface TestimonialsSectionData {
-  title: PlainText;
+  title?: PlainText;
   items: TestimonialItem[];
 }
 
@@ -93,7 +93,7 @@ export interface FaqItem {
 }
 
 export interface FaqSectionData {
-  title: PlainText;
+  title?: PlainText;
   items: FaqItem[];
 }
 
@@ -177,18 +177,39 @@ export interface HomePageContent {
   faq: FaqSectionData;
 }
 
+export interface TattoosIntroductionData {
+  h2?: PlainText;
+  h3?: PlainText;
+  description?: RichTextHtml;
+  introImage?: PlainText;
+}
+
+export interface TattoosTechniquesData {
+  h2?: PlainText;
+  h3?: PlainText;
+  description?: RichTextHtml;
+  categories: TechniqueCategory[];
+}
+
+export interface TattoosDetailsData {
+  decorImage?: PlainText;
+  h2?: PlainText;
+  cta?: PlainText;
+  h3?: PlainText;
+  description?: RichTextHtml;
+  contentText?: RichTextHtml;
+}
+
+export interface TattoosPageContent {
+  introduction: TattoosIntroductionData;
+  techniques: TattoosTechniquesData;
+  details: TattoosDetailsData;
+  contactForm?: ContactFormSectionData;
+  testimonials?: TestimonialsSectionData;
+  faq?: FaqSectionData;
+}
+
 export const defaultTattoosContent: TattoosPageContent = {
-  seo: { title: "", description: "" },
-  hero: {
-    title: "",
-    subtitle: "",
-    description: "",
-    primaryCtaText: "",
-    primaryCtaLink: "",
-    imageRight: "",
-    imageLeft: "",
-    poem: "",
-  },
   introduction: {
     h2: "",
     h3: "",
@@ -438,7 +459,9 @@ export const contentAPI = {
   },
 
   saveSharedPageContent: async (
-    data: Partial<Pick<HomePageContent, "contactForm" | "testimonials" | "faq">>,
+    data: Partial<
+      Pick<HomePageContent, "contactForm" | "testimonials" | "faq">
+    >,
     token?: string,
   ): Promise<{ page: string; data: Partial<HomePageContent> }> => {
     const sharedData = await getPageData<Partial<HomePageContent>>("shared");
@@ -461,7 +484,9 @@ export const contentAPI = {
         ...sharedData.faq,
         ...(data.faq || {}),
         items:
-          data.faq?.items || sharedData.faq?.items || defaultHomeContent.faq.items,
+          data.faq?.items ||
+          sharedData.faq?.items ||
+          defaultHomeContent.faq.items,
       },
     };
 

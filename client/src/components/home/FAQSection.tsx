@@ -4,7 +4,7 @@ import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 
 interface FAQSectionProps {
-  data: FaqSectionData;
+  data?: FaqSectionData;
   isEditing?: boolean;
   onChange?: (nextData: FaqSectionData) => void;
   onAddItem?: () => void;
@@ -19,7 +19,7 @@ export function FAQSection({
   onRemoveItem,
 }: FAQSectionProps) {
   const updateField = (field: keyof FaqSectionData, value: string) => {
-    onChange?.({ ...data, [field]: value });
+    onChange?.({ ...(data || { items: [] }), [field]: value });
   };
 
   const updateItem = (
@@ -28,8 +28,8 @@ export function FAQSection({
     value: string,
   ) => {
     onChange?.({
-      ...data,
-      items: data.items.map((item, itemIndex) =>
+      ...(data || { items: [] }),
+      items: (data?.items ?? []).map((item, itemIndex) =>
         itemIndex === index ? { ...item, [field]: value } : item,
       ),
     });
@@ -42,7 +42,7 @@ export function FAQSection({
           <EditorField
             type="plain"
             label="Section title"
-            value={data.title}
+            value={data?.title || ""}
             onChange={(value) => updateField("title", value)}
           />
           {onAddItem && (
@@ -60,11 +60,11 @@ export function FAQSection({
         </div>
       ) : (
         <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-6">
-          {data.title}
+          {data?.title || ""}
         </h2>
       )}
       <div className="space-y-3">
-        {data.items.map((item, index) => (
+        {(data?.items ?? []).map((item, index) => (
           <details
             key={`${item.question}-${index}`}
             className="rounded-lg bg-white border border-[#efe7dc] p-4"

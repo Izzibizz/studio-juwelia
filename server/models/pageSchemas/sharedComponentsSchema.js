@@ -6,10 +6,12 @@ const {
   contactFormSchema,
   testimonialsSchema,
   faqSchema,
+  seoSchema,
 } = require("../components/reusableComponentSchemas");
 
 const sharedComponentsSchema = new mongoose.Schema(
   {
+    seo: { type: seoSchema, required: false },
     hero: { type: heroSchema, required: false },
     artIntro: { type: introSectionSchema, required: false },
     tattooIntro: { type: introSectionSchema, required: false },

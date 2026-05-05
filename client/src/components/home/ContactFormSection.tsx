@@ -4,7 +4,7 @@ import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 
 interface ContactFormSectionProps {
-  data: ContactFormSectionData;
+  data?: ContactFormSectionData;
   isEditing?: boolean;
   onChange?: (nextData: ContactFormSectionData) => void;
 }
@@ -27,41 +27,41 @@ export function ContactFormSection({
           <EditorField
             type="plain"
             label="Title"
-            value={data.title}
+            value={data?.title || ""}
             onChange={(value) => updateField("title", value)}
           />
           <EditorField
             type="rich"
             label="Subtitle"
-            value={data.subtitle}
+            value={data?.subtitle || ""}
             onChange={(value) => updateField("subtitle", value)}
           />
           <EditorField
             type="plain"
             label="Button text"
-            value={data.buttonText}
+            value={data?.buttonText || ""}
             onChange={(value) => updateField("buttonText", value)}
           />
           <EditorField
             type="plain"
             label="Success message"
-            value={data.successMessage}
+            value={data?.successMessage || ""}
             onChange={(value) => updateField("successMessage", value)}
           />
           <EditorField
             type="rich"
             label="Terms and conditions"
-            value={data.termsAndConditions}
+            value={data?.termsAndConditions || ""}
             onChange={(value) => updateField("termsAndConditions", value)}
           />
         </div>
       ) : (
         <>
           <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-2">
-            {data.title}
+            {data?.title || ""}
           </h2>
           <RichTextContent
-            html={data.subtitle}
+            html={data?.subtitle || ""}
             className="text-brownBlack mb-6"
           />
         </>
@@ -93,14 +93,16 @@ export function ContactFormSection({
           className="w-fit px-5 py-3 rounded-full bg-darkBrown text-white hover:opacity-90"
           type="submit"
         >
-          {data.buttonText}
+          {data?.buttonText || ""}
         </button>
       </form>
       <RichTextContent
-        html={data.termsAndConditions}
+        html={data?.termsAndConditions || ""}
         className="mt-4 text-xs text-brown"
       />
-      {sent && <p className="mt-3 text-green-700">{data.successMessage}</p>}
+      {sent && (
+        <p className="mt-3 text-green-700">{data?.successMessage || ""}</p>
+      )}
     </section>
   );
 }

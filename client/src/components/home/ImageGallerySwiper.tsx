@@ -38,7 +38,6 @@ export function ImageGallerySwiper({
             centeredSlides
             centeredSlidesBounds={false}
             loop
-            loopedSlides={Math.max(galleryImages.length, 5)}
             loopAdditionalSlides={Math.max(galleryImages.length, 5)}
             initialSlide={2}
             slidesPerView={5}

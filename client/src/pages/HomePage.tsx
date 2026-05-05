@@ -180,7 +180,7 @@ export const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 md:py-10 space-y-8">
+    <section className="flex flex-col py-8 md:py-10">
       <Hero
         data={content.hero}
         isEditing={isAuthenticated && isEditMode}
@@ -312,6 +312,6 @@ export const HomePage: React.FC = () => {
           }))
         }
       />
-    </div>
+    </section>
   );
 };

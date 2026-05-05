@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ContactFormSection } from "../components/home/ContactFormSection";
+import { FAQSection } from "../components/home/FAQSection";
+import { TestimonialsSection } from "../components/home/TestimonialsSection";
 import { ContentSectionEditor } from "../components/editor";
 import { RichTextContent } from "../components/RichTextContent";
 import { useAdminStore } from "../stores/adminStore";
@@ -10,17 +14,17 @@ import {
   type TattoosPageContent,
 } from "../api/contentAPI";
 
-const isSectionFilled = (section: Record<string, unknown> | undefined) => {
-  return !!(
-    section &&
-    Object.values(section).some(
-      (value) =>
-        typeof value === "string"
-          ? value.trim().length > 0
-          : Array.isArray(value)
-          ? value.length > 0
-          : !!value,
-    ),
+const isSectionFilled = (section: unknown) => {
+  if (!section || typeof section !== "object" || Array.isArray(section)) {
+    return false;
+  }
+
+  return !!Object.values(section as Record<string, unknown>).some((value) =>
+    typeof value === "string"
+      ? value.trim().length > 0
+      : Array.isArray(value)
+        ? value.length > 0
+        : !!value,
   );
 };
 
@@ -72,7 +76,12 @@ export const Tattoos: React.FC = () => {
     2,
   );
 
-  if (!isLoading && !isEditMode && !hasContent) {
+  const hasBookingOrExtraSections =
+    isSectionFilled(content.contactForm) ||
+    isSectionFilled(content.testimonials) ||
+    isSectionFilled(content.faq);
+
+  if (!isLoading && !isEditMode && !hasContent && !hasBookingOrExtraSections) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-12 text-darkBrown">
         <p>Le contenu des tatouages n’est pas encore disponible.</p>
@@ -175,10 +184,13 @@ export const Tattoos: React.FC = () => {
                   h3: nextValue.h3,
                   description: nextValue.description,
                   categories: (() => {
-                    if (!nextValue.categories?.trim()) return current.techniques?.categories ?? [];
+                    if (!nextValue.categories?.trim())
+                      return current.techniques?.categories ?? [];
                     try {
                       const parsed = JSON.parse(nextValue.categories);
-                      return Array.isArray(parsed) ? parsed : current.techniques?.categories ?? [];
+                      return Array.isArray(parsed)
+                        ? parsed
+                        : (current.techniques?.categories ?? []);
                     } catch {
                       return current.techniques?.categories ?? [];
                     }
@@ -221,20 +233,37 @@ export const Tattoos: React.FC = () => {
             <section className="space-y-4">
               <h1 className="text-4xl font-semibold">{content.hero.title}</h1>
               {content.hero.subtitle && (
-                <RichTextContent html={content.hero.subtitle} className="text-lg text-darkBrown" />
+                <RichTextContent
+                  html={content.hero.subtitle}
+                  className="text-lg text-darkBrown"
+                />
               )}
               {content.hero.description && (
-                <RichTextContent html={content.hero.description} className="text-base text-brown" />
+                <RichTextContent
+                  html={content.hero.description}
+                  className="text-base text-brown"
+                />
               )}
             </section>
           )}
 
           {isSectionFilled(content.introduction) && (
             <section className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
-              {content.introduction?.h2 && <h2 className="text-3xl font-semibold">{content.introduction.h2}</h2>}
-              {content.introduction?.h3 && <h3 className="mt-2 text-xl text-darkRed">{content.introduction.h3}</h3>}
+              {content.introduction?.h2 && (
+                <h2 className="text-3xl font-semibold">
+                  {content.introduction.h2}
+                </h2>
+              )}
+              {content.introduction?.h3 && (
+                <h3 className="mt-2 text-xl text-darkRed">
+                  {content.introduction.h3}
+                </h3>
+              )}
               {content.introduction?.description && (
-                <RichTextContent html={content.introduction.description} className="mt-4 text-brown" />
+                <RichTextContent
+                  html={content.introduction.description}
+                  className="mt-4 text-brown"
+                />
               )}
               {content.introduction?.introImage && (
                 <img
@@ -248,39 +277,74 @@ export const Tattoos: React.FC = () => {
 
           {isSectionFilled(content.techniques) && (
             <section className="space-y-6">
-              {content.techniques?.h2 && <h2 className="text-3xl font-semibold">{content.techniques.h2}</h2>}
-              {content.techniques?.h3 && <h3 className="text-xl text-darkRed">{content.techniques.h3}</h3>}
+              {content.techniques?.h2 && (
+                <h2 className="text-3xl font-semibold">
+                  {content.techniques.h2}
+                </h2>
+              )}
+              {content.techniques?.h3 && (
+                <h3 className="text-xl text-darkRed">
+                  {content.techniques.h3}
+                </h3>
+              )}
               {content.techniques?.description && (
-                <RichTextContent html={content.techniques.description} className="text-brown" />
+                <RichTextContent
+                  html={content.techniques.description}
+                  className="text-brown"
+                />
               )}
               {content.techniques?.categories?.map((category, index) => (
-                <article key={index} className="rounded-3xl border border-[#e7dfd5] bg-[#fff8f0] p-6 shadow-sm">
-                  {category.title && <h3 className="text-2xl font-semibold">{category.title}</h3>}
+                <article
+                  key={index}
+                  className="rounded-3xl border border-[#e7dfd5] bg-[#fff8f0] p-6 shadow-sm"
+                >
+                  {category.title && (
+                    <h3 className="text-2xl font-semibold">{category.title}</h3>
+                  )}
                   {category.mainImage?.image && (
                     <div className="mt-4">
                       <img
                         src={category.mainImage.image}
-                        alt={category.mainImage.alt || category.title || "Technique image"}
+                        alt={
+                          category.mainImage.alt ||
+                          category.title ||
+                          "Technique image"
+                        }
                         className="w-full rounded-3xl object-cover"
                       />
                       {category.mainImage.description && (
-                        <RichTextContent html={category.mainImage.description} className="mt-3 text-brown" />
+                        <RichTextContent
+                          html={category.mainImage.description}
+                          className="mt-3 text-brown"
+                        />
                       )}
                     </div>
                   )}
                   {category.description && (
-                    <RichTextContent html={category.description} className="mt-4 text-brown" />
+                    <RichTextContent
+                      html={category.description}
+                      className="mt-4 text-brown"
+                    />
                   )}
                   {category.contentText && (
-                    <RichTextContent html={category.contentText} className="mt-4 text-brown" />
+                    <RichTextContent
+                      html={category.contentText}
+                      className="mt-4 text-brown"
+                    />
                   )}
                   {category.images?.length ? (
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                       {category.images.map((imageItem, imageIndex) => (
-                        <div key={imageIndex} className="rounded-3xl border border-[#e7dfd5] overflow-hidden">
+                        <div
+                          key={imageIndex}
+                          className="rounded-3xl border border-[#e7dfd5] overflow-hidden"
+                        >
                           <img
                             src={imageItem.image || ""}
-                            alt={imageItem.alt || `Technique photo ${imageIndex + 1}`}
+                            alt={
+                              imageItem.alt ||
+                              `Technique photo ${imageIndex + 1}`
+                            }
                             className="h-56 w-full object-cover"
                           />
                           {imageItem.text && (
@@ -306,20 +370,133 @@ export const Tattoos: React.FC = () => {
                   className="w-full rounded-3xl object-cover"
                 />
               )}
-              {content.details?.h2 && <h2 className="mt-6 text-3xl font-semibold">{content.details.h2}</h2>}
-              {content.details?.cta && <p className="mt-3 text-lg text-darkRed">{content.details.cta}</p>}
-              {content.details?.h3 && <h3 className="mt-4 text-xl">{content.details.h3}</h3>}
+              {content.details?.h2 && (
+                <h2 className="mt-6 text-3xl font-semibold">
+                  {content.details.h2}
+                </h2>
+              )}
+              {content.details?.cta && (
+                <p className="mt-3 text-lg text-darkRed">
+                  {content.details.cta}
+                </p>
+              )}
+              {content.details?.h3 && (
+                <h3 className="mt-4 text-xl">{content.details.h3}</h3>
+              )}
               {content.details?.description && (
-                <RichTextContent html={content.details.description} className="mt-4 text-brown" />
+                <RichTextContent
+                  html={content.details.description}
+                  className="mt-4 text-brown"
+                />
               )}
               {content.details?.contentText && (
-                <RichTextContent html={content.details.contentText} className="mt-4 text-brown" />
+                <RichTextContent
+                  html={content.details.contentText}
+                  className="mt-4 text-brown"
+                />
               )}
             </section>
+          )}
+
+          <div className="grid gap-10 lg:grid-cols-2">
+            <div className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
+              <h2 className="text-2xl font-semibold">Prendre rendez-vous</h2>
+              <p className="mt-3 text-brown">
+                Découvrez nos tatouages et réservez votre séance en ligne.
+              </p>
+              <Link
+                to="/prendre-rendez-vous"
+                className="mt-6 inline-flex rounded-full bg-darkBrown px-6 py-3 text-sm font-semibold text-white hover:bg-brown"
+              >
+                Réserver maintenant
+              </Link>
+            </div>
+
+            {(content.contactForm || isAuthenticated) && (
+              <ContactFormSection
+                data={content.contactForm ?? defaultTattoosContent.contactForm!}
+                isEditing={isAuthenticated && isEditMode}
+                onChange={(nextData) =>
+                  setContent((current) => ({
+                    ...current,
+                    contactForm: nextData,
+                  }))
+                }
+              />
+            )}
+          </div>
+
+          {(content.testimonials?.items.length || isAuthenticated) && (
+            <TestimonialsSection
+              data={content.testimonials ?? defaultTattoosContent.testimonials!}
+              isEditing={isAuthenticated && isEditMode}
+              onChange={(nextData) =>
+                setContent((current) => ({
+                  ...current,
+                  testimonials: nextData,
+                }))
+              }
+              onAddItem={() =>
+                setContent((current) => ({
+                  ...current,
+                  testimonials: {
+                    ...current.testimonials,
+                    items: [
+                      ...(current.testimonials?.items ?? []),
+                      { name: "", quote: "", role: "" },
+                    ],
+                  },
+                }))
+              }
+              onRemoveItem={(index) =>
+                setContent((current) => ({
+                  ...current,
+                  testimonials: {
+                    ...current.testimonials,
+                    items: (current.testimonials?.items ?? []).filter(
+                      (_, i) => i !== index,
+                    ),
+                  },
+                }))
+              }
+            />
+          )}
+
+          {(content.faq?.items.length || isAuthenticated) && (
+            <FAQSection
+              data={content.faq ?? defaultTattoosContent.faq!}
+              isEditing={isAuthenticated && isEditMode}
+              onChange={(nextData) =>
+                setContent((current) => ({
+                  ...current,
+                  faq: nextData,
+                }))
+              }
+              onAddItem={() =>
+                setContent((current) => ({
+                  ...current,
+                  faq: {
+                    ...current.faq,
+                    items: [
+                      ...(current.faq?.items ?? []),
+                      { question: "", answer: "" },
+                    ],
+                  },
+                }))
+              }
+              onRemoveItem={(index) =>
+                setContent((current) => ({
+                  ...current,
+                  faq: {
+                    ...current.faq,
+                    items: (current.faq?.items ?? []).filter((_, i) => i !== index),
+                  },
+                }))
+              }
+            />
           )}
         </div>
       )}
     </div>
   );
 };
-

@@ -141,6 +141,9 @@ export interface TattoosPageContent {
     description?: RichTextHtml;
     contentText?: RichTextHtml;
   };
+  contactForm?: ContactFormSectionData;
+  testimonials?: TestimonialsSectionData;
+  faq?: FaqSectionData;
 }
 
 export interface ContactPageContent {
@@ -205,6 +208,21 @@ export const defaultTattoosContent: TattoosPageContent = {
     h3: "",
     description: "",
     contentText: "",
+  },
+  contactForm: {
+    title: "Book an appointment",
+    subtitle: "Laissez-nous un message avec votre projet.",
+    buttonText: "Envoyer",
+    successMessage: "Merci, votre message a été envoyé.",
+    termsAndConditions: "",
+  },
+  testimonials: {
+    title: "Ce que disent nos clients",
+    items: [],
+  },
+  faq: {
+    title: "Questions fréquentes",
+    items: [],
   },
 };
 
@@ -384,7 +402,32 @@ export const contentAPI = {
   },
 
   getTattoosPageContent: async (): Promise<TattoosPageContent> => {
-    return getPageData<TattoosPageContent>("tattoos");
+    const [pageData, sharedData] = await Promise.all([
+      getPageData<Partial<TattoosPageContent>>("tattoos"),
+      getPageData<Partial<HomePageContent>>("shared"),
+    ]);
+
+    return {
+      ...defaultTattoosContent,
+      ...pageData,
+      contactForm: {
+        ...defaultTattoosContent.contactForm,
+        ...(sharedData?.contactForm || {}),
+      },
+      testimonials: {
+        ...defaultTattoosContent.testimonials,
+        ...(sharedData?.testimonials || {}),
+        items:
+          sharedData?.testimonials?.items ||
+          defaultTattoosContent.testimonials.items,
+      },
+      faq: {
+        ...defaultTattoosContent.faq,
+        ...(sharedData?.faq || {}),
+        items:
+          sharedData?.faq?.items || defaultTattoosContent.faq.items,
+      },
+    };
   },
 
   savePageContent: async <TData extends object>(
@@ -409,6 +452,37 @@ export const contentAPI = {
 
     await handleApiResponse(res, `saving page ${page}`);
     return res.json();
+  },
+
+  saveSharedPageContent: async (
+    data: Partial<Pick<HomePageContent, "contactForm" | "testimonials" | "faq">>,
+    token?: string,
+  ): Promise<{ page: string; data: Partial<HomePageContent> }> => {
+    const sharedData = await getPageData<Partial<HomePageContent>>("shared");
+    const mergedData = {
+      ...sharedData,
+      ...data,
+      contactForm: {
+        ...sharedData.contactForm,
+        ...(data.contactForm || {}),
+      },
+      testimonials: {
+        ...sharedData.testimonials,
+        ...(data.testimonials || {}),
+        items:
+          data.testimonials?.items ||
+          sharedData.testimonials?.items ||
+          defaultHomeContent.testimonials.items,
+      },
+      faq: {
+        ...sharedData.faq,
+        ...(data.faq || {}),
+        items:
+          data.faq?.items || sharedData.faq?.items || defaultHomeContent.faq.items,
+      },
+    };
+
+    return contentAPI.savePageContent("shared", mergedData, token);
   },
 
   uploadImages: async (

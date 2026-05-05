@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {
   contactFormSchema,
   testimonialsSchema,
-  faqSchema,,
+  faqSchema,
   plainTextField,
   richTextHtmlField,
 } = require("../components/reusableComponentSchemas");

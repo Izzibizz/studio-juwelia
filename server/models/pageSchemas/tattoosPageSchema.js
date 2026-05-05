@@ -43,6 +43,8 @@ const tattoosPageSchema = new mongoose.Schema(
           h3: plainTextField(false),
           description: richTextHtmlField(false),
           introImage: plainTextField(false),
+          introImageAlt: plainTextField(false),
+          introImageDescription: richTextHtmlField(false),
         },
         { _id: false },
       ),

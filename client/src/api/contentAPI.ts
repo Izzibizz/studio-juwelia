@@ -164,6 +164,8 @@ export interface TattoosIntroductionData {
   h3?: PlainText;
   description?: RichTextHtml;
   introImage?: PlainText;
+  introImageAlt?: PlainText;
+  introImageDescription?: RichTextHtml;
 }
 
 export interface TattoosTechniquesData {
@@ -197,6 +199,8 @@ export const defaultTattoosContent: TattoosPageContent = {
     h3: "",
     description: "",
     introImage: "",
+    introImageAlt: "",
+    introImageDescription: "",
   },
   techniques: {
     h2: "",
@@ -390,11 +394,19 @@ export const contentAPI = {
   },
 
   getTattoosPageContent: async (): Promise<TattoosPageContent> => {
-    const pageData = await getPageData<Partial<TattoosPageContent>>("tattoos");
+    const [pageData, homepageData] = await Promise.all([
+      getPageData<Partial<TattoosPageContent>>("tattoos"),
+      getPageData<Partial<HomePageContent>>("homepage"),
+    ]);
 
     return {
       ...defaultTattoosContent,
       ...pageData,
+      contactForm:
+        homepageData.contactForm || defaultTattoosContent.contactForm,
+      testimonials:
+        homepageData.testimonials || defaultTattoosContent.testimonials,
+      faq: homepageData.faq || defaultTattoosContent.faq,
     };
   },
 
@@ -433,11 +445,13 @@ export const contentAPI = {
       ...pageData,
       ...data,
       contactForm: {
-        ...pageData.contactForm,
+        ...defaultHomeContent.contactForm,
+        ...(pageData.contactForm || {}),
         ...(data.contactForm || {}),
       },
       testimonials: {
-        ...pageData.testimonials,
+        ...defaultHomeContent.testimonials,
+        ...(pageData.testimonials || {}),
         ...(data.testimonials || {}),
         items:
           data.testimonials?.items ||
@@ -445,7 +459,8 @@ export const contentAPI = {
           defaultHomeContent.testimonials.items,
       },
       faq: {
-        ...pageData.faq,
+        ...defaultHomeContent.faq,
+        ...(pageData.faq || {}),
         ...(data.faq || {}),
         items:
           data.faq?.items ||

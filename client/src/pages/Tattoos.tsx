@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { ContactFormSection } from "../components/home/ContactFormSection";
 import { FAQSection } from "../components/home/FAQSection";
+import { ImageUploadDropzone } from "../components/home/ImageUploadDropzone";
 import { TestimonialsSection } from "../components/home/TestimonialsSection";
-import { ContentSectionEditor } from "../components/editor";
+import { ContentSectionEditor, EditorField } from "../components/editor";
 import { RichTextContent } from "../components/RichTextContent";
 import { useAdminStore } from "../stores/adminStore";
 import { useAuthStore } from "../stores/authStore";
@@ -9,7 +11,10 @@ import { tattoosEditorSchema } from "../editorSchemas/tattoosEditorSchema";
 import {
   contentAPI,
   defaultTattoosContent,
+  type ImageGalleryItemData,
   type TattoosPageContent,
+  type TattoosTechniquesData,
+  type TechniqueCategory,
 } from "../api/contentAPI";
 
 const isSectionFilled = (section: unknown) => {
@@ -33,6 +38,287 @@ export const Tattoos: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { isEditMode, registerSaveAction } = useAdminStore();
   const { isAuthenticated, token } = useAuthStore();
+
+  const emptyTechniqueCategory: TechniqueCategory = {
+    title: "",
+    mainImage: { image: "", alt: "", description: "" },
+    description: "",
+    contentText: "",
+    images: [],
+  };
+
+  const uploadSingleImage = async (file: File, caption: string) => {
+    const uploadedImages = await contentAPI.uploadImages(
+      [file],
+      token ?? undefined,
+      { alt: caption, caption },
+    );
+
+    const imageUrl = uploadedImages[0]?.url;
+    if (!imageUrl) {
+      throw new Error("Image upload did not return a URL");
+    }
+
+    return imageUrl;
+  };
+
+  const saveTattoosPageContent = async (nextContent: TattoosPageContent) => {
+    if (!token) return;
+
+    const { introduction, techniques, details } = nextContent;
+    await contentAPI.savePageContent(
+      "tattoos",
+      { introduction, techniques, details },
+      token,
+    );
+  };
+
+  const uploadIntroductionImage = async (file: File) => {
+    const imageUrl = await uploadSingleImage(file, "Tattoo introduction image");
+    const nextContent = {
+      ...content,
+      introduction: {
+        ...content.introduction,
+        introImage: imageUrl,
+      },
+    };
+    setContent(nextContent);
+    await saveTattoosPageContent(nextContent);
+  };
+
+  const updateTechniques = (nextTechniques: TattoosTechniquesData) => {
+    setContent((current) => ({
+      ...current,
+      techniques: nextTechniques,
+    }));
+  };
+
+  const updateTechniqueCategory = (
+    categoryIndex: number,
+    nextCategory: TechniqueCategory,
+  ) => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      const categories = techniques.categories ?? [];
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: categories.map((category, index) =>
+            index === categoryIndex ? nextCategory : category,
+          ),
+        },
+      };
+    });
+  };
+
+  const addTechniqueCategory = () => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: [
+            ...(techniques.categories ?? []),
+            emptyTechniqueCategory,
+          ],
+        },
+      };
+    });
+  };
+
+  const removeTechniqueCategory = (categoryIndex: number) => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      const categories = techniques.categories ?? [];
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: categories.filter((_, index) => index !== categoryIndex),
+        },
+      };
+    });
+  };
+
+  const addTechniqueImageItem = (categoryIndex: number) => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      const categories = techniques.categories ?? [];
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: categories.map((category, index) => {
+            if (index !== categoryIndex) return category;
+            return {
+              ...category,
+              images: [
+                ...(category.images ?? []),
+                { image: "", alt: "", name: "", text: "" },
+              ],
+            };
+          }),
+        },
+      };
+    });
+  };
+
+  const removeTechniqueImageItem = (
+    categoryIndex: number,
+    imageIndex: number,
+  ) => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: (techniques.categories ?? []).map((category, index) => {
+            if (index !== categoryIndex) return category;
+            return {
+              ...category,
+              images: (category.images ?? []).filter(
+                (_, imageIndexItem) => imageIndexItem !== imageIndex,
+              ),
+            };
+          }),
+        },
+      };
+    });
+  };
+
+  const updateTechniqueImageItem = (
+    categoryIndex: number,
+    imageIndex: number,
+    field: keyof ImageGalleryItemData,
+    value: string,
+  ) => {
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: (techniques.categories ?? []).map((category, index) => {
+            if (index !== categoryIndex) return category;
+            return {
+              ...category,
+              images: (category.images ?? []).map(
+                (imageItem, imageItemIndex) =>
+                  imageItemIndex === imageIndex
+                    ? { ...imageItem, [field]: value }
+                    : imageItem,
+              ),
+            };
+          }),
+        },
+      };
+    });
+  };
+
+  const uploadTechniqueCategoryImage = async (
+    categoryIndex: number,
+    imageIndex: number,
+    file: File,
+  ) => {
+    const imageUrl = await uploadSingleImage(
+      file,
+      `Technique category image ${categoryIndex + 1}-${imageIndex + 1}`,
+    );
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: (techniques.categories ?? []).map((category, index) => {
+            if (index !== categoryIndex) return category;
+            return {
+              ...category,
+              images: (category.images ?? []).map(
+                (imageItem, imageItemIndex) =>
+                  imageItemIndex === imageIndex
+                    ? { ...imageItem, image: imageUrl }
+                    : imageItem,
+              ),
+            };
+          }),
+        },
+      };
+    });
+  };
+
+  const uploadTechniqueCategoryMainImage = async (
+    categoryIndex: number,
+    file: File,
+  ) => {
+    const imageUrl = await uploadSingleImage(
+      file,
+      `Technique category main image ${categoryIndex + 1}`,
+    );
+    setContent((current) => {
+      const techniques = current.techniques ?? {
+        h2: "",
+        h3: "",
+        description: "",
+        categories: [],
+      };
+      return {
+        ...current,
+        techniques: {
+          ...techniques,
+          categories: (techniques.categories ?? []).map((category, index) =>
+            index !== categoryIndex
+              ? category
+              : {
+                  ...category,
+                  mainImage: {
+                    ...category.mainImage,
+                    image: imageUrl,
+                  },
+                },
+          ),
+        },
+      };
+    });
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -73,12 +359,6 @@ export const Tattoos: React.FC = () => {
     isSectionFilled(content.introduction) ||
     isSectionFilled(content.techniques) ||
     isSectionFilled(content.details);
-
-  const techniquesCategoriesJson = JSON.stringify(
-    content.techniques?.categories || [],
-    null,
-    2,
-  );
 
   const hasBookingOrExtraSections =
     isSectionFilled(content.contactForm) ||
@@ -122,39 +402,320 @@ export const Tattoos: React.FC = () => {
             }
           />
 
-          <ContentSectionEditor
-            title="Techniques"
-            fields={tattoosEditorSchema.techniques}
-            value={{
-              h2: content.techniques?.h2 ?? "",
-              h3: content.techniques?.h3 ?? "",
-              description: content.techniques?.description ?? "",
-              categories: techniquesCategoriesJson,
-            }}
-            onChange={(nextValue) =>
-              setContent((current) => ({
-                ...current,
-                techniques: {
-                  ...current.techniques,
-                  h2: nextValue.h2,
-                  h3: nextValue.h3,
-                  description: nextValue.description,
-                  categories: (() => {
-                    if (!nextValue.categories?.trim())
-                      return current.techniques?.categories ?? [];
-                    try {
-                      const parsed = JSON.parse(nextValue.categories);
-                      return Array.isArray(parsed)
-                        ? parsed
-                        : (current.techniques?.categories ?? []);
-                    } catch {
-                      return current.techniques?.categories ?? [];
-                    }
-                  })(),
-                },
-              }))
-            }
-          />
+          <div className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5">
+            <h3 className="mb-4 text-lg font-bold text-darkBrown">
+              Introduction Image
+            </h3>
+            {content.introduction?.introImage ? (
+              <img
+                src={content.introduction.introImage}
+                alt={content.introduction.h2 || "Tattoo introduction image"}
+                className="mb-4 w-full rounded-3xl object-cover"
+              />
+            ) : null}
+            <ImageUploadDropzone
+              label="Drop introduction image here or click to upload"
+              onUpload={uploadIntroductionImage}
+            />
+          </div>
+
+          <section className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5">
+            <h3 className="mb-4 text-lg font-bold text-darkBrown">
+              Techniques
+            </h3>
+            <div className="grid gap-4">
+              <EditorField
+                type="plain"
+                label="Techniques H2"
+                value={content.techniques?.h2 ?? ""}
+                onChange={(value) =>
+                  updateTechniques({
+                    ...(content.techniques ?? {
+                      h2: "",
+                      h3: "",
+                      description: "",
+                      categories: [],
+                    }),
+                    h2: value,
+                  })
+                }
+              />
+              <EditorField
+                type="plain"
+                label="Techniques H3"
+                value={content.techniques?.h3 ?? ""}
+                onChange={(value) =>
+                  updateTechniques({
+                    ...(content.techniques ?? {
+                      h2: "",
+                      h3: "",
+                      description: "",
+                      categories: [],
+                    }),
+                    h3: value,
+                  })
+                }
+              />
+              <EditorField
+                type="rich"
+                label="Techniques Description"
+                value={content.techniques?.description ?? ""}
+                onChange={(value) =>
+                  updateTechniques({
+                    ...(content.techniques ?? {
+                      h2: "",
+                      h3: "",
+                      description: "",
+                      categories: [],
+                    }),
+                    description: value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <h4 className="text-base font-semibold text-darkBrown">
+                  Technique Categories
+                </h4>
+                <button
+                  type="button"
+                  className="rounded-full border border-darkBrown bg-white px-4 py-2 text-sm font-semibold text-darkBrown hover:bg-[#f3ede6]"
+                  onClick={addTechniqueCategory}
+                >
+                  Add category
+                </button>
+              </div>
+
+              {(content.techniques?.categories ?? []).length === 0 ? (
+                <p className="text-sm text-brown">
+                  No technique categories yet. Add one to start.
+                </p>
+              ) : null}
+
+              {(content.techniques?.categories ?? []).map(
+                (category, categoryIndex) => (
+                  <div
+                    key={categoryIndex}
+                    className="rounded-3xl border border-[#d8cfc1] bg-white p-5 shadow-sm"
+                  >
+                    <div className="mb-4 flex items-center justify-between gap-4">
+                      <h5 className="text-base font-semibold text-darkBrown">
+                        Category {categoryIndex + 1}
+                      </h5>
+                      <button
+                        type="button"
+                        className="text-sm font-semibold text-darkRed hover:opacity-80"
+                        onClick={() => removeTechniqueCategory(categoryIndex)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="grid gap-4">
+                      <EditorField
+                        type="plain"
+                        label="Title"
+                        value={category.title ?? ""}
+                        onChange={(value) =>
+                          updateTechniqueCategory(categoryIndex, {
+                            ...category,
+                            title: value,
+                          })
+                        }
+                      />
+                      <EditorField
+                        type="rich"
+                        label="Description"
+                        value={category.description ?? ""}
+                        onChange={(value) =>
+                          updateTechniqueCategory(categoryIndex, {
+                            ...category,
+                            description: value,
+                          })
+                        }
+                      />
+                      <EditorField
+                        type="rich"
+                        label="Content Text"
+                        value={category.contentText ?? ""}
+                        onChange={(value) =>
+                          updateTechniqueCategory(categoryIndex, {
+                            ...category,
+                            contentText: value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="mt-6 rounded-2xl border border-[#e7dfd5] bg-[#faf7f2] p-4">
+                      <h6 className="mb-3 font-semibold text-darkBrown">
+                        Main Image
+                      </h6>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <EditorField
+                          type="plain"
+                          label="Image URL"
+                          value={category.mainImage?.image ?? ""}
+                          onChange={(value) =>
+                            updateTechniqueCategory(categoryIndex, {
+                              ...category,
+                              mainImage: {
+                                ...category.mainImage,
+                                image: value,
+                              },
+                            })
+                          }
+                        />
+                        <EditorField
+                          type="plain"
+                          label="Alt text"
+                          value={category.mainImage?.alt ?? ""}
+                          onChange={(value) =>
+                            updateTechniqueCategory(categoryIndex, {
+                              ...category,
+                              mainImage: {
+                                ...category.mainImage,
+                                alt: value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <EditorField
+                        type="rich"
+                        label="Main image description"
+                        value={category.mainImage?.description ?? ""}
+                        onChange={(value) =>
+                          updateTechniqueCategory(categoryIndex, {
+                            ...category,
+                            mainImage: {
+                              ...category.mainImage,
+                              description: value,
+                            },
+                          })
+                        }
+                      />
+                      <ImageUploadDropzone
+                        label="Upload main image"
+                        onUpload={async (file) =>
+                          await uploadTechniqueCategoryMainImage(
+                            categoryIndex,
+                            file,
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div className="mt-6 space-y-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <h6 className="font-semibold text-darkBrown">
+                          Gallery items
+                        </h6>
+                        <button
+                          type="button"
+                          className="rounded-full border border-darkBrown bg-white px-4 py-2 text-sm font-semibold text-darkBrown hover:bg-[#f3ede6]"
+                          onClick={() => addTechniqueImageItem(categoryIndex)}
+                        >
+                          Add item
+                        </button>
+                      </div>
+
+                      {(category.images ?? []).map((imageItem, imageIndex) => (
+                        <div
+                          key={imageIndex}
+                          className="rounded-2xl border border-[#e7dfd5] bg-[#fff8f0] p-4"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-4">
+                            <span className="font-semibold text-darkBrown">
+                              Item {imageIndex + 1}
+                            </span>
+                            <button
+                              type="button"
+                              className="text-sm font-semibold text-darkRed hover:opacity-80"
+                              onClick={() =>
+                                removeTechniqueImageItem(
+                                  categoryIndex,
+                                  imageIndex,
+                                )
+                              }
+                            >
+                              Remove item
+                            </button>
+                          </div>
+                          <div className="grid gap-4">
+                            <EditorField
+                              type="plain"
+                              label="Image URL"
+                              value={imageItem.image ?? ""}
+                              onChange={(value) =>
+                                updateTechniqueImageItem(
+                                  categoryIndex,
+                                  imageIndex,
+                                  "image",
+                                  value,
+                                )
+                              }
+                            />
+                            <EditorField
+                              type="plain"
+                              label="Alt text"
+                              value={imageItem.alt ?? ""}
+                              onChange={(value) =>
+                                updateTechniqueImageItem(
+                                  categoryIndex,
+                                  imageIndex,
+                                  "alt",
+                                  value,
+                                )
+                              }
+                            />
+                            <EditorField
+                              type="plain"
+                              label="Name"
+                              value={imageItem.name ?? ""}
+                              onChange={(value) =>
+                                updateTechniqueImageItem(
+                                  categoryIndex,
+                                  imageIndex,
+                                  "name",
+                                  value,
+                                )
+                              }
+                            />
+                            <EditorField
+                              type="rich"
+                              label="Text"
+                              value={imageItem.text ?? ""}
+                              onChange={(value) =>
+                                updateTechniqueImageItem(
+                                  categoryIndex,
+                                  imageIndex,
+                                  "text",
+                                  value,
+                                )
+                              }
+                            />
+                          </div>
+                          <ImageUploadDropzone
+                            label="Upload item image"
+                            onUpload={async (file) =>
+                              await uploadTechniqueCategoryImage(
+                                categoryIndex,
+                                imageIndex,
+                                file,
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
+          </section>
 
           <ContentSectionEditor
             title="Details"
@@ -338,8 +899,19 @@ export const Tattoos: React.FC = () => {
         </div>
       )}
 
+      {(content.contactForm?.title || isAuthenticated) && (
+        <ContactFormSection
+          data={content.contactForm}
+          isEditing={isAuthenticated && isEditMode}
+          onChange={(contactForm) =>
+            setContent((current) => ({ ...current, contactForm }))
+          }
+        />
+      )}
+
       {(content.testimonials?.items.length || isAuthenticated) && (
         <TestimonialsSection
+          data={content.testimonials}
           isEditing={isAuthenticated && isEditMode}
           onChange={(testimonials) =>
             setContent((current) => ({ ...current, testimonials }))
@@ -375,7 +947,7 @@ export const Tattoos: React.FC = () => {
       )}
       {(content.faq?.items.length || isAuthenticated) && (
         <FAQSection
-          data={content.faq ?? defaultTattoosContent.faq!}
+          data={content.faq}
           isEditing={isAuthenticated && isEditMode}
           onChange={(nextData) =>
             setContent((current) => ({

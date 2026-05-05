@@ -78,7 +78,7 @@ export function Hero({
               <RichTextContent html={data.description} className="" />
               <div className="flex flex-wrap gap-3">
                 <button
-                  className="px-5 py-3 rounded-full bg-white text-darkBrown font-semibold hover:opacity-90"
+                  className="px-5 py-3 rounded-full border border-darkBrown text-darkBrown font-semibold hover:border-mediumGreen hover:text-mediumGreen transition cursor-pointer hover:scale-105"
                   onClick={() =>
                     document
                       .getElementById("artIntro")

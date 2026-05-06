@@ -48,7 +48,7 @@ export function ArtIntro({
   return (
     <section
       id="artIntro"
-      className="wave-bg text-warmWhite flex flex-col gap-6"
+      className="bg-darkBrown text-warmWhite flex flex-col gap-6"
     >
       <div className="w-11/12 laptop:w-9/12 mx-auto">
       {isEditing ? (

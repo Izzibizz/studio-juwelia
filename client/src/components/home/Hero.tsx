@@ -121,7 +121,7 @@ export function Hero({
       )}
       <svg
         viewBox="0 0 5483.08 1501.25"
-        className="w-[105%] laptop:w-[100%] absolute bottom-[-1px] laptop:bottom-0 left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto"
+        className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] laptop:bottom-0 left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
       >

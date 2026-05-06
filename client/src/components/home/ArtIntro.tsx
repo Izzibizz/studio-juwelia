@@ -48,7 +48,7 @@ export function ArtIntro({
   return (
     <section
       id="artIntro"
-      className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative"
+      className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative pb-42"
     >
       <div className="w-11/12 laptop:w-9/12 mx-auto">
         {isEditing ? (
@@ -174,7 +174,7 @@ export function ArtIntro({
       </div>
       <svg
         viewBox="0 0 1920 373.98"
-        className="w-[105%] laptop:w-[100%] absolute bottom-[-1px] laptop:bottom-0 left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto"
+        className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
       >

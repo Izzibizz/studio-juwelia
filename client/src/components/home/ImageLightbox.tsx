@@ -41,7 +41,7 @@ export function ImageLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
       role="dialog"
       aria-modal="true"
       onClick={onClose}

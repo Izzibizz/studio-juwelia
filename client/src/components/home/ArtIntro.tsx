@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { GalleryIntroSectionData } from "../../api/contentAPI";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
-import { ImageGallerySwiper } from "./ImageGallerySwiper";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
+import { CenteredEmblaGallery } from "./CenteredEmblaCarousel";
 
 interface ArtIntroProps {
   data: GalleryIntroSectionData;
@@ -23,6 +24,9 @@ export function ArtIntro({
   onAddImageUpload,
   onRemoveImage,
 }: ArtIntroProps) {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
   const galleryImages = useMemo(
     () => data.imageGallery.filter((item) => Boolean(item.image)),
     [data.imageGallery],
@@ -45,10 +49,44 @@ export function ArtIntro({
     });
   };
 
+  const reorderGalleryImages = (fromIndex: number, toIndex: number) => {
+    const newGallery = [...data.imageGallery];
+    const [movedItem] = newGallery.splice(fromIndex, 1);
+    newGallery.splice(toIndex, 0, movedItem);
+    onChange?.({ ...data, imageGallery: newGallery });
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== toIndex) {
+      reorderGalleryImages(draggedIndex, toIndex);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   return (
     <section
       id="artIntro"
-      className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative pb-[100px] laptop:pb-[350px]"
+      className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative pt-14 laptop:pt-0 pb-[100px] laptop:pb-[350px]"
     >
       <div className="w-11/12 laptop:w-9/12 mx-auto">
         {isEditing ? (
@@ -81,7 +119,9 @@ export function ArtIntro({
               html={data.description}
               className=" mb-5 tablet:max-w-[500px] self-end"
             />
-            <p className="font-semibold ">{data.ctaText}</p>
+            <button className="font-semibold ">
+              <Link to="/tatouages">{data.ctaText}</Link>
+            </button>
           </div>
         )}
 
@@ -100,45 +140,47 @@ export function ArtIntro({
               </div>
             )}
             {isEditing ? (
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
                 {data.imageGallery.map((item, index) => (
                   <div
                     key={`${item.name}-${index}`}
-                    className="grid gap-3 rounded-lg bg-white p-3"
+                    draggable
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`grid gap-3 rounded-lg bg-white p-3 cursor-move transition-all ${
+                      draggedIndex === index
+                        ? "opacity-50"
+                        : dragOverIndex === index
+                          ? "ring-2 ring-blue-500 scale-105"
+                          : ""
+                    }`}
                   >
                     {item.image ? (
                       <img
                         src={item.image}
                         alt={item.alt || item.name}
-                        className="h-20 w-full rounded-lg object-cover"
+                        className="h-[400px] w-full rounded-lg object-cover"
+                        draggable={false}
                       />
                     ) : (
                       <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-[#d8cfc1] text-xs text-brown">
                         No image
                       </div>
                     )}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-darkBrown">
-                        Image {index + 1}
-                      </span>
+                    <div className="flex flex-col justify-between gap-2">
                       {onRemoveImage && (
                         <button
                           type="button"
                           onClick={() => onRemoveImage(index)}
-                          className="text-darkRed transition hover:opacity-70"
+                          className="text-darkRed transition hover:opacity-70 self-end p-4 cursor-pointer"
                         >
                           <FiTrash2 size={16} />
                         </button>
                       )}
                     </div>
-                    <EditorField
-                      type="plain"
-                      label="Image URL"
-                      value={item.image}
-                      onChange={(value) =>
-                        updateGalleryField(index, "image", value)
-                      }
-                    />
                     <EditorField
                       type="plain"
                       label="Alt text"
@@ -149,7 +191,7 @@ export function ArtIntro({
                     />
                     <EditorField
                       type="plain"
-                      label="Name"
+                      label="Nom/description"
                       value={item.name || ""}
                       onChange={(value) =>
                         updateGalleryField(index, "name", value)
@@ -165,8 +207,10 @@ export function ArtIntro({
                 ))}
               </div>
             ) : (
-              <div className=" w-11/12 laptop:w-9/12 mx-auto">
-                <ImageGallerySwiper images={galleryImages} variant="art" />
+              <div className="w-full flex justify-center overflow-hidden">
+                <div className="w-full max-w-[1200px]">
+                  <CenteredEmblaGallery images={galleryImages} />
+                </div>
               </div>
             )}
           </div>

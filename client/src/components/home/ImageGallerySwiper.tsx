@@ -1,22 +1,149 @@
-import { useMemo, useState } from "react";
-import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ImageGalleryItemData } from "../../api/contentAPI";
 import { ImageLightbox } from "./ImageLightbox";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-coverflow";
 
 interface ImageGallerySwiperProps {
   images: ImageGalleryItemData[];
   variant?: "art" | "default";
 }
 
-export function ImageGallerySwiper({
+type ImageItem = ImageGalleryItemData;
+
+interface CenteredGalleryProps {
+  images: ImageItem[];
+  interval?: number;
+  onItemClick?: (index: number) => void;
+}
+
+function CenteredGallery({
   images,
-  variant = "default",
-}: ImageGallerySwiperProps) {
+  interval = 2500,
+  onItemClick,
+}: CenteredGalleryProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const length = images.length;
+  const startXRef = useRef<number | null>(null);
+  const deltaXRef = useRef(0);
+
+  useEffect(() => {
+    if (!length) return;
+
+    const id = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % length);
+    }, interval);
+
+    return () => clearInterval(id);
+  }, [length, interval]);
+
+  const nextSlide = () =>
+    setActiveIndex((prev) => (((prev + 1) % length) + length) % length);
+  const prevSlide = () =>
+    setActiveIndex((prev) => (((prev - 1) % length) + length) % length);
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    startXRef.current = event.clientX;
+    deltaXRef.current = 0;
+    setIsDragging(true);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || startXRef.current === null) return;
+    deltaXRef.current = event.clientX - startXRef.current;
+  };
+
+  const resetDrag = () => {
+    startXRef.current = null;
+    deltaXRef.current = 0;
+    setIsDragging(false);
+  };
+
+  const handlePointerUp = () => {
+    if (!isDragging) return;
+    const delta = deltaXRef.current;
+    if (delta > 80) {
+      prevSlide();
+    } else if (delta < -80) {
+      nextSlide();
+    }
+    resetDrag();
+  };
+
+  const visibleSlides = useMemo(() => {
+    return [-2, -1, 0, 1, 2].map((offset) => {
+      const rawIndex = activeIndex + offset;
+      const index = ((rawIndex % length) + length) % length;
+      return {
+        ...images[index],
+        index,
+        offset,
+      };
+    });
+  }, [activeIndex, images, length]);
+
+  if (!length) return null;
+
+  return (
+    <div className="w-full flex flex-col items-center overflow-hidden p-10">
+      <div
+        className="flex items-center justify-center gap-3"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+      >
+        {visibleSlides.map((item, i) => {
+          const isCenter = item.offset === 0;
+
+          return (
+            <button
+              key={`${item.index}-${i}`}
+              type="button"
+              onClick={() => onItemClick?.(item.index)}
+              className="relative transition-all duration-700 ease-out rounded-xl overflow-hidden"
+              style={{
+                width: "220px",
+                height: "320px",
+                transform: isCenter ? "scale(1.3)" : "scale(0.7)",
+              }}
+            >
+              <div
+                className={`relative rounded-xl overflow-hidden ${
+                  isCenter ? "z-20" : "opacity-70 z-10"
+                }`}
+              >
+                <img
+                  src={item.image}
+                  alt={item.alt || item.name || ""}
+                  className="w-full h-full object-cover aspect-[3/4] transition-transform duration-700 ease-out"
+                  draggable={false}
+                />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-4 flex items-center justify-center gap-4">
+        <button
+          type="button"
+          onClick={prevSlide}
+          className="p-3 shadow-lg transition object-cover"
+        >
+          <img src="/arrow-left.png" alt="Previous" className="w-full" />
+        </button>
+        <button
+          type="button"
+          onClick={nextSlide}
+          className="p-3 shadow-lg transition object-cover"
+        >
+          <img src="/arrow-right.png" alt="Next" className="w-full" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function ImageGallerySwiper({ images }: ImageGallerySwiperProps) {
   const galleryImages = useMemo(
     () => images.filter((item) => Boolean(item.image)),
     [images],
@@ -25,83 +152,14 @@ export function ImageGallerySwiper({
 
   if (galleryImages.length === 0) return null;
 
-  const isArt = variant === "art";
-
   return (
     <>
-      <div className="mt-4 w-full max-w-full overflow-hidden rounded-xl bg-white p-3">
-        {isArt ? (
-          <Swiper
-            modules={[EffectCoverflow, Pagination]}
-            effect="coverflow"
-            grabCursor
-            centeredSlides
-            centeredSlidesBounds={false}
-            loop
-            loopAdditionalSlides={Math.max(galleryImages.length, 5)}
-            initialSlide={2}
-            slidesPerView={5}
-            spaceBetween={12}
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 60,
-              modifier: 1,
-              scale: 0.8,
-              slideShadows: false,
-            }}
-            pagination={{ clickable: true }}
-            className="home-art-swiper w-full max-w-full"
-          >
-            {galleryImages.map((item, index) => (
-              <SwiperSlide
-                key={`${item.name}-${index}`}
-                className="transition-transform duration-300"
-              >
-                <button
-                  type="button"
-                  onClick={() => setLightboxIndex(index)}
-                  className="group block w-full max-w-full overflow-hidden rounded-xl"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.alt || item.name}
-                    className="h-56 w-full rounded-xl object-cover transition duration-300 group-hover:scale-[1.02]"
-                  />
-                </button>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : (
-          <Swiper
-            modules={[Navigation, Pagination]}
-            navigation
-            pagination={{ clickable: true }}
-            spaceBetween={12}
-            slidesPerView={1}
-            breakpoints={{
-              640: { slidesPerView: 1.1 },
-              900: { slidesPerView: 1.25 },
-            }}
-            className="home-art-swiper w-full max-w-full"
-          >
-            {galleryImages.map((item, index) => (
-              <SwiperSlide key={`${item.name}-${index}`}>
-                <button
-                  type="button"
-                  onClick={() => setLightboxIndex(index)}
-                  className="group block w-full max-w-full overflow-hidden rounded-xl"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.alt || item.name}
-                    className="h-56 w-full rounded-xl object-cover transition duration-300 group-hover:scale-[1.02]"
-                  />
-                </button>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        )}
+      <div className="mt-4 w-full max-w-full overflow-hidden p-3">
+        <CenteredGallery
+          images={galleryImages}
+          interval={2500}
+          onItemClick={(index) => setLightboxIndex(index)}
+        />
       </div>
 
       <ImageLightbox

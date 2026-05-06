@@ -32,8 +32,8 @@
 
 @theme {
   --font-tropical: "tropical", sans-serif;
-  --font-sans: "Modern Sans", sans-serif;
-  --font-light: "Modern Sans Light", sans-serif;
+  --font-sans: "sans", sans-serif;
+  --font-light: "light", sans-serif;
   --font-juwelia: "juwelia", sans-serif;
 
   --breakpoint-tablet: 600px;
@@ -64,27 +64,6 @@
   }
 }
 
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
 body {
   font-family: var(--font-light);

@@ -174,7 +174,7 @@ export function ArtIntro({
       </div>
       <svg
         viewBox="0 0 1920 373.98"
-        className="w-[105%] absolute -bottom-[1px] left-1/2 -translate-x-1/2 h-auto"
+        className="w-[105%] absolute -bottom-[1px] laptop:bottom-0 left-1/2 -translate-x-1/2 h-auto"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
       >

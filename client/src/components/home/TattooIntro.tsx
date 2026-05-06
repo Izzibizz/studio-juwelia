@@ -45,7 +45,7 @@ export function TattooIntro({
   };
 
   return (
-    <section className="min-w-0 rounded-2xl border border-[#e7dfd5] bg-warmWhite p-6 md:p-8">
+    <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative">
       {isEditing ? (
         <div className="grid gap-4">
           <EditorField

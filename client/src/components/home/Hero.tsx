@@ -2,7 +2,7 @@ import type { HeroSectionData } from "../../api/contentAPI";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { motion } from "framer-motion";
-import divider from "/form-1-hero-artIntro.svg"
+import divider from "/form-1-hero-artIntro.svg";
 /* import { InlineUploadButton } from "./InlineUploadButton"; */
 
 interface HeroProps {
@@ -103,7 +103,10 @@ export function Hero({
             )}
           </div>
           <div className="flex flex-col tablet:flex-row tablet:col-span-2 gap-4 ">
-            <RichTextContent html={data.poem} className="px-4 tablet:self-end tablet:mb-8 tablet:ml-22 laptop:self-center" />
+            <RichTextContent
+              html={data.poem}
+              className="px-4 tablet:self-end tablet:mb-8 tablet:ml-22 laptop:self-center"
+            />
             {data.imageRight && (
               <motion.img
                 src={data.imageRight}
@@ -117,7 +120,11 @@ export function Hero({
           </div>
         </div>
       )}
-      <img src={divider} className="aspect-ratio-auto w-full absolute bottom-0" />
+      <img
+        src={divider}
+        className="w-screen absolute bottom-0 left-1/2 -translate-x-1/2 object-cover object-center"
+        alt="wavy divider"
+      />
     </section>
   );
 }

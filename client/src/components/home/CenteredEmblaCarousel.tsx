@@ -1,6 +1,8 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import leftarrow from "/arrow-left.png";
+import arrowright from "/arrow-right.png";
 
 type ImageItem = {
   image: string;
@@ -78,6 +80,16 @@ export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
       y: 10,
     };
   };
+
+  const scrollPrev = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollNext();
+  }, [emblaApi]);
 
   // ✅ STABIL select handler
   const handleSelect = useCallback(() => {
@@ -163,6 +175,27 @@ export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
             );
           })}
         </div>
+      </div>
+      <div className="flex justify-center gap-6 mt-6">
+        <button
+          onClick={scrollPrev}
+          className="transition hover:scale-110 active:scale-95"
+          aria-label="Previous"
+        >
+          <img
+            src={leftarrow}
+            alt="Previous"
+            className="w-full"
+          />
+        </button>
+
+        <button
+          onClick={scrollNext}
+          className="transition hover:scale-110 active:scale-95"
+          aria-label="Next"
+        >
+          <img src={arrowright} alt="Next" className="w-full" />
+        </button>
       </div>
     </div>
   );

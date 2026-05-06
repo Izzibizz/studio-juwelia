@@ -158,7 +158,7 @@ export const Header: React.FC = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[70]
-       text-black  ${scrolled ? "bg-beige h-[80px]" : "bg-none h-[100px]"} animate-fadeIn`}
+       text-black  ${scrolled ? "bg-beige/85 h-[80px]" : "bg-none h-[100px]"} animate-fadeIn`}
     >
       <div
         className="flex gap-6 laptop:gap-0 items-center cursor-pointer"

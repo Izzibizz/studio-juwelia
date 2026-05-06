@@ -4,8 +4,8 @@ import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { MenuToggle } from "./MenuToggle";
 import { RiEnglishInput } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
-import logo from "/juwelia-tattoo-logo.png";
-import textLogo from "/studio-juwelia-tattoo-name-2.svg";
+import logo from "/juwelia-tattoo-logo-2.png";
+import textLogo from "/juwelia-logo-1-v.svg";
 /* import { usePageStore } from "../stores/pageStore"; */
 
 export const Header: React.FC = () => {
@@ -157,11 +157,11 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[70] h-[100px]
-       text-black  ${scrolled ? "bg-beige" : "bg-none"} animate-fadeIn`}
+      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[70]
+       text-black  ${scrolled ? "bg-beige h-[80px]" : "bg-none h-[100px]"} animate-fadeIn`}
     >
       <div
-        className="flex gap-6 items-center cursor-pointer"
+        className="flex gap-6 laptop:gap-0 items-center cursor-pointer"
         onClick={() => logoClick()}
       >
         {" "}
@@ -169,13 +169,13 @@ export const Header: React.FC = () => {
           src={isMobile && smallerHeader ? logo : isMobile ? logo : logo}
           className={` ${
             smallerHeader
-              ? "w-[60px] transform transition-transform duration-200"
-              : "w-[100px] transform transition-transform duration-200"
+              ? "w-[50px] transform transition-transform duration-200"
+              : "w-[70px] transform transition-transform duration-200"
           }  ${
             !isHome &&
             "hover:scale-105 transform transition-transform duration-100"
           }`}
-          alt="logo Juwelia"
+          alt="logo Juwelia icon"
         />
         {!isMobile && (
           <img
@@ -185,10 +185,10 @@ export const Header: React.FC = () => {
               "hover:scale-105 transform transition-transform duration-100"
             } ${
               smallerHeader
-                ? "w-[120px] transform transition-transform duration-200"
+                ? "w-[100px] transform transition-transform duration-200"
                 : "w-[170px] transform transition-transform duration-200"
             }`}
-            alt="Studio Juwelia"
+            alt="Studio Juwelia logo text"
           />
         )}
       </div>

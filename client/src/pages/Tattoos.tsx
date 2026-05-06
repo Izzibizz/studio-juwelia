@@ -73,13 +73,16 @@ export const Tattoos: React.FC = () => {
     );
   };
 
-  const uploadIntroductionImage = async (file: File) => {
-    const imageUrl = await uploadSingleImage(file, "Tattoo introduction image");
+  const uploadIntroductionImage = async (file: File, alt: string) => {
+    const imageUrl = await uploadSingleImage(file, alt);
     const nextContent = {
       ...content,
       introduction: {
         ...content.introduction,
         introImage: imageUrl,
+        introImageAlt: alt,
+        introImageDescription:
+          content.introduction?.introImageDescription || "",
       },
     };
     setContent(nextContent);
@@ -376,7 +379,7 @@ export const Tattoos: React.FC = () => {
   console.log("Current tattoos page content:", content);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 space-y-14 text-darkBrown">
+    <section className="flex flex-col gap-16 py-12 animate-fadeIn">
       {isAuthenticated && isEditMode ? (
         <div className="grid gap-10">
           <ContentSectionEditor
@@ -386,7 +389,8 @@ export const Tattoos: React.FC = () => {
               h2: content.introduction?.h2 ?? "",
               h3: content.introduction?.h3 ?? "",
               description: content.introduction?.description ?? "",
-              introImage: content.introduction?.introImage ?? "",
+              introImageDescription:
+                content.introduction?.introImageDescription ?? "",
             }}
             onChange={(nextValue) =>
               setContent((current) => ({
@@ -396,7 +400,7 @@ export const Tattoos: React.FC = () => {
                   h2: nextValue.h2,
                   h3: nextValue.h3,
                   description: nextValue.description,
-                  introImage: nextValue.introImage,
+                  introImageDescription: nextValue.introImageDescription,
                 },
               }))
             }
@@ -406,17 +410,24 @@ export const Tattoos: React.FC = () => {
             <h3 className="mb-4 text-lg font-bold text-darkBrown">
               Introduction Image
             </h3>
+            <div className="flex flex-col tablet:flex-row tablet:items-center gap-6">
             {content.introduction?.introImage ? (
               <img
                 src={content.introduction.introImage}
-                alt={content.introduction.h2 || "Tattoo introduction image"}
-                className="mb-4 w-full rounded-3xl object-cover"
+                alt={
+                  content.introduction.introImageAlt ||
+                  content.introduction.h2 ||
+                  "Tattoo introduction image"
+                }
+                className="mb-4 w-[300px] object-cover"
               />
             ) : null}
             <ImageUploadDropzone
               label="Drop introduction image here or click to upload"
               onUpload={uploadIntroductionImage}
+              initialAlt={content.introduction?.introImageAlt || ""}
             />
+          </div>
           </div>
 
           <section className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5">
@@ -745,44 +756,54 @@ export const Tattoos: React.FC = () => {
           />
         </div>
       ) : (
-        <div className="space-y-12">
+        <div className="space-y-12 w-9/12 mx-auto flex flex-col">
           {isSectionFilled(content.introduction) && (
-            <section className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
+            <section className="flex flex-col laptop:flex-row laptop:justify-between">
+              <div className="flex flex-col gap-4">
               {content.introduction?.h2 && (
-                <h2 className="text-3xl font-semibold">
+                <h2 className="text-3xl font-juwelia">
                   {content.introduction.h2}
                 </h2>
               )}
               {content.introduction?.h3 && (
-                <h3 className="mt-2 text-xl text-darkRed">
+                <h3 className="mt-2 text-4xl text-darkRed font-tropical max-w-[800px]">
                   {content.introduction.h3}
                 </h3>
               )}
               {content.introduction?.description && (
                 <RichTextContent
                   html={content.introduction.description}
-                  className="mt-4 text-brown"
+                  className="mt-4 text-brown max-w-[800px]"
                 />
               )}
+              </div>
+              <div className="flex flex-col gap-4 items-center">
               {content.introduction?.introImage && (
                 <img
                   src={content.introduction.introImage}
                   alt={content.introduction.h2 || "Tattoo introduction image"}
-                  className="mt-6 w-full rounded-3xl object-cover"
+                  className="mt-6 w-full tablet:max-w-[400px] object-cover "
                 />
               )}
+              {content.introduction?.introImageDescription && (
+                <RichTextContent
+                  html={content.introduction.introImageDescription}
+                  className="mt-3 text-brown max-w-[800px] font-tropical"
+                />
+              )}
+              </div>
             </section>
           )}
 
           {isSectionFilled(content.techniques) && (
             <section className="space-y-6">
               {content.techniques?.h2 && (
-                <h2 className="text-3xl font-semibold">
+                <h2 className="text-3xl font-juwelia">
                   {content.techniques.h2}
                 </h2>
               )}
               {content.techniques?.h3 && (
-                <h3 className="text-xl text-darkRed">
+                <h3 className="text-darkRed font-tropical text-4xl">
                   {content.techniques.h3}
                 </h3>
               )}
@@ -978,6 +999,6 @@ export const Tattoos: React.FC = () => {
           }
         />
       )}
-    </div>
+    </section>
   );
 };

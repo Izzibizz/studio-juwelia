@@ -125,7 +125,7 @@ export const Header: React.FC = () => {
       }
     };
 
-    if (isOpen || languageDropdownOpen || mobileLanguageExpanded) {
+    if (isOpen || mobileLanguageExpanded) {
       document.body.style.overflow = "hidden";
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -137,7 +137,23 @@ export const Header: React.FC = () => {
       document.body.style.overflow = "";
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, languageDropdownOpen, mobileLanguageExpanded]);
+  }, [isOpen, mobileLanguageExpanded]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (languageDropdownOpen) {
+        setLanguageDropdownOpen(false);
+      }
+    };
+
+    if (languageDropdownOpen) {
+      window.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [languageDropdownOpen]);
 
   return (
     <header

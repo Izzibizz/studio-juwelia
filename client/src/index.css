@@ -1,25 +1,40 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'juwelia';
-  src: url('./assets/fonts/Gronsmarune.otf') format('opentype');
+  font-family: "juwelia";
+  src: url("./assets/fonts/Gronsmarune.otf") format("opentype");
   font-weight: 400; /* normal vikt */
   font-style: normal;
   font-display: swap; /* snabbare render */
 }
 @font-face {
-  font-family: 'tropical';
-  src: url('./assets/fonts/tropicalavenue.otf') format('opentype');
+  font-family: "tropical";
+  src: url("./assets/fonts/tropicalavenue.otf") format("opentype");
   font-weight: 400; /* normal vikt */
   font-style: normal;
   font-display: swap; /* snabbare render */
 }
+@font-face {
+  font-family: "sans";
+  src: url("./assets/fonts/MODERNSANS.ttf") format("truetype");
+  font-weight: 400; /* normal vikt */
+  font-style: normal;
+  font-display: swap; /* snabbare render */
+}
+@font-face {
+  font-family: "light";
+  src: url("./assets/fonts/ModernSans-Light.otf") format("opentype");
+  font-weight: 200; /* lätt vikt */
+  font-style: normal;
+  font-display: swap; /* snabbare render */
+}
+
 
 @theme {
   --font-tropical: "tropical", sans-serif;
-  --font-sans: "Open Sans", sans-serif;
+  --font-sans: "Modern Sans", sans-serif;
+  --font-light: "Modern Sans Light", sans-serif;
   --font-juwelia: "juwelia", sans-serif;
-
 
   --breakpoint-tablet: 600px;
   --breakpoint-laptop: 1025px;
@@ -30,12 +45,14 @@
   --color-lightBrown: rgb(148, 95, 65);
   --color-brown: rgb(121, 60, 41);
   --color-darkBrown: rgb(91, 44, 36);
-  --color-darkRed: rgb(93,33,33);
+  --color-darkRed: rgb(93, 33, 33);
   --color-brownBlack: rgb(54, 19, 13);
   --color-mediumGreen: rgb(79, 101, 63);
 
   --animate-fadeIn: fadeIn 1s ease-in both;
   --animate-longFadeIn: fadeIn 2.3s ease-in both;
+  --animate-fade-in-left: fadeInLeft 1.5s ease-out both;
+  --animate-fade-in-right: fadeInRight 1.5s ease-out both;
 }
 
 @keyframes fadeIn {
@@ -44,6 +61,28 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 

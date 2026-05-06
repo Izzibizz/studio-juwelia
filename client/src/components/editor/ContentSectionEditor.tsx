@@ -27,7 +27,7 @@ export function ContentSectionEditor({
   };
 
   return (
-    <section className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5">
+    <section className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5 max-w-[800px] mx-auto">
       <h3 className="mb-4 text-lg font-bold text-darkBrown">{title}</h3>
       <div className="grid gap-4">
         {Object.entries(fields).map(([fieldKey, definition]) => (

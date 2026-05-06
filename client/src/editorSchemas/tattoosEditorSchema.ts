@@ -5,7 +5,10 @@ export const tattoosEditorSchema: PageEditorSchema = {
     h2: { label: "Introduction H2", type: "plain" },
     h3: { label: "Introduction H3", type: "plain" },
     description: { label: "Introduction Description", type: "rich" },
-    introImage: { label: "Introduction Image URL", type: "plain" },
+    introImageDescription: {
+      label: "Introduction Image Description",
+      type: "rich",
+    },
   },
   techniques: {
     h2: { label: "Techniques H2", type: "plain" },

@@ -1,6 +1,8 @@
 import type { HeroSectionData } from "../../api/contentAPI";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
+import { motion } from "framer-motion";
+import divider from "/form-1-hero-artIntro.svg"
 /* import { InlineUploadButton } from "./InlineUploadButton"; */
 
 interface HeroProps {
@@ -24,7 +26,7 @@ export function Hero({
   };
 
   return (
-    <section className="flex flex-col w-11/12 mx-auto tablet:w-full gap-6">
+    <section className="flex flex-col gap-6 relative">
       {isEditing ? (
         <div className="mb-8 grid gap-4 rounded-2xl border border-white/15 bg-white/10 p-4">
           <EditorField
@@ -67,7 +69,7 @@ export function Hero({
           </div>
         </div>
       ) : (
-        <div className="grid tablet:grid-cols-5 tablet:justify-between">
+        <div className="grid tablet:grid-cols-5 tablet:justify-between  w-11/12 mx-auto tablet:w-full">
           <div className="flex flex-col gap-4 tablet:col-span-2">
             <div className="flex flex-col gap-8 tablet:ml-38 tablet:mt-14">
               <h1 className="text-3xl font-juwelia">{data.title}</h1>
@@ -90,25 +92,32 @@ export function Hero({
               </div>
             </div>
             {data.imageLeft && (
-              <img
+              <motion.img
                 src={data.imageLeft}
                 alt="Hero left"
                 className="object-cover tablet:mt-2"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
               />
             )}
           </div>
           <div className="flex flex-col tablet:flex-row tablet:col-span-2 gap-4 ">
-            <RichTextContent html={data.poem} className="self-end" />
+            <RichTextContent html={data.poem} className="px-4 tablet:self-end tablet:mb-8 tablet:ml-22 laptop:self-center" />
             {data.imageRight && (
-              <img
+              <motion.img
                 src={data.imageRight}
                 alt="Hero right"
-                className="object-cover tablet:absolute tablet:right-[-100px] tablet:top-0 tablet:max-w-[500px] laptop:max-w-[800px]"
+                className="object-cover tablet:absolute tablet:right-0 tablet:top-0 tablet:w-1/3 tablet:max-w-[500px] laptop:max-w-[700px]"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
               />
             )}
           </div>
         </div>
       )}
+      <img src={divider} className="aspect-ratio-auto w-full absolute bottom-0" />
     </section>
   );
 }

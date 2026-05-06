@@ -69,14 +69,14 @@ export function TattooIntro({
         </div>
       ) : (
         <>
-          <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-3">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">
             {data.title}
           </h2>
           <RichTextContent
             html={data.description}
-            className="text-brownBlack mb-5"
+            className="mb-5"
           />
-          <p className="text-darkRed font-semibold">{data.ctaText}</p>
+          <p className=" font-semibold">{data.ctaText}</p>
         </>
       )}
 
@@ -84,7 +84,7 @@ export function TattooIntro({
         <div className="mt-4 grid gap-3">
           {isEditing && onAddImageUpload && (
             <div className="rounded-lg bg-white p-3">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-darkBrown">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 <FiPlus size={15} />
                 Add image to gallery
               </div>
@@ -108,19 +108,19 @@ export function TattooIntro({
                       className="h-20 w-full rounded-lg object-cover"
                     />
                   ) : (
-                    <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-[#d8cfc1] text-xs text-brown">
+                    <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-[#d8cfc1] text-xs">
                       No image
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-semibold text-darkBrown">
+                    <span className="text-sm font-semibold">
                       Image {index + 1}
                     </span>
                     {onRemoveImage && (
                       <button
                         type="button"
                         onClick={() => onRemoveImage(index)}
-                        className="text-darkRed transition hover:opacity-70"
+                        className=" transition hover:opacity-70"
                       >
                         <FiTrash2 size={16} />
                       </button>

@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import type { GalleryIntroSectionData } from "../../api/contentAPI";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
 import { CenteredEmblaGallery } from "./CenteredEmblaCarousel";
+import { ImageLightbox } from "./ImageLightbox";
+import { motion } from "framer-motion";
 
 interface ArtIntroProps {
   data: GalleryIntroSectionData;
@@ -31,6 +33,8 @@ export function ArtIntro({
     () => data.imageGallery.filter((item) => Boolean(item.image)),
     [data.imageGallery],
   );
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const updateField = (field: keyof GalleryIntroSectionData, value: string) => {
     onChange?.({ ...data, [field]: value });
@@ -111,18 +115,28 @@ export function ArtIntro({
             />
           </div>
         ) : (
-          <div className="self-end text-end flex flex-col items-end">
-            <h2 className="text-2xl md:text-3xl font-tropical mb-3">
-              {data.title}
-            </h2>
-            <RichTextContent
-              html={data.description}
-              className=" mb-5 tablet:max-w-[500px] self-end"
-            />
-            <button className="font-semibold ">
-              <Link to="/tatouages">{data.ctaText}</Link>
-            </button>
-          </div>
+          <motion.section
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 2,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <div className="self-end text-end flex flex-col items-end">
+              <h2 className="text-2xl md:text-3xl font-tropical mb-3">
+                {data.title}
+              </h2>
+              <RichTextContent
+                html={data.description}
+                className=" mb-5 tablet:max-w-[500px] self-end"
+              />
+              <button className="px-5 py-3 rounded-full border border-warmWhite text-warmWhite font-semibold transition cursor-pointer hover:scale-105">
+                <NavLink to="/oeuvres">{data.ctaText}</NavLink>
+              </button>
+            </div>
+          </motion.section>
         )}
 
         {(data.imageGallery.length > 0 || isEditing) && (
@@ -143,7 +157,7 @@ export function ArtIntro({
               <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
                 {data.imageGallery.map((item, index) => (
                   <div
-                    key={`${item.name}-${index}`}
+                    key={index}
                     draggable
                     onDragStart={() => handleDragStart(index)}
                     onDragOver={(e) => handleDragOver(e, index)}
@@ -207,11 +221,23 @@ export function ArtIntro({
                 ))}
               </div>
             ) : (
-              <div className="w-full flex justify-center overflow-hidden">
+              <motion.section
+                initial={{ opacity: 0, y: 80 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 3,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="w-full flex justify-center overflow-hidden"
+              >
                 <div className="w-full max-w-[1200px]">
-                  <CenteredEmblaGallery images={galleryImages} />
+                  <CenteredEmblaGallery
+                    images={galleryImages}
+                    onItemClick={(index) => setLightboxIndex(index)}
+                  />
                 </div>
-              </div>
+              </motion.section>
             )}
           </div>
         )}
@@ -227,6 +253,24 @@ export function ArtIntro({
           fill="#793c29"
         />
       </svg>
+      <ImageLightbox
+        isOpen={lightboxIndex !== null}
+        images={galleryImages}
+        activeIndex={lightboxIndex ?? 0}
+        onClose={() => setLightboxIndex(null)}
+        onPrev={() =>
+          setLightboxIndex((prev) => {
+            if (prev === null) return 0;
+            return (prev - 1 + galleryImages.length) % galleryImages.length;
+          })
+        }
+        onNext={() =>
+          setLightboxIndex((prev) => {
+            if (prev === null) return 0;
+            return (prev + 1) % galleryImages.length;
+          })
+        }
+      />
     </section>
   );
 }

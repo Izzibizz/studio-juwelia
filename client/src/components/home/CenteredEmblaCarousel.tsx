@@ -13,9 +13,14 @@ type ImageItem = {
 interface Props {
   images: ImageItem[];
   autoplayDelay?: number;
+  onItemClick?: (index: number) => void;
 }
 
-export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
+export function CenteredEmblaGallery({
+  images,
+  autoplayDelay = 2500,
+  onItemClick,
+}: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
@@ -147,6 +152,11 @@ export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
                 key={index}
                 className="flex-[0_0_33.333%] tablet:flex-[0_0_20%] flex justify-center px-2"
               >
+                <button
+                  type="button"
+                  onClick={() => onItemClick?.(index)}
+                  className="cursor-pointer"
+                >
                 <motion.div
                   animate={{
                     scale: styles.scale,
@@ -167,10 +177,11 @@ export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
                   <img
                     src={item.image}
                     alt={item.alt || item.name || ""}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover cursor-pointer"
                     draggable={false}
                   />
                 </motion.div>
+                </button>
               </div>
             );
           })}
@@ -179,19 +190,19 @@ export function CenteredEmblaGallery({ images, autoplayDelay = 2500 }: Props) {
       <div className="flex justify-center gap-6 mt-6">
         <button
           onClick={scrollPrev}
-          className="transition hover:scale-110 active:scale-95"
+          className="transition hover:scale-110 active:scale-95 z-30"
           aria-label="Previous"
         >
           <img
             src={leftarrow}
             alt="Previous"
-            className="w-full"
+            className="w-full cursor-pointer"
           />
         </button>
 
         <button
           onClick={scrollNext}
-          className="transition hover:scale-110 active:scale-95"
+          className="transition hover:scale-110 active:scale-95 cursor-pointer z-30"
           aria-label="Next"
         >
           <img src={arrowright} alt="Next" className="w-full" />

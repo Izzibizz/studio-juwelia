@@ -6,6 +6,7 @@ import { RiEnglishInput } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
 import logo from "/juwelia-tattoo-logo-2.png";
 import textLogo from "/juwelia-logo-1-v.svg";
+import Fr from "/Fr.png";
 /* import { usePageStore } from "../stores/pageStore"; */
 
 export const Header: React.FC = () => {
@@ -24,7 +25,7 @@ export const Header: React.FC = () => {
 
   const navlinks = [
     { fr: "Tatouage", eng: "Tattoos", path: "/tatouages" },
-    { fr: "Oeuvres", eng: "Art", path: "/oevres" },
+    { fr: "Oeuvres", eng: "Art", path: "/oeuvres" },
     { fr: "A propos", eng: "About", path: "/a-propos" },
     { fr: "Contact", eng: "Contact", path: "/contact" },
     {
@@ -157,7 +158,7 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[70]
+      className={`fixed top-0 left-0 w-screen font-juwelia flex justify-between p-4 pr-6 tablet:p-6 laptop:pt-8 laptop:pr-8 items-center z-[50]
        text-black  ${scrolled ? "bg-beige/85 h-[80px]" : "bg-none h-[100px]"} animate-fadeIn`}
     >
       <div
@@ -205,7 +206,7 @@ export const Header: React.FC = () => {
                 className={`fixed top-0 right-0 h-screen w-screen overflow-hidden bg-beige text-xl backdrop-blur-xl flex justify-end px-10 `}
                 ref={dropdownRef}
               >
-                <ul className="flex flex-col items-end gap-5 text-darkRed absolute bottom-28 tablet:bottom-40 animate-fadeIn">
+                <ul className="flex flex-col items-end gap-5 text-darkRed absolute bottom-34 tablet:bottom-40 animate-fadeIn">
                   {!isHome && (
                     <NavLink
                       to="/"
@@ -244,7 +245,14 @@ export const Header: React.FC = () => {
                           className="flex items-center gap-2 bg-beige px-3 py-2 rounded hover:bg-gray-100 whitespace-nowrap"
                         >
                           {isEnglish ? (
-                            "🇫🇷 Français"
+                            <>
+                              <img
+                                src={Fr}
+                                alt="Français"
+                                className="w-5 h-5"
+                              />{" "}
+                              Français
+                            </>
                           ) : (
                             <>
                               <RiEnglishInput /> English
@@ -259,7 +267,11 @@ export const Header: React.FC = () => {
                     className="flex items-center gap-2 text-2xl hover:scale-105 transform transition-transform duration-100 min-h-[2rem]"
                   >
                     <span className="flex items-center">
-                      {isEnglish ? <RiEnglishInput /> : "🇫🇷"}
+                      {isEnglish ? (
+                        <RiEnglishInput />
+                      ) : (
+                        <img src={Fr} alt="Français" className="w-7 h-7" />
+                      )}
                     </span>
                     <AnimatePresence>
                       {mobileLanguageExpanded && (
@@ -310,7 +322,7 @@ export const Header: React.FC = () => {
                 onClick={toggleLanguageDropdown}
                 className="flex items-center gap-2 hover:scale-105 transform transition-transform duration-100 text-2xl"
               >
-                {isEnglish ? <RiEnglishInput /> : "🇫🇷"}
+                {isEnglish ? <RiEnglishInput /> : <img src={Fr} alt="Français" className="w-7 h-7" />}
                 <span className="text-sm">
                   <IoIosArrowDown />
                 </span>
@@ -324,7 +336,10 @@ export const Header: React.FC = () => {
                     }}
                     className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
                   >
-                    🇫🇷 Français
+                    <>
+                      <img src={Fr} alt="Français" className="w-7 h-7" />{" "}
+                      Français
+                    </>
                   </button>
                   <button
                     onClick={() => {

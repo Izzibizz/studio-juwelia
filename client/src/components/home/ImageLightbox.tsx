@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import type { ImageGalleryItemData } from "../../api/contentAPI";
+import { createPortal } from "react-dom";
 
 interface ImageLightboxProps {
   isOpen: boolean;
@@ -39,9 +40,9 @@ export function ImageLightbox({
   const selectedImage = images[activeIndex];
   if (!selectedImage) return null;
 
-  return (
+ return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/90 p-4"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -98,6 +99,7 @@ export function ImageLightbox({
           <FiChevronRight size={24} />
         </button>
       )}
-    </div>
+    </div>,
+      document.body
   );
 }

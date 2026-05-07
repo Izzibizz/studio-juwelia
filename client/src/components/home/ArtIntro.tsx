@@ -235,6 +235,7 @@ export function ArtIntro({
                   <CenteredEmblaGallery
                     images={galleryImages}
                     onItemClick={(index) => setLightboxIndex(index)}
+                    autoplayDelay={3500}
                   />
                 </div>
               </motion.section>

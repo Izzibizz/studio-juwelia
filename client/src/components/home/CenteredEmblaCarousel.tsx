@@ -37,22 +37,26 @@ export function CenteredEmblaGallery({
   // 🔥 LOOP-SAFE distance (fixar glitch vid loop)
   const getDistance = useCallback(
     (index: number) => {
-      const diff = Math.abs(index - selectedIndex);
-      return Math.min(diff, length - diff);
+      let diff = index - selectedIndex;
+
+      if (diff > length / 2) diff -= length;
+      if (diff < -length / 2) diff += length;
+
+      return diff;
     },
     [selectedIndex, length],
   );
 
   // 🎯 SCALE + DEPTH
   const getStyles = (index: number) => {
-    const dist = getDistance(index);
+    const dist = Math.abs(getDistance(index));
 
     if (dist === 0) {
       return {
-        scale: 1.2,
+        scale: 1.27,
         opacity: 1,
         blur: 0,
-        zIndex: 30,
+        zIndex: 999,
         y: -10,
       };
     }
@@ -62,7 +66,7 @@ export function CenteredEmblaGallery({
         scale: 0.95,
         opacity: 0.75,
         blur: 1,
-        zIndex: 20,
+        zIndex: 500,
         y: 0,
       };
     }
@@ -150,37 +154,39 @@ export function CenteredEmblaGallery({
             return (
               <div
                 key={index}
-                className="flex-[0_0_33.333%] tablet:flex-[0_0_20%] flex justify-center px-2"
+                className="flex-[0_0_33.333%] tablet:flex-[0_0_24%] flex justify-center px-2"
               >
                 <button
                   type="button"
                   onClick={() => onItemClick?.(index)}
                   className="cursor-pointer"
                 >
-                <motion.div
-                  animate={{
-                    scale: styles.scale,
-                    opacity: styles.opacity,
-                    y: styles.y,
-                    filter: `blur(${styles.blur}px)`,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 25,
-                  }}
-                  style={{
-                    zIndex: styles.zIndex,
-                  }}
-                  className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.alt || item.name || ""}
-                    className="w-full h-full object-cover cursor-pointer"
-                    draggable={false}
-                  />
-                </motion.div>
+                  <motion.div
+                    animate={{
+                      scale: styles.scale,
+                      opacity: styles.opacity,
+                      y: styles.y,
+                      filter: `blur(${styles.blur}px)`,
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 60,
+                      damping: 30,
+                    }}
+                    style={{
+                      zIndex: styles.zIndex,
+                      backfaceVisibility: "hidden",
+                      transform: "translateZ(0)",
+                    }}
+                    className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.alt || item.name || ""}
+                      className="w-full h-full object-cover cursor-pointer"
+                      draggable={false}
+                    />
+                  </motion.div>
                 </button>
               </div>
             );

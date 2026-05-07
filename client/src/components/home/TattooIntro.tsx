@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import type { GalleryIntroSectionData } from "../../api/contentAPI";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import {  FiTrash2 } from "react-icons/fi";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
+import { SplitRevealSlider } from "./SplitRevealSlider";
 
 interface TattooIntroProps {
   data: GalleryIntroSectionData;
@@ -19,7 +20,6 @@ export function TattooIntro({
   isEditing = false,
   onChange,
   onUploadImage,
-  onAddImageUpload,
   onRemoveImage,
 }: TattooIntroProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -81,6 +81,8 @@ export function TattooIntro({
     setDragOverIndex(null);
   };
 
+  console.log("Rendering TattooIntro with data:", data);
+
   return (
     <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative">
       {isEditing ? (
@@ -114,18 +116,6 @@ export function TattooIntro({
 
       {(data.imageGallery.length > 0 || isEditing) && (
         <div className="mt-4 grid gap-3">
-          {isEditing && onAddImageUpload && (
-            <div className="rounded-lg bg-white p-3">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                <FiPlus size={15} />
-                Add image to gallery
-              </div>
-              <ImageUploadDropzone
-                label="Drop image to add a new gallery item"
-                onUpload={onAddImageUpload}
-              />
-            </div>
-          )}
           {isEditing ? (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {data.imageGallery.map((item, index) => (
@@ -205,20 +195,22 @@ export function TattooIntro({
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              {galleryImages.map((item, index) => (
-                <div
-                  key={`${item.name}-${index}`}
-                  className="grid gap-3 rounded-lg bg-white p-3"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.alt || item.name}
-                    className="h-20 w-full rounded-lg object-cover"
-                  />
-                </div>
-              ))}
-            </div>
+            <>
+              {galleryImages.length > 1 && (
+                <SplitRevealSlider
+                  left={{
+                    image: galleryImages[0]?.image,
+                    alt: galleryImages[0]?.alt || "Before tattoo",
+                    name: galleryImages[0]?.name || "Avant",
+                  }}
+                  right={{
+                    image: galleryImages[1]?.image,
+                    alt: galleryImages[1]?.alt || "After tattoo",
+                    name: galleryImages[1]?.name || "Après",
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
       )}

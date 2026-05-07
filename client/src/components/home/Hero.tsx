@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { HeroSectionData } from "../../api/contentAPI";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
@@ -23,6 +24,20 @@ export function Hero({
   const updateField = (field: keyof HeroSectionData, value: string) => {
     onChange?.({ ...data, [field]: value });
   };
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <section className="flex flex-col gap-6 relative">
@@ -90,7 +105,7 @@ export function Hero({
                 </button>
               </div>
             </div>
-            {data.imageLeft && (
+            {data.imageLeft && !isMobile ? (
               <motion.img
                 src={data.imageLeft}
                 alt="Hero left"
@@ -99,23 +114,39 @@ export function Hero({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
               />
-            )}
+            ): ( <motion.img
+                src={data.imageLeft}
+                alt="Hero left"
+                className="object-cover"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+              />)}
           </div>
           <div className="flex flex-col tablet:flex-row tablet:col-span-2 gap-4 ">
             <RichTextContent
               html={data.poem}
               className="px-4 tablet:self-end tablet:mb-8 tablet:ml-22 laptop:self-center"
             />
-            {data.imageRight && (
+            {data.imageRight && !isMobile ? (
               <motion.img
                 src={data.imageRight}
                 alt="Hero right"
                 className="object-cover tablet:absolute tablet:right-0 tablet:top-0 tablet:w-1/3 tablet:max-w-[500px] laptop:max-w-[700px]"
                 initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
               />
-            )}
+            ) : ( <motion.img
+                src={data.imageRight}
+                alt="Hero right"
+                className="object-cover pb-22"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
+              />  )}
           </div>
         </div>
       )}

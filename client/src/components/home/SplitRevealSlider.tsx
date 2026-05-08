@@ -85,10 +85,10 @@ export function SplitRevealSlider({
   `;
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center px-8">
       <div
         ref={containerRef}
-        className="relative w-full w-[200px] h-[350px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-none"
+        className="relative w-full w-[200px] h-[500px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-none"
       >
         {/* LEFT IMAGE */}
         <div className="absolute inset-0">
@@ -158,7 +158,7 @@ export function SplitRevealSlider({
           {/* diagonal line */}
           <div className="relative h-full">
             {/* handle */}
-            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-brown">
+            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white">
             </div>
           </div>
         </div>

@@ -84,7 +84,7 @@ export function TattooIntro({
   console.log("Rendering TattooIntro with data:", data);
 
   return (
-    <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative">
+    <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative pb-22">
       {isEditing ? (
         <div className="grid gap-4">
           <EditorField

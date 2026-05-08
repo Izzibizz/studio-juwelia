@@ -30,6 +30,11 @@ export function SplitRevealSlider({
 
   const [isDragging, setIsDragging] = useState(false);
 
+  // mobile scroll helpers
+  const startXRef = useRef(0);
+  const startYRef = useRef(0);
+  const isHorizontalDragRef = useRef(false);
+
   const updatePosition = (clientX: number) => {
     if (!containerRef.current) return;
 
@@ -46,17 +51,46 @@ export function SplitRevealSlider({
 
   const handlePointerMove = (e: PointerEvent) => {
     if (!draggingRef.current) return;
+
+    const deltaX = e.clientX - startXRef.current;
+    const deltaY = e.clientY - startYRef.current;
+
+    // detect direction
+    if (!isHorizontalDragRef.current) {
+      // vertical scroll -> allow page scroll
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return;
+      }
+
+      // horizontal drag detected
+      if (Math.abs(deltaX) > 8) {
+        isHorizontalDragRef.current = true;
+      }
+    }
+
+    // only drag slider horizontally
+    if (!isHorizontalDragRef.current) return;
+
     updatePosition(e.clientX);
   };
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     setIsDragging(true);
     draggingRef.current = true;
+
+    startXRef.current = e.clientX;
+    startYRef.current = e.clientY;
+
+    isHorizontalDragRef.current = false;
   };
 
   const handlePointerUp = () => {
+    if (!draggingRef.current) return;
+
     setIsDragging(false);
     draggingRef.current = false;
+
+    isHorizontalDragRef.current = false;
 
     animate(divider, 50, {
       duration: 0.45,
@@ -64,6 +98,7 @@ export function SplitRevealSlider({
       onUpdate: (latest) => setDivider(latest),
     });
   };
+
   useEffect(() => {
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
@@ -88,7 +123,7 @@ export function SplitRevealSlider({
     <div className="w-full flex justify-center px-8">
       <div
         ref={containerRef}
-        className="relative w-full w-[200px] h-[500px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-none"
+        className="relative w-full w-[200px] h-[500px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-pan-y"
       >
         {/* LEFT IMAGE */}
         <div className="absolute inset-0">
@@ -158,8 +193,7 @@ export function SplitRevealSlider({
           {/* diagonal line */}
           <div className="relative h-full">
             {/* handle */}
-            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rotate-45 border-4 border-white">
-            </div>
+            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rotate-45 border-4 border-white"></div>
           </div>
         </div>
       </div>

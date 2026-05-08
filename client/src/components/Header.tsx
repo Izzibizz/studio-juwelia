@@ -162,7 +162,7 @@ export const Header: React.FC = () => {
        text-black  ${scrolled ? "bg-beige/85 h-[80px]" : "bg-none h-[100px]"} animate-fadeIn`}
     >
       <div
-        className="flex gap-6 laptop:gap-0 items-center cursor-pointer"
+        className="flex items-center cursor-pointer"
         onClick={() => logoClick()}
       >
         {" "}
@@ -178,7 +178,7 @@ export const Header: React.FC = () => {
           }`}
           alt="logo Juwelia icon"
         />
-        {!isMobile && (
+    {((isMobile && !smallerHeader) || !isMobile ) && (
           <img
             src={textLogo}
             className={` ${
@@ -187,7 +187,7 @@ export const Header: React.FC = () => {
             } ${
               smallerHeader
                 ? "w-[100px] transform transition-transform duration-200"
-                : "w-[170px] transform transition-transform duration-200"
+                : ` ${ isMobile ? "w-[100px]" : "w-[170px]"} transform transition-transform duration-200`
             }`}
             alt="Studio Juwelia logo text"
           />

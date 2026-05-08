@@ -120,7 +120,7 @@ export function TattooIntro({
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {data.imageGallery.map((item, index) => (
                 <div
-                  key={`${item.name}-${index}`}
+                  key={`${index}`}
                   draggable
                   onDragStart={() => handleDragStart(index)}
                   onDragOver={(e) => handleDragOver(e, index)}
@@ -195,7 +195,7 @@ export function TattooIntro({
               ))}
             </div>
           ) : (
-            <>
+            <div className="flex flex-col items-center gap-6">
               {galleryImages.length > 1 && (
                 <SplitRevealSlider
                   left={{
@@ -210,7 +210,8 @@ export function TattooIntro({
                   }}
                 />
               )}
-            </>
+              <p>Glissez pour révéler l’illustration et le tatouage final</p>
+            </div>
           )}
         </div>
       )}

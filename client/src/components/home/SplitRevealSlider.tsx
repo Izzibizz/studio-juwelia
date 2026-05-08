@@ -158,7 +158,7 @@ export function SplitRevealSlider({
           {/* diagonal line */}
           <div className="relative h-full">
             {/* handle */}
-            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white">
+            <div className="absolute top-1/2 left-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rotate-45 border-4 border-white">
             </div>
           </div>
         </div>

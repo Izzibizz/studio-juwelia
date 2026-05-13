@@ -131,21 +131,28 @@ export const HomePage: React.FC = () => {
     }));
   };
 
-  const uploadAboutImage = async (index: number, field: string, file: File) => {
+  const uploadAboutImage = async (
+    index: number,
+    field: string,
+    file: File,
+    type: "values" | "profile",
+  ) => {
     const imageUrl = await uploadSingleImage(file, `${field}-${index + 1}`);
+
     const nextContent = {
       ...content,
       aboutIntro: {
         ...content.aboutIntro,
-        items: content.aboutIntro.items.map((item, itemIndex) =>
-          itemIndex === index ? { ...item, [field]: imageUrl } : item,
-        ),
+        [type]: {
+          ...content.aboutIntro[type],
+          [field]: imageUrl,
+        },
       },
     };
+
     setContent(nextContent);
     await saveHomePageContent(nextContent);
   };
-
   useEffect(() => {
     const run = async () => {
       try {
@@ -217,36 +224,6 @@ export const HomePage: React.FC = () => {
         isEditing={isAuthenticated && isEditMode}
         onChange={(aboutIntro) =>
           setContent((current) => ({ ...current, aboutIntro }))
-        }
-        onAddItem={() =>
-          setContent((current) => ({
-            ...current,
-            aboutIntro: {
-              ...current.aboutIntro,
-              items: [
-                ...current.aboutIntro.items,
-                {
-                  title: "",
-                  description: "",
-                  ctaText: "",
-                  ctaLink: "",
-                  illustrationImage: "",
-                  valuesImage: "",
-                },
-              ],
-            },
-          }))
-        }
-        onRemoveItem={(index) =>
-          setContent((current) => ({
-            ...current,
-            aboutIntro: {
-              ...current.aboutIntro,
-              items: current.aboutIntro.items.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            },
-          }))
         }
         onUploadImage={uploadAboutImage}
       />

@@ -76,10 +76,13 @@ export interface ProfileIntroItem {
   ctaText: PlainText;
   ctaLink: PlainText;
   image: PlainText;
+  listTitle: string;
+  list: string[];
 }
 
 export interface AboutIntroData {
-  items: Array<ValuesIntroItem | ProfileIntroItem>;
+  values: ValuesIntroItem;
+  profile: ProfileIntroItem;
 }
 
 export interface ContactFormSectionData {
@@ -292,7 +295,21 @@ export const defaultHomeContent: HomePageContent = {
     imageGallery: [],
   },
   aboutIntro: {
-    items: [],
+    values: {
+      title: "",
+      description: "",
+      ctaText: "",
+      ctaLink: "",
+      illustrationImage: "",
+      valuesImage: "",
+    },
+    profile: {
+      title: "",
+      description: "",
+      ctaText: "",
+      ctaLink: "",
+      image: "",
+    },
   },
   contactForm: {
     title: "",
@@ -347,10 +364,15 @@ const mergeHomeContent = (
       ...base.aboutIntro,
       ...(sharedData?.aboutIntro || {}),
       ...(pageData?.aboutIntro || {}),
-      items:
-        pageData?.aboutIntro?.items ||
-        sharedData?.aboutIntro?.items ||
-        base.aboutIntro.items,
+      values:
+        pageData?.aboutIntro?.values ||
+        sharedData?.aboutIntro?.values ||
+        base.aboutIntro.values,
+
+      profile:
+        pageData?.aboutIntro?.profile ||
+        sharedData?.aboutIntro?.profile ||
+        base.aboutIntro.profile,
     },
     contactForm: {
       ...base.contactForm,

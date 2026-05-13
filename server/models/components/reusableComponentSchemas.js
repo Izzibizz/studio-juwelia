@@ -78,14 +78,16 @@ const profileIntroSchema = new mongoose.Schema(
     description: richTextHtmlField(),
     ctaText: plainTextField(),
     ctaLink: plainTextField(),
-    image: plainTextField(),
+    listTitle: plainTextField(),
+    list: { type: [String], default: [] },
   },
   { _id: false },
 );
 
 const aboutIntroSchema = new mongoose.Schema(
   {
-    items: { type: [valuesSchema, profileIntroSchema], default: [] },
+    values: valuesSchema,
+    profile: profileIntroSchema,
   },
   { _id: false },
 );

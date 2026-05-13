@@ -96,7 +96,6 @@ export function TattooIntro({
     setDragOverIndex(null);
   };
 
-  console.log("Rendering TattooIntro with data:", data);
 
   return (
     <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative pb-22">

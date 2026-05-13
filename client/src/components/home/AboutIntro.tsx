@@ -1,149 +1,169 @@
-import type { AboutIntroData } from "../../api/contentAPI";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import type {
+  AboutIntroData,
+  ValuesIntroItem,
+  ProfileIntroItem,
+} from "../../api/contentAPI";
+
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
-import { InlineUploadButton } from "./InlineUploadButton";
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface AboutIntroProps {
   data: AboutIntroData;
   isEditing?: boolean;
   onChange?: (nextData: AboutIntroData) => void;
-  onAddItem?: () => void;
-  onRemoveItem?: (index: number) => void;
-  onUploadImage?: (index: number, field: string, file: File) => Promise<void>;
+
+  onAddValueItem?: () => void;
+  onRemoveValueItem?: (index: number) => void;
+
+  onAddProfileItem?: () => void;
+  onRemoveProfileItem?: (index: number) => void;
+
+  onUploadImage?: (
+    index: number,
+    field: string,
+    file: File,
+    type: "values" | "profile",
+  ) => Promise<void>;
 }
 
 export function AboutIntro({
   data,
   isEditing = false,
   onChange,
-  onAddItem,
-  onRemoveItem,
   onUploadImage,
 }: AboutIntroProps) {
-  const updateItem = (index: number, field: string, value: string) => {
+  const updateValues = <K extends keyof ValuesIntroItem>(
+    field: K,
+    value: ValuesIntroItem[K],
+  ) => {
     onChange?.({
       ...data,
-      items: data.items.map((item, itemIndex) =>
-        itemIndex === index ? { ...item, [field]: value } : item,
-      ),
+      values: {
+        ...data.values,
+        [field]: value,
+      },
     });
   };
 
-  const getFieldValue = (
-    item: AboutIntroData["items"][number],
-    field: string,
-  ) => (item as unknown as { [key: string]: string | undefined })[field] || "";
+  const updateProfile = <K extends keyof ProfileIntroItem>(
+    field: K,
+    value: ProfileIntroItem[K],
+  ) => {
+    onChange?.({
+      ...data,
+      profile: {
+        ...data.profile,
+        [field]: value,
+      },
+    });
+  };
+
+  console.log("AboutIntro data:", data);
 
   return (
-    <section className="rounded-2xl p-6 md:p-8 bg-beige border border-[#e7dfd5]">
-      <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-4">
-        A propos
-      </h2>
-      {isEditing && onAddItem && (
-        <div className="mb-4 flex justify-end">
-          <button
-            type="button"
-            onClick={onAddItem}
-            className="inline-flex items-center gap-2 rounded-full border border-darkBrown px-4 py-2 text-sm font-semibold text-darkBrown transition hover:bg-darkBrown hover:text-white"
-          >
-            <FiPlus size={16} />
-            Add item
-          </button>
-        </div>
-      )}
-      {data.items.length === 0 && (
-        <p className="text-brown">
-          Aucun contenu configure pour cette section.
-        </p>
-      )}
-      <div className="grid gap-4">
-        {data.items.map((item, index) => (
-          <article
-            key={`${item.title}-${index}`}
-            className="rounded-xl border border-[#efe7dc] bg-white p-4"
-          >
-            {isEditing ? (
-              <div className="grid gap-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-darkBrown">
-                    About item {index + 1}
-                  </span>
-                  {onRemoveItem && (
-                    <button
-                      type="button"
-                      onClick={() => onRemoveItem(index)}
-                      className="text-darkRed transition hover:opacity-70"
-                    >
-                      <FiTrash2 size={16} />
-                    </button>
-                  )}
-                </div>
-                <EditorField
-                  type="plain"
-                  label="Title"
-                  value={item.title}
-                  onChange={(value) => updateItem(index, "title", value)}
-                />
-                <EditorField
-                  type="rich"
-                  label="Description"
-                  value={item.description}
-                  onChange={(value) => updateItem(index, "description", value)}
-                />
-                <EditorField
-                  type="plain"
-                  label="CTA text"
-                  value={item.ctaText}
-                  onChange={(value) => updateItem(index, "ctaText", value)}
-                />
-                <EditorField
-                  type="plain"
-                  label="CTA link"
-                  value={getFieldValue(item, "ctaLink")}
-                  onChange={(value) => updateItem(index, "ctaLink", value)}
-                />
-                {["image", "illustrationImage", "valuesImage"].map((field) => (
-                  <div
-                    key={field}
-                    className="grid gap-3 rounded-xl border border-[#efe7dc] bg-[#f8f4ee] p-3"
-                  >
-                    {getFieldValue(item, field) ? (
-                      <img
-                        src={getFieldValue(item, field)}
-                        alt={`${field} ${index + 1}`}
-                        className="h-24 w-full rounded-xl object-cover"
-                      />
-                    ) : null}
-                    <EditorField
-                      type="plain"
-                      label={field}
-                      value={getFieldValue(item, field)}
-                      onChange={(value) => updateItem(index, field, value)}
-                    />
-                    {onUploadImage && (
-                      <InlineUploadButton
-                        label={`Upload ${field}`}
-                        onUpload={(file) => onUploadImage(index, field, file)}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <>
-                <h3 className="text-lg font-semibold text-darkBrown mb-2">
-                  {item.title}
-                </h3>
-                <RichTextContent
-                  html={item.description}
-                  className="text-brownBlack mb-3"
-                />
-                <p className="text-darkRed font-semibold">{item.ctaText}</p>
-              </>
+    <section className="p-6 bg-beige rounded-2xl">
+
+      {/* VALUES */}
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4">Values</h3>
+
+        {isEditing ? (
+          <>
+            <EditorField
+              type="plain"
+              label="Title"
+              value={data.values.title}
+              onChange={(v) => updateValues("title", v)}
+            />
+
+            <EditorField
+              type="rich"
+              label="Description"
+              value={data.values.description}
+              onChange={(v) => updateValues("description", v)}
+            />
+
+            <EditorField
+              type="plain"
+              label="CTA"
+              value={data.values.ctaText}
+              onChange={(v) => updateValues("ctaText", v)}
+            />
+
+            <EditorField
+              type="plain"
+              label="Link"
+              value={data.values.ctaLink}
+              onChange={(v) => updateValues("ctaLink", v)}
+            />
+
+            <EditorField
+              type="plain"
+              label="Illustration"
+              value={data.values.illustrationImage}
+              onChange={(v) => updateValues("illustrationImage", v)}
+            />
+
+            {onUploadImage && (
+              <ImageUploadDropzone
+                label="Upload illustration"
+                onUpload={(file) =>
+                  onUploadImage(0, "illustrationImage", file, "values")
+                }
+              />
             )}
-          </article>
-        ))}
+          </>
+        ) : (
+          <>
+            <h4>{data.values.title}</h4>
+            <RichTextContent html={data.values.description} />
+          </>
+        )}
+      </div>
+
+      {/* PROFILE */}
+      <div>
+        <h3 className="text-xl font-bold mb-4">Profile</h3>
+
+        {isEditing ? (
+          <>
+            <EditorField
+              type="plain"
+              label="Title"
+              value={data.profile.title}
+              onChange={(v) => updateProfile("title", v)}
+            />
+
+            <EditorField
+              type="rich"
+              label="Description"
+              value={data.profile.description}
+              onChange={(v) => updateProfile("description", v)}
+            />
+
+            <EditorField
+              type="plain"
+              label="Image"
+              value={data.profile.image}
+              onChange={(v) => updateProfile("image", v)}
+            />
+
+            {onUploadImage && (
+              <ImageUploadDropzone
+                label="Upload image"
+                onUpload={(file) =>
+                  onUploadImage(0, "image", file, "profile")
+                }
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <h4>{data.profile.title}</h4>
+            <RichTextContent html={data.profile.description} />
+          </>
+        )}
       </div>
     </section>
   );

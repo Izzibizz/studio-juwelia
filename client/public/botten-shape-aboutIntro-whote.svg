@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712.7 125.09">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fefaf0;
+      }
+
+      .cls-2 {
+        fill: #fefefe;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M435.13,122.02c94.17,2.35,185.11-11.42,277.56-26.79v29.59s-698.98.27-698.98.27v-49.54c36.81-.95,366.35,45.09,421.43,46.47Z"/>
+  <path class="cls-2" d="M698.99,52.22v1.03s-686.26,0-686.26,0c.03-.27.14-.69,1.02-.74l685.24-.29Z"/>
+  <path class="cls-2" d="M0,.74v-.74h.75c-.22.27-.47.52-.75.74Z"/>
+  <path class="cls-2" d="M.75,53.25h-.75v-.75c.36.1.65.43.75.75Z"/>
+</svg>

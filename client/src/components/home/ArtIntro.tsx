@@ -92,7 +92,7 @@ export function ArtIntro({
       id="artIntro"
       className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative pt-14 laptop:pt-0 pb-[100px] laptop:pb-[350px]"
     >
-      <div className="w-11/12 laptop:w-9/12 mx-auto">
+      <div className="w-11/12 laptop:w-8/12 mx-auto">
         {isEditing ? (
           <div className="grid gap-4">
             <EditorField
@@ -132,9 +132,12 @@ export function ArtIntro({
                 html={data.description}
                 className=" mb-5 tablet:max-w-[500px] self-end"
               />
-              <button className="px-5 py-3 rounded-full border border-warmWhite text-warmWhite font-semibold transition cursor-pointer hover:scale-105">
-                <NavLink to="/oeuvres">{data.ctaText}</NavLink>
-              </button>
+              <NavLink
+                to="/oeuvres"
+                className="px-5 py-3 rounded-full border border-warmWhite text-warmWhite font-semibold transition cursor-pointer hover:scale-105"
+              >
+                {data.ctaText}
+              </NavLink>
             </div>
           </motion.section>
         )}

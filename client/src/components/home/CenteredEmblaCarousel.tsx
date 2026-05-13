@@ -178,12 +178,12 @@ export function CenteredEmblaGallery({
                       backfaceVisibility: "hidden",
                       transform: "translateZ(0)",
                     }}
-                    className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl"
+                    className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl hover:scale-105 transition-transform duration-300"
                   >
                     <img
                       src={item.image}
                       alt={item.alt || item.name || ""}
-                      className="w-full h-full object-cover cursor-pointer"
+                      className="w-full h-full object-cover cursor-pointer "
                       draggable={false}
                     />
                   </motion.div>

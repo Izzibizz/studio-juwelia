@@ -30,6 +30,9 @@ export function SplitRevealSlider({
 
   const [isDragging, setIsDragging] = useState(false);
 
+  const leftOpacity = Math.max(0, (70 - divider) / 20);
+  const rightOpacity = Math.max(0, (divider - 30) / 20);
+
   // mobile scroll helpers
   const startXRef = useRef(0);
   const startYRef = useRef(0);
@@ -123,7 +126,7 @@ export function SplitRevealSlider({
     <div className="w-full flex justify-center">
       <div
         ref={containerRef}
-        className="relative w-full w-[200px] h-[500px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-pan-y"
+        className="relative w-full w-[200px] h-[500px] laptop:w-[400px] laptop:h-[650px] overflow-hidden rounded-3xl select-none touch-pan-y"
       >
         {/* LEFT IMAGE */}
         <div className="absolute inset-0">
@@ -142,9 +145,15 @@ export function SplitRevealSlider({
           </button>
 
           {left.name && (
-            <div className="absolute bottom-4 left-4 rounded-full bg-brown/40 px-4 py-2 text-sm text-white">
+            <motion.div
+              animate={{
+                opacity: rightOpacity,
+              }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-4 left-4 rounded-full bg-brown/40 px-4 py-2 text-sm text-white"
+            >
               {left.name}
-            </div>
+            </motion.div>
           )}
         </div>
 
@@ -175,9 +184,15 @@ export function SplitRevealSlider({
           </button>
 
           {right.name && (
-            <div className="absolute bottom-4 right-4 rounded-full bg-brown/40 px-4 py-2 text-sm text-white">
+            <motion.div
+              animate={{
+                opacity: leftOpacity,
+              }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-4 right-4 rounded-full bg-brown/40 px-4 py-2 text-sm text-white"
+            >
               {right.name}
-            </div>
+            </motion.div>
           )}
         </motion.div>
 

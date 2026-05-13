@@ -36,7 +36,7 @@ export function AboutIntro({
   ) => (item as unknown as { [key: string]: string | undefined })[field] || "";
 
   return (
-    <section className="rounded-2xl p-6 md:p-8 bg-warmWhite border border-[#e7dfd5]">
+    <section className="rounded-2xl p-6 md:p-8 bg-beige border border-[#e7dfd5]">
       <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-4">
         A propos
       </h2>

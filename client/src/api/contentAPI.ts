@@ -44,6 +44,7 @@ export interface TechniqueCategory {
 
 export interface GalleryIntroSectionData {
   title: PlainText;
+  subtitle?: RichTextHtml;
   description: RichTextHtml;
   ctaText: PlainText;
   imageGallery: ImageGalleryItemData[];
@@ -285,6 +286,7 @@ export const defaultHomeContent: HomePageContent = {
   },
   tattooIntro: {
     title: "",
+    subtitle: "",
     description: "",
     ctaText: "",
     imageGallery: [],

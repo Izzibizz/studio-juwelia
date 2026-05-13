@@ -6,6 +6,7 @@ import { Footer } from "./components/Footer";
 import { LogoutPopup } from "./components/LogoutPopup";
 import AppRoutes from "./routes/AppRoutes";
 import { useAuthStore } from "./stores/authStore";
+import ScrollToTop from "./components/ScrollToTopp";
 
 function App() {
   const {
@@ -32,8 +33,11 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Header />
-      <main className={`flex-grow ${"pt-[130px]"} min-h-[97vh] max-w-screen overflow-hidden`}>
+      <main
+        className={`flex-grow ${"pt-[130px]"} min-h-[97vh] max-w-screen overflow-hidden`}
+      >
         <AppRoutes />
       </main>
       <Footer />

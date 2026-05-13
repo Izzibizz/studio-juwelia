@@ -324,7 +324,7 @@ export function AboutIntro({
         <img
           src={data.profile.decorImage}
           alt="decor"
-          className="absolute bottom-0 right-[-50px] w-[600px] h-auto object-cover"
+          className="laptop:absolute bottom-0 right-[-50px] w-[600px] h-auto object-cover"
         />
       )}
 

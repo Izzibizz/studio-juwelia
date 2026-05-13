@@ -7,17 +7,12 @@ import type {
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 
 interface AboutIntroProps {
   data: AboutIntroData;
   isEditing?: boolean;
-  onChange?: (nextData: AboutIntroData) => void;
-
-  onAddValueItem?: () => void;
-  onRemoveValueItem?: (index: number) => void;
-
-  onAddProfileItem?: () => void;
-  onRemoveProfileItem?: (index: number) => void;
+  onChange?: (next: AboutIntroData) => void;
 
   onUploadImage?: (
     index: number,
@@ -59,112 +54,259 @@ export function AboutIntro({
     });
   };
 
-  console.log("AboutIntro data:", data);
+  // LIST HELPERS
+  const updateList = (list: string[]) => {
+    onChange?.({
+      ...data,
+      profile: {
+        ...data.profile,
+        list,
+      },
+    });
+  };
 
+  const addListItem = () => {
+    updateList([...(data.profile.list ?? []), ""]);
+  };
+
+  const updateListItem = (index: number, value: string) => {
+    const next = [...(data.profile.list ?? [])];
+    next[index] = value;
+    updateList(next);
+  };
+
+  const removeListItem = (index: number) => {
+    updateList((data.profile.list ?? []).filter((_, i) => i !== index));
+  };
+
+  console.log("AboutIntro render", { data });
   return (
-    <section className="p-6 bg-beige rounded-2xl">
-
-      {/* VALUES */}
-      <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4">Values</h3>
-
-        {isEditing ? (
-          <>
-            <EditorField
-              type="plain"
-              label="Title"
-              value={data.values.title}
-              onChange={(v) => updateValues("title", v)}
-            />
-
-            <EditorField
-              type="rich"
-              label="Description"
-              value={data.values.description}
-              onChange={(v) => updateValues("description", v)}
-            />
-
-            <EditorField
-              type="plain"
-              label="CTA"
-              value={data.values.ctaText}
-              onChange={(v) => updateValues("ctaText", v)}
-            />
-
-            <EditorField
-              type="plain"
-              label="Link"
-              value={data.values.ctaLink}
-              onChange={(v) => updateValues("ctaLink", v)}
-            />
-
-            <EditorField
-              type="plain"
-              label="Illustration"
-              value={data.values.illustrationImage}
-              onChange={(v) => updateValues("illustrationImage", v)}
-            />
-
-            {onUploadImage && (
-              <ImageUploadDropzone
-                label="Upload illustration"
-                onUpload={(file) =>
-                  onUploadImage(0, "illustrationImage", file, "values")
-                }
+    <section className="p-6 bg-beige rounded-2xl space-y-10 relative pb-20 laptop:pb-38">
+      <div className="w-11/12 mx-auto laptop:w-7/12 flex flex-col gap-6 laptop:gap-38">
+        <img
+          src={data.values.valuesImage}
+          alt="Values illustration"
+          className="w-full h-auto laptop:absolute top-10 left-[-130px] max-w-[600px] max-h-[700px] object-cover rounded-lg"
+        />
+        {/* ================= VALUES ================= */}
+        <div>
+          {isEditing ? (
+            <>
+              <EditorField
+                type="plain"
+                label="Title"
+                value={data.values.title}
+                onChange={(v) => updateValues("title", v)}
               />
-            )}
-          </>
-        ) : (
-          <>
-            <h4>{data.values.title}</h4>
-            <RichTextContent html={data.values.description} />
-          </>
-        )}
-      </div>
 
-      {/* PROFILE */}
-      <div>
-        <h3 className="text-xl font-bold mb-4">Profile</h3>
-
-        {isEditing ? (
-          <>
-            <EditorField
-              type="plain"
-              label="Title"
-              value={data.profile.title}
-              onChange={(v) => updateProfile("title", v)}
-            />
-
-            <EditorField
-              type="rich"
-              label="Description"
-              value={data.profile.description}
-              onChange={(v) => updateProfile("description", v)}
-            />
-
-            <EditorField
-              type="plain"
-              label="Image"
-              value={data.profile.image}
-              onChange={(v) => updateProfile("image", v)}
-            />
-
-            {onUploadImage && (
-              <ImageUploadDropzone
-                label="Upload image"
-                onUpload={(file) =>
-                  onUploadImage(0, "image", file, "profile")
-                }
+              <EditorField
+                type="rich"
+                label="Description"
+                value={data.values.description}
+                onChange={(v) => updateValues("description", v)}
               />
-            )}
-          </>
-        ) : (
-          <>
-            <h4>{data.profile.title}</h4>
-            <RichTextContent html={data.profile.description} />
-          </>
-        )}
+
+              <EditorField
+                type="plain"
+                label="CTA text"
+                value={data.values.ctaText}
+                onChange={(v) => updateValues("ctaText", v)}
+              />
+
+              <EditorField
+                type="plain"
+                label="CTA link"
+                value={data.values.ctaLink}
+                onChange={(v) => updateValues("ctaLink", v)}
+              />
+
+              {/* ================= VALUES IMAGE (NEW) ================= */}
+              <div className="space-y-2 mt-4">
+                <EditorField
+                  type="plain"
+                  label="Values Image URL"
+                  value={data.values.valuesImage}
+                  onChange={(v) => updateValues("valuesImage", v)}
+                />
+
+                {data.values.valuesImage && (
+                  <img
+                    src={data.values.valuesImage}
+                    alt="values"
+                    className="w-full max-h-48 object-cover rounded-lg"
+                  />
+                )}
+
+                {onUploadImage && (
+                  <ImageUploadDropzone
+                    label="Upload values image"
+                    onUpload={(file) =>
+                      onUploadImage(0, "valuesImage", file, "values")
+                    }
+                  />
+                )}
+              </div>
+
+              {/* ================= ILLUSTRATION IMAGE ================= */}
+              <div className="space-y-2 mt-4 flex flex-col">
+                <EditorField
+                  type="plain"
+                  label="Illustration image URL"
+                  value={data.values.illustrationImage}
+                  onChange={(v) => updateValues("illustrationImage", v)}
+                />
+
+                {data.values.illustrationImage && (
+                  <img
+                    src={data.values.illustrationImage}
+                    alt="illustration"
+                    className="w-full max-h-[500px] max-w-[400px] self-center object-cover rounded-lg"
+                  />
+                )}
+
+                {onUploadImage && (
+                  <ImageUploadDropzone
+                    label="Upload illustration"
+                    onUpload={(file) =>
+                      onUploadImage(0, "illustrationImage", file, "values")
+                    }
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col laptop:flex-row laptop:justify-between gap-6">
+              <div className="flex flex-col gap-6">
+                <h4 className="font-tropical text-4xl">{data.values.title}</h4>
+                <RichTextContent
+                  html={data.values.description}
+                  className="laptop:max-w-[400px]"
+                />
+              </div>
+              <img
+                src={data.values.illustrationImage}
+                alt="illustration"
+                className="w-full max-h-[500px] max-w-[400px] self-center object-cover rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* ================= PROFILE ================= */}
+        <div>
+          {isEditing ? (
+            <div className="space-y-4">
+              <EditorField
+                type="plain"
+                label="Title"
+                value={data.profile.title}
+                onChange={(v) => updateProfile("title", v)}
+              />
+
+              <EditorField
+                type="rich"
+                label="Description"
+                value={data.profile.description}
+                onChange={(v) => updateProfile("description", v)}
+              />
+
+              <EditorField
+                type="plain"
+                label="Image"
+                value={data.profile.image}
+                onChange={(v) => updateProfile("image", v)}
+              />
+
+              <EditorField
+                type="plain"
+                label="List title"
+                value={data.profile.listTitle}
+                onChange={(v) => updateProfile("listTitle", v)}
+              />
+              {/* ================= LIST ================= */}
+              <div className="mt-6">
+                {(data.profile.list ?? []).map((item, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      className="flex-1 border p-2 rounded"
+                      value={item}
+                      onChange={(e) => updateListItem(index, e.target.value)}
+                    />
+
+                    <button
+                      onClick={() => removeListItem(index)}
+                      className="text-red-500"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                ))}
+                <div className="flex justify-between items-center mb-2">
+                  <button
+                    onClick={addListItem}
+                    className="flex items-center gap-1 text-sm border rounded-4xl px-4 py-2 my-8 cursor-pointer hover:scale-105 transition"
+                  >
+                    <FiPlus /> Add list item
+                  </button>
+                </div>
+                {data.profile.image && (
+                  <img
+                    src={data.profile.image}
+                    alt="profile"
+                    className="w-full max-h-[700px] max-w-[600px] object-cover rounded-lg"
+                  />
+                )}
+
+                {onUploadImage && (
+                  <ImageUploadDropzone
+                    label="Upload profile image"
+                    onUpload={(file) =>
+                      onUploadImage(0, "image", file, "profile")
+                    }
+                  />
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col laptop:flex-row gap-6 laptop:gap-12">
+              <img
+                src={data.profile.image}
+                alt="portrait Juwelia Joelle artiste"
+                className="w-full max-w-[400px] self-center object-cover rounded-lg"
+              />
+              <div className="flex flex-col gap-4">
+                <h4 className="font-tropical text-4xl">{data.profile.title}</h4>
+                <RichTextContent html={data.profile.description} className="max-w-[400px]"/>
+
+                {(data.profile.list?.length ?? 0) > 0 && (
+                  <div className="mt-4">
+                    <h5 className="font-semibold mb-2">
+                      {data.profile.listTitle}
+                    </h5>
+
+                    <ul className="list-disc ml-5">
+                      {data.profile.list.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+      <svg
+        viewBox="0 0 712.7 125.09"
+        className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto block"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M435.13,122.02c94.17,2.35,185.11-11.42,277.56-26.79v29.86H0V75.48c36.81-.95,366.35,45.09,421.43,46.47Z"
+          fill="#fefaf0"
+        />
+      </svg>
     </section>
   );
 }

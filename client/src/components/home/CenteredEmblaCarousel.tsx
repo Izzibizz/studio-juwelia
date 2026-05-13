@@ -178,7 +178,7 @@ export function CenteredEmblaGallery({
                       backfaceVisibility: "hidden",
                       transform: "translateZ(0)",
                     }}
-                    className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl hover:scale-105 transition-transform duration-300"
+                    className="w-[200px] laptop:w-[250px] h-[300px] laptop:h-[360px] rounded-xl overflow-hidden shadow-xl"
                   >
                     <img
                       src={item.image}

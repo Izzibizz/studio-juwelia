@@ -92,7 +92,7 @@ export function ArtIntro({
       id="artIntro"
       className="bg-darkBrown text-warmWhite flex flex-col gap-6 relative pt-14 laptop:pt-0 pb-[100px] laptop:pb-[350px]"
     >
-      <div className="w-11/12 laptop:w-8/12 mx-auto">
+      <div className="w-11/12 laptop:w-7/12 mx-auto">
         {isEditing ? (
           <div className="grid gap-4">
             <EditorField

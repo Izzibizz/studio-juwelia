@@ -36,7 +36,7 @@ export function TestimonialsSection({
   };
 
   return (
-    <section className="rounded-2xl p-6 md:p-8 bg-warmWhite border border-[#e7dfd5]">
+    <section className="p-6 md:p-8 bg-lightCream">
       {isEditing ? (
         <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
           <EditorField

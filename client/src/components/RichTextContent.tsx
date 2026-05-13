@@ -13,7 +13,7 @@ export function RichTextContent({
 
   return (
     <div
-      className={`[&_p]:mb-6 ${className}`}
+      className={`[&_p]:mb-4 ${className}`}
       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
     />
   );

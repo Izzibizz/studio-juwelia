@@ -320,24 +320,24 @@ export const Header: React.FC = () => {
             <li className="relative ml-12" ref={languageRef}>
               <button
                 onClick={toggleLanguageDropdown}
-                className="flex items-center gap-2 hover:scale-105 transform transition-transform duration-100 text-2xl"
+                className="flex items-center gap-2 hover:scale-105 transform transition-transform duration-100 text-2xl cursor-pointer"
               >
-                {isEnglish ? <RiEnglishInput /> : <img src={Fr} alt="Français" className="w-7 h-7" />}
+                {isEnglish ? <RiEnglishInput /> : <img src={Fr} alt="Français" className="w-7 h-7 " />}
                 <span className="text-sm">
                   <IoIosArrowDown />
                 </span>
               </button>
               {languageDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-32 bg-beige border border-gray-300 rounded shadow-lg z-80">
+                <div className="absolute right-0 mt-2 w-34 bg-beige border border-gray-300 rounded shadow-lg z-80">
                   <button
                     onClick={() => {
                       setIsEnglish(false);
                       setLanguageDropdownOpen(false);
                     }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
+                    className="flex items-center gap-2 w-full px-4 py-4 text-left hover:bg-gray-100 cursor-pointer"
                   >
                     <>
-                      <img src={Fr} alt="Français" className="w-7 h-7" />{" "}
+                      <img src={Fr} alt="Français" className="w-6 h-6" />{" "}
                       Français
                     </>
                   </button>
@@ -346,7 +346,7 @@ export const Header: React.FC = () => {
                       setIsEnglish(true);
                       setLanguageDropdownOpen(false);
                     }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
+                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100 cursor-pointer"
                   >
                     <RiEnglishInput /> English
                   </button>

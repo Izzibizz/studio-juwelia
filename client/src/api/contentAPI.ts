@@ -309,6 +309,8 @@ export const defaultHomeContent: HomePageContent = {
       ctaText: "",
       ctaLink: "",
       image: "",
+      listTitle: "",
+      list: [],
     },
   },
   contactForm: {

@@ -78,6 +78,8 @@ const profileIntroSchema = new mongoose.Schema(
     description: richTextHtmlField(),
     ctaText: plainTextField(),
     ctaLink: plainTextField(),
+    profileImage: plainTextField(),
+    decorImage: plainTextField(),
     listTitle: plainTextField(),
     list: { type: [String], default: [] },
   },

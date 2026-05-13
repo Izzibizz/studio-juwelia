@@ -153,7 +153,7 @@ export const HomePage: React.FC = () => {
     setContent(nextContent);
     await saveHomePageContent(nextContent);
   };
-  
+
   useEffect(() => {
     const run = async () => {
       try {

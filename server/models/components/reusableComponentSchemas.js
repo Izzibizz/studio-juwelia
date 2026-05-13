@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const plainTextField = (required = true) => ({
+const plainTextField = () => ({
   type: String,
-  required,
+  default: "",
   trim: true,
 });
 

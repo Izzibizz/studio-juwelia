@@ -75,7 +75,8 @@ export interface ProfileIntroItem {
   description: RichTextHtml;
   ctaText: PlainText;
   ctaLink: PlainText;
-  image: PlainText;
+  profileImage: PlainText;
+  decorImage: PlainText;
   listTitle: string;
   list: string[];
 }
@@ -308,7 +309,8 @@ export const defaultHomeContent: HomePageContent = {
       description: "",
       ctaText: "",
       ctaLink: "",
-      image: "",
+      profileImage: "",
+      decorImage: "",
       listTitle: "",
       list: [],
     },

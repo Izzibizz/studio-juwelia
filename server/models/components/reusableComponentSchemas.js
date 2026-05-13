@@ -55,6 +55,7 @@ const paintingsIntroSchema = new mongoose.Schema({
 
 const tattoosIntroSchema = new mongoose.Schema({
   title: plainTextField(),
+  subtitle: richTextHtmlField(),
   description: richTextHtmlField(),
   ctaText: plainTextField(),
   imageGallery: { type: [imageGalleryItemSchema], default: [] },

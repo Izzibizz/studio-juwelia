@@ -120,7 +120,7 @@ export function SplitRevealSlider({
   `;
 
   return (
-    <div className="w-full flex justify-center px-8">
+    <div className="w-full flex justify-center">
       <div
         ref={containerRef}
         className="relative w-full w-[200px] h-[500px] laptop:w-[500px] laptop:h-[750px] overflow-hidden rounded-3xl select-none touch-pan-y"

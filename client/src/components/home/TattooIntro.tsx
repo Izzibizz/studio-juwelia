@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { GalleryIntroSectionData } from "../../api/contentAPI";
 import {  FiTrash2 } from "react-icons/fi";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
 import { SplitRevealSlider } from "./SplitRevealSlider";
+import { NavLink } from "react-router-dom";
 
 interface TattooIntroProps {
   data: GalleryIntroSectionData;
@@ -24,6 +25,7 @@ export function TattooIntro({
 }: TattooIntroProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1280);
 
   const galleryImages = useMemo(
     () => data.imageGallery.filter((item) => Boolean(item.image)),
@@ -53,6 +55,13 @@ export function TattooIntro({
     newGallery.splice(toIndex, 0, movedItem);
     onChange?.({ ...data, imageGallery: newGallery });
   };
+
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 1280);
+  
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
@@ -85,6 +94,7 @@ export function TattooIntro({
 
   return (
     <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative pb-22">
+      <div className={`${isEditing || isMobile ? "flex-col w-10/12 my-24" : "flex-row w-9/12 justify-between my-32"} mx-auto flex`}>
       {isEditing ? (
         <div className="grid gap-4">
           <EditorField
@@ -107,11 +117,13 @@ export function TattooIntro({
           />
         </div>
       ) : (
-        <>
+        <div className="flex flex-col">
           <h2 className="text-2xl md:text-3xl font-bold mb-3">{data.title}</h2>
           <RichTextContent html={data.description} className="mb-5" />
-          <p className=" font-semibold">{data.ctaText}</p>
-        </>
+           <button className="px-5 py-3 rounded-full w-fit border border-warmWhite text-warmWhite font-semibold transition cursor-pointer hover:scale-105">
+                <NavLink to="/tatouages">{data.ctaText}</NavLink>
+              </button>
+        </div>
       )}
 
       {(data.imageGallery.length > 0 || isEditing) && (
@@ -215,6 +227,7 @@ export function TattooIntro({
           )}
         </div>
       )}
+      </div>
     </section>
   );
 }

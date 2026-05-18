@@ -418,7 +418,7 @@ export const Tattoos: React.FC = () => {
   console.log("Current tattoos page content:", content);
 
   return (
-    <section className="flex flex-col gap-16 py-12 animate-fadeIn">
+    <section className="flex flex-col py-12 animate-fadeIn">
       {isAuthenticated && isEditMode ? (
         <div className="grid gap-10">
           <ContentSectionEditor

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { randomUUID } = require("crypto");
 
 const plainTextField = () => ({
   type: String,
@@ -29,6 +30,10 @@ const heroSchema = new mongoose.Schema(
 
 const imageGalleryItemSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      default: randomUUID,
+    },
     image: plainTextField(),
     alt: plainTextField(),
     name: plainTextField(),

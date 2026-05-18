@@ -259,7 +259,7 @@ export const HomePage: React.FC = () => {
   }
 
   return (
-    <section className="flex flex-col py-8 md:py-10 animate-fadeIn">
+    <section className="flex flex-col pt-8 md:pt-10 animate-fadeIn">
       <Hero
         data={content.hero}
         isEditing={isAuthenticated && isEditMode}

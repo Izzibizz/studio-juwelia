@@ -176,7 +176,7 @@ export function TattooIntro({
                       <img
                         src={item.image}
                         alt={item.alt || item.name}
-                        className="h-20 w-full rounded-lg object-cover"
+                        className="h-[700px] w-auto w-full rounded-lg object-cover"
                         draggable={false}
                       />
                     ) : (

@@ -55,6 +55,7 @@ router.post(
     );
 
     const newGalleryItem = {
+      id: randomUUID(),
       image: uploaded.url,
       alt: altText || nameText || fallbackName,
       name: nameText || altText || fallbackName,

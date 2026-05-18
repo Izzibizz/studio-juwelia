@@ -77,7 +77,7 @@ export const Footer: React.FC = () => {
     : undefined;
 
   return (
-    <footer className="bg-beige text-black py-8">
+    <footer className="bg-darkBrown text-warmWhite py-8">
       {!isContactPage ? (
         <div className="mx-auto flex max-w-md flex-col items-center gap-4 text-lg">
           {isEditMode && isAuthenticated ? (
@@ -125,7 +125,7 @@ export const Footer: React.FC = () => {
                 href={googleMapsLink}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-base text-darkRed hover:text-brown"
+                className="flex items-center gap-2 text-base text-warmWhite hover:text-brown"
               >
                 <MdOutlineLocationOn />
                 {address}

@@ -110,7 +110,7 @@ const testimonialItemSchema = new mongoose.Schema(
   {
     name: plainTextField(),
     quote: richTextHtmlField(),
-    role: plainTextField(),
+    typeOfClient: plainTextField(),
   },
   { _id: false },
 );
@@ -118,6 +118,7 @@ const testimonialItemSchema = new mongoose.Schema(
 const testimonialsSchema = new mongoose.Schema(
   {
     title: plainTextField(),
+    subTitle: richTextHtmlField(),
     items: { type: [testimonialItemSchema], default: [] },
   },
   { _id: false },

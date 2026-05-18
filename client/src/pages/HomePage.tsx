@@ -266,7 +266,7 @@ export const HomePage: React.FC = () => {
               ...current.testimonials,
               items: [
                 ...current.testimonials.items,
-                { name: "", quote: "", role: "" },
+                { name: "", quote: "", typeOfClient: "" },
               ],
             },
           }))

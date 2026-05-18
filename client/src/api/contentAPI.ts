@@ -98,11 +98,12 @@ export interface ContactFormSectionData {
 export interface TestimonialItem {
   name: PlainText;
   quote: RichTextHtml;
-  role: PlainText;
+  typeOfClient: PlainText;
 }
 
 export interface TestimonialsSectionData {
   title?: PlainText;
+  subTitle?: RichTextHtml;
   items: TestimonialItem[];
 }
 

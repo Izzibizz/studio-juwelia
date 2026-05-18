@@ -115,6 +115,7 @@ export interface FaqItem {
 
 export interface FaqSectionData {
   title?: PlainText;
+  images: PlainText[];
   items: FaqItem[];
 }
 
@@ -238,6 +239,7 @@ export const defaultTattoosContent: TattoosPageContent = {
   faq: {
     title: "Questions fréquentes",
     items: [],
+    images: [],
   },
 };
 
@@ -334,6 +336,7 @@ export const defaultHomeContent: HomePageContent = {
   faq: {
     title: "",
     items: [],
+    images: [],
   },
 };
 

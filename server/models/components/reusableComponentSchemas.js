@@ -135,6 +135,7 @@ const faqItemSchema = new mongoose.Schema(
 const faqSchema = new mongoose.Schema(
   {
     title: plainTextField(),
+    images: { type: [plainTextField()], default: [] },
     items: { type: [faqItemSchema], default: [] },
   },
   { _id: false },

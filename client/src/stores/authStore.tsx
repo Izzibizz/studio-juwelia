@@ -21,7 +21,6 @@ interface AuthState {
   deleteUser: () => Promise<void>;
   clearError: () => void;
   checkTokenExpiration: () => void;
-  hideLogoutPopup: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(

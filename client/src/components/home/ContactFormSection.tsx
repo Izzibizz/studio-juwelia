@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { ContactFormSectionData } from "../../api/contentAPI";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 import { TermsModal } from "../TermsModal";
 
@@ -9,12 +10,14 @@ interface ContactFormSectionProps {
   data?: ContactFormSectionData;
   isEditing?: boolean;
   onChange?: (nextData: ContactFormSectionData) => void;
+  onUploadImage?: (field: string, file: File) => Promise<void>;
 }
 
 export function ContactFormSection({
   data,
   isEditing = false,
   onChange,
+  onUploadImage,
 }: ContactFormSectionProps) {
   const [showTerms, setShowTerms] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -84,8 +87,8 @@ export function ContactFormSection({
   }, [submitSuccess, submitError]);
 
   return (
-    <section className="p-6pb-20 laptop:pb-[350px] bg-lightCream relative ">
-      <div className="flex flex-col w-11/12 max-w-[1100px] mx-auto gap-6">
+    <section className="p-6 py-20 laptop:pt-[200px] laptop:pb-[350px] bg-lightCream relative ">
+      <div className="flex flex-col w-11/12 max-w-[1300px] mx-auto gap-6">
         {isEditing ? (
           <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
             <EditorField
@@ -118,6 +121,22 @@ export function ContactFormSection({
               value={data?.termsAndConditions || ""}
               onChange={(value) => updateField("termsAndConditions", value)}
             />
+            <div className="space-y-3 flex flex-col">
+              {data?.decorImage && (
+                <img
+                  src={data.decorImage}
+                  alt="decor"
+                  className="w-full max-w-[400px] rounded-xl object-cover self-center"
+                />
+              )}
+
+              {onUploadImage && (
+                <ImageUploadDropzone
+                  label="Upload decor image"
+                  onUpload={(file) => onUploadImage("decorImage", file)}
+                />
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -130,7 +149,8 @@ export function ContactFormSection({
             />
           </div>
         )}
-        <form onSubmit={handleSubmit} className="grid gap-4">
+        <div className="flex flex-col laptop:flex-row laptop:justify-between gap-8">
+        <form onSubmit={handleSubmit} className="grid gap-4 laptop:w-1/2">
           <div className="grid md:grid-cols-2 gap-4">
             <input
               name="prenom"
@@ -223,12 +243,12 @@ export function ContactFormSection({
             required
           />
 
-          <div className="flex items-start gap-3 text-sm">
+          <div className="flex items-center justify-end gap-3 text-sm">
             <input
               type="checkbox"
               checked={acceptedTerms}
               onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-1"
+              className="hover:scale-110 transition cursor-pointer w-4 h-4 bg-green-500 checked:bg-green-700 rounded focus:ring-0"
             />
 
             <p className="text-brownBlack">
@@ -246,16 +266,26 @@ export function ContactFormSection({
 
           <button
             disabled={!acceptedTerms || isSubmitting}
-            className="w-fit px-6 py-3 rounded-full bg-darkBrown text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition"
+            className="w-fit justify-self-end px-6 py-2 rounded-full bg-darkBrown text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:opacity-90 transition"
             type="submit"
           >
             {isSubmitting ? "Envoi en cours..." : data?.buttonText || "Envoyer"}
           </button>
         </form>
+
+           {data?.decorImage && !isEditing && (
+          <img
+            src={data.decorImage}
+            alt="Décoration"
+            className=" w-[300px] laptop:w-[500px] object-cover pointer-events-none"
+          />
+        )}
         {submitSuccess && (
           <p className="mt-3 text-green-700">{data?.successMessage || ""}</p>
         )}
         {submitError && <p className="mt-3 text-red-700">{submitError}</p>}
+
+        </div>
         <svg
           viewBox="0 0 590.34 74.98"
           className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto block"

@@ -155,6 +155,21 @@ export const HomePage: React.FC = () => {
     await saveHomePageContent(nextContent);
   };
 
+  const uploadContactImage = async (field: string, file: File) => {
+    const imageUrl = await uploadSingleImage(file, field);
+
+    const nextContent = {
+      ...content,
+      contactForm: {
+        ...content.contactForm,
+        [field]: imageUrl,
+      },
+    };
+
+    setContent(nextContent);
+    await saveHomePageContent(nextContent);
+  };
+
   useEffect(() => {
     const run = async () => {
       try {
@@ -230,12 +245,13 @@ export const HomePage: React.FC = () => {
         onUploadImage={uploadAboutImage}
         faqRef={faqRef}
       />
-            <ContactFormSection
+      <ContactFormSection
         data={content.contactForm}
         isEditing={isAuthenticated && isEditMode}
         onChange={(contactForm) =>
           setContent((current) => ({ ...current, contactForm }))
         }
+        onUploadImage={uploadContactImage}
       />
       <TestimonialsSection
         data={content.testimonials}

@@ -170,23 +170,60 @@ export const HomePage: React.FC = () => {
     await saveHomePageContent(nextContent);
   };
 
-  const uploadTestimonialsImage = async (
-  field: string,
-  file: File,
-) => {
-  const imageUrl = await uploadSingleImage(file, field);
+  const uploadTestimonialsImage = async (field: string, file: File) => {
+    const imageUrl = await uploadSingleImage(file, field);
 
-  const nextContent = {
-    ...content,
-    testimonials: {
-      ...content.testimonials,
-      [field]: imageUrl,
-    },
+    const nextContent = {
+      ...content,
+      testimonials: {
+        ...content.testimonials,
+        [field]: imageUrl,
+      },
+    };
+
+    setContent(nextContent);
+    await saveHomePageContent(nextContent);
   };
 
-  setContent(nextContent);
-  await saveHomePageContent(nextContent);
-};
+  const uploadFaqImage = async (file: File, alt?: string) => {
+    const uploadedImages = await contentAPI.uploadImages(
+      [file],
+      token ?? undefined,
+      {
+        alt: alt || "FAQ image",
+        caption: alt || "FAQ image",
+      },
+    );
+
+    const uploaded = uploadedImages[0];
+
+    if (!uploaded?.url) {
+      throw new Error("Failed uploading FAQ image");
+    }
+
+    const nextContent = {
+      ...content,
+
+      faq: {
+        ...content.faq,
+
+        images: [
+          ...(content.faq.images || []),
+
+          {
+            id: uploaded.id,
+            image: uploaded.url,
+            alt: uploaded.alt || "",
+            name: uploaded.caption || "",
+          },
+        ],
+      },
+    };
+
+    setContent(nextContent);
+
+    await saveHomePageContent(nextContent);
+  };
 
   useEffect(() => {
     const run = async () => {
@@ -306,28 +343,46 @@ export const HomePage: React.FC = () => {
       <FAQSection
         data={content.faq}
         isEditing={isAuthenticated && isEditMode}
-        onChange={(faq) => setContent((current) => ({ ...current, faq }))}
+        currentPage="homepage"
+        faqRef={faqRef}
+        onChange={(faq) =>
+          setContent((current) => ({
+            ...current,
+            faq,
+          }))
+        }
         onAddItem={() =>
           setContent((current) => ({
             ...current,
+
             faq: {
               ...current.faq,
-              items: [...current.faq.items, { question: "", answer: "" }],
+
+              items: [
+                ...current.faq.items,
+
+                {
+                  question: "",
+                  answer: "",
+                },
+              ],
             },
           }))
         }
         onRemoveItem={(index) =>
           setContent((current) => ({
             ...current,
+
             faq: {
               ...current.faq,
+
               items: current.faq.items.filter(
                 (_, itemIndex) => itemIndex !== index,
               ),
             },
           }))
         }
-        faqRef={faqRef}
+        onAddImageUpload={uploadFaqImage}
       />
     </section>
   );

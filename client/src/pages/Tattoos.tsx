@@ -323,6 +323,45 @@ export const Tattoos: React.FC = () => {
     });
   };
 
+  const uploadFaqImage = async (file: File, alt?: string) => {
+    const uploadedImages = await contentAPI.uploadImages(
+      [file],
+      token ?? undefined,
+      {
+        alt: alt || file.name,
+        caption: alt || file.name,
+      },
+    );
+
+    const uploaded = uploadedImages[0];
+
+    if (!uploaded?.url) {
+      throw new Error("FAQ image upload failed");
+    }
+
+    const newImage: ImageGalleryItemData = {
+      id: crypto.randomUUID(),
+      image: uploaded.url,
+      alt: alt || "",
+    };
+
+    setContent(
+      (current): TattoosPageContent => ({
+        ...current,
+
+        faq: {
+          title: current.faq?.title ?? defaultTattoosContent.faq?.title ?? "",
+
+          items: current.faq?.items ?? defaultTattoosContent.faq?.items ?? [],
+
+          images: [...(current.faq?.images ?? []), newImage],
+
+          pageImageMap: current.faq?.pageImageMap ?? {},
+        },
+      }),
+    );
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -411,23 +450,23 @@ export const Tattoos: React.FC = () => {
               Introduction Image
             </h3>
             <div className="flex flex-col tablet:flex-row tablet:items-center gap-6">
-            {content.introduction?.introImage ? (
-              <img
-                src={content.introduction.introImage}
-                alt={
-                  content.introduction.introImageAlt ||
-                  content.introduction.h2 ||
-                  "Tattoo introduction image"
-                }
-                className="mb-4 w-[300px] object-cover"
+              {content.introduction?.introImage ? (
+                <img
+                  src={content.introduction.introImage}
+                  alt={
+                    content.introduction.introImageAlt ||
+                    content.introduction.h2 ||
+                    "Tattoo introduction image"
+                  }
+                  className="mb-4 w-[300px] object-cover"
+                />
+              ) : null}
+              <ImageUploadDropzone
+                label="Drop introduction image here or click to upload"
+                onUpload={uploadIntroductionImage}
+                initialAlt={content.introduction?.introImageAlt || ""}
               />
-            ) : null}
-            <ImageUploadDropzone
-              label="Drop introduction image here or click to upload"
-              onUpload={uploadIntroductionImage}
-              initialAlt={content.introduction?.introImageAlt || ""}
-            />
-          </div>
+            </div>
           </div>
 
           <section className="rounded-2xl border border-[#e7dfd5] bg-[#f8f4ee] p-5">
@@ -760,37 +799,37 @@ export const Tattoos: React.FC = () => {
           {isSectionFilled(content.introduction) && (
             <section className="flex flex-col laptop:flex-row laptop:justify-between">
               <div className="flex flex-col gap-4">
-              {content.introduction?.h2 && (
-                <h2 className="text-3xl font-juwelia">
-                  {content.introduction.h2}
-                </h2>
-              )}
-              {content.introduction?.h3 && (
-                <h3 className="mt-2 text-4xl text-darkRed font-tropical max-w-[800px]">
-                  {content.introduction.h3}
-                </h3>
-              )}
-              {content.introduction?.description && (
-                <RichTextContent
-                  html={content.introduction.description}
-                  className="mt-4 text-brown max-w-[800px]"
-                />
-              )}
+                {content.introduction?.h2 && (
+                  <h2 className="text-3xl font-juwelia">
+                    {content.introduction.h2}
+                  </h2>
+                )}
+                {content.introduction?.h3 && (
+                  <h3 className="mt-2 text-4xl text-darkRed font-tropical max-w-[800px]">
+                    {content.introduction.h3}
+                  </h3>
+                )}
+                {content.introduction?.description && (
+                  <RichTextContent
+                    html={content.introduction.description}
+                    className="mt-4 text-brown max-w-[800px]"
+                  />
+                )}
               </div>
               <div className="flex flex-col gap-4 items-center">
-              {content.introduction?.introImage && (
-                <img
-                  src={content.introduction.introImage}
-                  alt={content.introduction.h2 || "Tattoo introduction image"}
-                  className="mt-6 w-full tablet:max-w-[400px] object-cover "
-                />
-              )}
-              {content.introduction?.introImageDescription && (
-                <RichTextContent
-                  html={content.introduction.introImageDescription}
-                  className="mt-3 text-brown max-w-[800px] font-tropical"
-                />
-              )}
+                {content.introduction?.introImage && (
+                  <img
+                    src={content.introduction.introImage}
+                    alt={content.introduction.h2 || "Tattoo introduction image"}
+                    className="mt-6 w-full tablet:max-w-[400px] object-cover "
+                  />
+                )}
+                {content.introduction?.introImageDescription && (
+                  <RichTextContent
+                    html={content.introduction.introImageDescription}
+                    className="mt-3 text-brown max-w-[800px] font-tropical"
+                  />
+                )}
               </div>
             </section>
           )}
@@ -891,7 +930,7 @@ export const Tattoos: React.FC = () => {
                 />
               )}
               {content.details?.h2 && (
-                <h2 className="mt-6 text-3faqxl font-semibold">
+                <h2 className="mt-6 text-3xl font-semibold">
                   {content.details.h2}
                 </h2>
               )}
@@ -930,23 +969,39 @@ export const Tattoos: React.FC = () => {
         />
       )}
 
-      {(content.testimonials?.items.length || isAuthenticated) && (
+      {(content.testimonials?.items?.length || isAuthenticated) && (
         <TestimonialsSection
-          data={content.testimonials}
+          data={{
+            ...(content.testimonials ??
+              defaultTattoosContent.testimonials ?? {
+                title: "",
+                items: [],
+              }),
+          }}
           isEditing={isAuthenticated && isEditMode}
           onChange={(testimonials) =>
-            setContent((current) => ({ ...current, testimonials }))
+            setContent((current) => ({
+              ...current,
+              testimonials,
+            }))
           }
           onAddItem={() =>
             setContent((current) => ({
               ...current,
               testimonials: {
-                title:
-                  current.testimonials?.title ||
-                  defaultTattoosContent.testimonials!.title,
+                ...(current.testimonials ??
+                  defaultTattoosContent.testimonials ?? {
+                    title: "",
+                    items: [],
+                  }),
+
                 items: [
                   ...(current.testimonials?.items ?? []),
-                  { name: "", quote: "", role: "" },
+                  {
+                    name: "",
+                    quote: "",
+                    typeOfClient: "",
+                  },
                 ],
               },
             }))
@@ -955,9 +1010,12 @@ export const Tattoos: React.FC = () => {
             setContent((current) => ({
               ...current,
               testimonials: {
-                title:
-                  current.testimonials?.title ||
-                  defaultTattoosContent.testimonials!.title,
+                ...(current.testimonials ??
+                  defaultTattoosContent.testimonials ?? {
+                    title: "",
+                    items: [],
+                  }),
+
                 items: (current.testimonials?.items ?? []).filter(
                   (_, itemIndex) => itemIndex !== index,
                 ),
@@ -966,34 +1024,74 @@ export const Tattoos: React.FC = () => {
           }
         />
       )}
-      {(content.faq?.items.length || isAuthenticated) && (
+      {(content.faq?.items?.length || isAuthenticated) && (
         <FAQSection
-          data={content.faq}
+          data={{
+            ...(content.faq ??
+              defaultTattoosContent.faq ?? {
+                title: "",
+                items: [],
+                images: [],
+                pageImageMap: {},
+              }),
+
+            images: content.faq?.images ?? [],
+            pageImageMap: content.faq?.pageImageMap ?? {},
+          }}
           isEditing={isAuthenticated && isEditMode}
           onChange={(nextData) =>
             setContent((current) => ({
               ...current,
-              faq: nextData,
+              faq: {
+                ...nextData,
+                images: nextData.images ?? [],
+                pageImageMap: nextData.pageImageMap ?? {},
+              },
             }))
           }
           onAddItem={() =>
             setContent((current) => ({
               ...current,
               faq: {
-                title: current.faq?.title || defaultTattoosContent.faq!.title,
+                ...(current.faq ??
+                  defaultTattoosContent.faq ?? {
+                    title: "",
+                    items: [],
+                    images: [],
+                    pageImageMap: {},
+                  }),
+
                 items: [
                   ...(current.faq?.items ?? []),
-                  { question: "", answer: "" },
+                  {
+                    question: "",
+                    answer: "",
+                  },
                 ],
+
+                images: current.faq?.images ?? [],
+                pageImageMap: current.faq?.pageImageMap ?? {},
               },
             }))
           }
+          currentPage="tattoo"
+          onAddImageUpload={uploadFaqImage}
           onRemoveItem={(index) =>
             setContent((current) => ({
               ...current,
               faq: {
-                title: current.faq?.title || defaultTattoosContent.faq!.title,
+                ...(current.faq ??
+                  defaultTattoosContent.faq ?? {
+                    title: "",
+                    items: [],
+                    images: [],
+                    pageImageMap: {},
+                  }),
+
                 items: (current.faq?.items ?? []).filter((_, i) => i !== index),
+
+                images: current.faq?.images ?? [],
+                pageImageMap: current.faq?.pageImageMap ?? {},
               },
             }))
           }

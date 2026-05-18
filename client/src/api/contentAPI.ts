@@ -28,6 +28,7 @@ export interface ImageGalleryItemData {
   alt: PlainText;
   name?: PlainText;
   text?: RichTextHtml;
+  id?: string;
 }
 
 export interface TechniqueCategory {
@@ -116,7 +117,13 @@ export interface FaqItem {
 export interface FaqSectionData {
   title?: PlainText;
   images: ImageGalleryItemData[];
-  imagesToDisplay: number;
+  pageImageMap?: {
+  homepage?: string[];
+  about?: string[];
+  tattoo?: string[];
+  art?: string[];
+  contact?: string[];
+};
   items: FaqItem[];
 }
 
@@ -238,10 +245,18 @@ export const defaultTattoosContent: TattoosPageContent = {
     items: [],
   },
   faq: {
-    title: "Questions fréquentes",
-    items: [],
-    images: [],
+  title: "",
+  items: [],
+  images: [],
+
+  pageImageMap: {
+    homepage: [],
+    about: [],
+    tattoo: [],
+    art: [],
+    contact: [],
   },
+},
 };
 
 interface PageDataResponse<T = Record<string, unknown>> {
@@ -334,11 +349,19 @@ export const defaultHomeContent: HomePageContent = {
     decorImage: "",
     items: [],
   },
-  faq: {
-    title: "",
-    items: [],
-    images: [],
+faq: {
+  title: "",
+  items: [],
+  images: [],
+
+  pageImageMap: {
+    homepage: [],
+    about: [],
+    tattoo: [],
+    art: [],
+    contact: [],
   },
+},
 };
 
 const mergeHomeContent = (
@@ -406,6 +429,11 @@ const mergeHomeContent = (
       ...(sharedData?.faq || {}),
       ...(pageData?.faq || {}),
       items: pageData?.faq?.items || sharedData?.faq?.items || base.faq.items,
+      pageImageMap: {
+        ...base.faq.pageImageMap,
+        ...(sharedData?.faq?.pageImageMap || {}),
+        ...(pageData?.faq?.pageImageMap || {}),
+      },
     },
   };
 };

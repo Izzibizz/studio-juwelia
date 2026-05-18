@@ -33,7 +33,7 @@ const imageGalleryItemSchema = new mongoose.Schema(
     alt: plainTextField(),
     name: plainTextField(),
   },
-  { _id: false },
+  { _id: true },
 );
 
 const introSectionSchema = new mongoose.Schema(
@@ -136,7 +136,32 @@ const faqSchema = new mongoose.Schema(
   {
     title: plainTextField(),
     images: { type: [imageGalleryItemSchema], default: [] },
-    imagesToDisplay: { type: Number, default: 3 },
+    pageImageMap: {
+      homepage: {
+        type: [String],
+        default: [],
+      },
+
+      about: {
+        type: [String],
+        default: [],
+      },
+
+      tattoo: {
+        type: [String],
+        default: [],
+      },
+
+      art: {
+        type: [String],
+        default: [],
+      },
+
+      contact: {
+        type: [String],
+        default: [],
+      },
+    },
     items: { type: [faqItemSchema], default: [] },
   },
   { _id: false },

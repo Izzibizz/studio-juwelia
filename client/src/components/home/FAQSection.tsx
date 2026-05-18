@@ -187,7 +187,7 @@ export function FAQSection({
             />
           </div>
         ) : (
-          <h2 className="text-2xl md:text-3xl font-bold text-darkBrown mb-6">
+          <h2 className="text-2xl md:text-3xl font-tropical text-darkBrown mb-6">
             {faqData.title || ""}
           </h2>
         )}
@@ -233,7 +233,7 @@ export function FAQSection({
                 </div>
               ) : (
                 <>
-                  <summary className="cursor-pointer font-semibold text-darkBrown">
+                  <summary className="cursor-pointer font-tropical text-darkBrown">
                     {item.question}
                   </summary>
 

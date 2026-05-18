@@ -133,10 +133,10 @@ export function ContactFormSection({
         ) : (
           <>
             <div className="flex flex-col gap-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-darkBrown">
+              <h2 className="text-2xl md:text-3xl font-tropical text-darkBrown">
                 {data?.title || ""}
               </h2>
-              <RichTextContent html={data?.subtitle || ""} className="" />
+              <RichTextContent html={data?.subtitle || ""} className="text-lg" />
             </div>
             <div className="flex flex-col laptop:flex-row laptop:justify-between gap-8">
               <form onSubmit={handleSubmit} className="flex flex-col gap-5 laptop:w-1/2">

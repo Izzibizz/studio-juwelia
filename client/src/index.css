@@ -43,12 +43,15 @@
   --color-warmWhite: rgb(251, 245, 236);
   --color-lightCream: rgb(255, 251, 241);
   --color-beige: rgb(228, 221, 211);
+  --color-pinkBeige: rgb(211, 180, 159);
   --color-lightBrown: rgb(138, 81, 56);
   --color-brown: rgb(121, 60, 41);
   --color-darkBrown: rgb(91, 44, 36);
   --color-darkRed: rgb(93, 33, 33);
   --color-brownBlack: rgb(54, 19, 13);
   --color-mediumGreen: rgb(79, 101, 63);
+  --color-lightGreen: rgb(195, 203, 146);
+  --color-orange: rgb(193, 104, 4);
 
   --animate-fadeIn: fadeIn 1s ease-in both;
   --animate-longFadeIn: fadeIn 2.3s ease-in both;

@@ -170,6 +170,24 @@ export const HomePage: React.FC = () => {
     await saveHomePageContent(nextContent);
   };
 
+  const uploadTestimonialsImage = async (
+  field: string,
+  file: File,
+) => {
+  const imageUrl = await uploadSingleImage(file, field);
+
+  const nextContent = {
+    ...content,
+    testimonials: {
+      ...content.testimonials,
+      [field]: imageUrl,
+    },
+  };
+
+  setContent(nextContent);
+  await saveHomePageContent(nextContent);
+};
+
   useEffect(() => {
     const run = async () => {
       try {
@@ -282,6 +300,7 @@ export const HomePage: React.FC = () => {
             },
           }))
         }
+        onUploadImage={uploadTestimonialsImage}
       />
 
       <FAQSection

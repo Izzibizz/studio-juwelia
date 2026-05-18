@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authAPI } from "../api/authAPI";
 import { isTokenExpired } from "../utils/jwt";
+import { useNotificationStore } from "./notificationStore";
 import type { User, AuthResponse } from "../api/authAPI";
 
 interface AuthState {
@@ -10,8 +11,6 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  showLogoutPopup: boolean;
-  logoutMessage: string;
 
   // Actions
   signup: (name: string, email: string, password: string) => Promise<void>;
@@ -33,8 +32,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
-      showLogoutPopup: false,
-      logoutMessage: "",
 
       signup: async (name: string, email: string, password: string) => {
         set({ isLoading: true, error: null });
@@ -77,11 +74,18 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
+          useNotificationStore
+            .getState()
+            .addNotification("Connexion réussie.", "success");
         } catch (err) {
+          const errorMessage = (err as Error).message;
           set({
-            error: (err as Error).message,
+            error: errorMessage,
             isLoading: false,
           });
+          useNotificationStore
+            .getState()
+            .addNotification(errorMessage, "error");
           throw err;
         }
       },
@@ -96,14 +100,22 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
             error: null,
-            showLogoutPopup: false,
-            logoutMessage: "",
           });
+          useNotificationStore
+            .getState()
+            .addNotification(
+              "Vous avez été déconnecté avec succès.",
+              "success",
+            );
         } catch (err) {
+          const errorMessage = (err as Error).message;
           set({
-            error: (err as Error).message,
+            error: errorMessage,
             isLoading: false,
           });
+          useNotificationStore
+            .getState()
+            .addNotification(errorMessage, "error");
           throw err;
         }
       },
@@ -167,14 +179,15 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
-            showLogoutPopup: true,
-            logoutMessage:
-              "Vous avez été déconnecté en raison d'une inactivité prolongée. Veuillez vous reconnecter.",
           });
+          useNotificationStore
+            .getState()
+            .addNotification(
+              "Vous avez été déconnecté en raison d'une inactivité prolongée. Veuillez vous reconnecter.",
+              "info",
+            );
         }
       },
-
-      hideLogoutPopup: () => set({ showLogoutPopup: false, logoutMessage: "" }),
     }),
     {
       name: "auth-storage",

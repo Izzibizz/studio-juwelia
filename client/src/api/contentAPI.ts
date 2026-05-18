@@ -104,6 +104,7 @@ export interface TestimonialItem {
 export interface TestimonialsSectionData {
   title?: PlainText;
   subTitle?: RichTextHtml;
+  decorImage?: PlainText;
   items: TestimonialItem[];
 }
 
@@ -326,6 +327,8 @@ export const defaultHomeContent: HomePageContent = {
   },
   testimonials: {
     title: "",
+    subTitle: "",
+    decorImage: "",
     items: [],
   },
   faq: {

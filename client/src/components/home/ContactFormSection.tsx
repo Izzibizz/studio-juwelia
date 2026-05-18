@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ContactFormSectionData } from "../../api/contentAPI";
 import { EditorField } from "../editor";
 import { RichTextContent } from "../RichTextContent";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
+import { useNotificationStore } from "../../stores/notificationStore";
 
 import { TermsModal } from "../TermsModal";
 
@@ -23,8 +24,9 @@ export function ContactFormSection({
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [projectType, setProjectType] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const addNotification = useNotificationStore(
+    (state) => state.addNotification,
+  );
 
   const updateField = (field: keyof ContactFormSectionData, value: string) => {
     onChange?.({ ...data, [field]: value });
@@ -33,15 +35,12 @@ export function ContactFormSection({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setSubmitError("");
-    setSubmitSuccess(false);
     setIsSubmitting(true);
 
     const form = event.currentTarget;
-
     const formData = new FormData(form);
 
-    // Honeypot anti-spam
+    // Honeypot
     if (formData.get("website")) {
       setIsSubmitting(false);
       return;
@@ -60,32 +59,25 @@ export function ContactFormSection({
         throw new Error("Erreur lors de l’envoi.");
       }
 
-      setSubmitSuccess(true);
-
       form.reset();
-
       setAcceptedTerms(false);
       setProjectType("");
+
+      addNotification(
+        data?.successMessage || "Message envoyé avec succès",
+        "success",
+      );
     } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : "Une erreur est survenue.",
+      addNotification(
+        error instanceof Error ? error.message : "Une erreur est survenue",
+        "error",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  useEffect(() => {
-    if (!submitSuccess && !submitError) return;
-
-    const timeout = setTimeout(() => {
-      setSubmitSuccess(false);
-      setSubmitError("");
-    }, 5000);
-
-    return () => clearTimeout(timeout);
-  }, [submitSuccess, submitError]);
-
+  console.log("ContactFormSection data:", data); // Debug log to check the data structure
   return (
     <section className="p-6 py-20 laptop:pt-[200px] laptop:pb-[350px] bg-lightCream relative ">
       <div className="flex flex-col w-11/12 max-w-[1300px] mx-auto gap-6">
@@ -139,153 +131,153 @@ export function ContactFormSection({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-darkBrown">
-              {data?.title || ""}
-            </h2>
-            <RichTextContent
-              html={data?.subtitle || ""}
-              className="text-brownBlack"
-            />
-          </div>
+          <>
+            <div className="flex flex-col gap-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-darkBrown">
+                {data?.title || ""}
+              </h2>
+              <RichTextContent html={data?.subtitle || ""} className="" />
+            </div>
+            <div className="flex flex-col laptop:flex-row laptop:justify-between gap-8">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-5 laptop:w-1/2">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <input
+                    name="prenom"
+                    className="px-4 py-3 rounded-full border h-14"
+                    placeholder="Prénom"
+                    required
+                  />
+
+                  <input
+                    name="nom"
+                    className="px-4 py-3 rounded-full border h-14"
+                    placeholder="Nom"
+                    required
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <input
+                    name="email"
+                    type="email"
+                    className="px-4 py-3 rounded-full border h-14"
+                    placeholder="Email"
+                    required
+                  />
+
+                  <input
+                    name="telephone"
+                    type="tel"
+                    className="px-4 py-3 rounded-full border h-14"
+                    placeholder="Téléphone"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="hidden"
+                  />
+                </div>
+
+                <select
+                  name="typeProjet"
+                  value={projectType}
+                  onChange={(e) => setProjectType(e.target.value)}
+                  className="px-4 py-3 rounded-full border bg-white h-14"
+                  required
+                >
+                  <option value="">Type de projet</option>
+                  <option value="tatouage">Tatouage</option>
+                  <option value="illustration">Illustration</option>
+                  <option value="collaboration">Collaboration</option>
+                </select>
+
+                <div
+                  className={`grid gap-4 transition-all duration-300 ease-in-out overflow-hidden ${
+                    projectType === "tatouage"
+                      ? "max-h-[500px] opacity-100 mt-2"
+                      : "max-h-0 opacity-0 mt-0"
+                  }`}
+                >
+                  <select
+                    name="zoneCorps"
+                    className="px-4 py-3 rounded-full border bg-white h-14"
+                    required={projectType === "tatouage"}
+                  >
+                    <option value="">Zone du corps</option>
+                    <option>Bras</option>
+                    <option>Jambe</option>
+                    <option>Dos</option>
+                    <option>Poitrine</option>
+                    <option>Main</option>
+                    <option>Cou</option>
+                    <option>Autre</option>
+                  </select>
+
+                  <select
+                    name="taille"
+                    className="px-4 py-3 rounded-full border bg-white h-14"
+                    required={projectType === "tatouage"}
+                  >
+                    <option value="">Taille approximative</option>
+                    <option>Petite (5-10 cm)</option>
+                    <option>Moyenne (10-15 cm)</option>
+                    <option>Grande (15-25 cm)</option>
+                    <option>Très grande (+25 cm)</option>
+                  </select>
+                </div>
+                <textarea
+                  name="description"
+                  className="px-4 py-4 rounded-3xl border min-h-[180px]"
+                  placeholder="Décrivez votre projet..."
+                  required
+                />
+
+                <div className="flex items-center justify-end gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="hover:scale-110 transition cursor-pointer w-4 h-4 bg-green-500 checked:bg-green-700 rounded focus:ring-0"
+                  />
+
+                  <p className="text-brownBlack">
+                    J’ai lu et accepté les{" "}
+                    <button
+                      type="button"
+                      onClick={() => setShowTerms(true)}
+                      className="underline font-semibold cursor-pointer hover:scale-105 transition"
+                    >
+                      conditions générales
+                    </button>
+                    .
+                  </p>
+                </div>
+
+                <button
+                  disabled={!acceptedTerms || isSubmitting}
+                  className="w-fit justify-self-end px-6 py-2 rounded-full bg-darkBrown text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:opacity-90 transition"
+                  type="submit"
+                >
+                  {isSubmitting
+                    ? "Envoi en cours..."
+                    : data?.buttonText || "Envoyer"}
+                </button>
+              </form>
+
+              {data?.decorImage && !isEditing && (
+                <img
+                  src={data.decorImage}
+                  alt="Décoration"
+                  className=" w-[300px] laptop:w-[500px] object-cover pointer-events-none"
+                />
+              )}
+            </div>
+          </>
         )}
-        <div className="flex flex-col laptop:flex-row laptop:justify-between gap-8">
-        <form onSubmit={handleSubmit} className="grid gap-4 laptop:w-1/2">
-          <div className="grid md:grid-cols-2 gap-4">
-            <input
-              name="prenom"
-              className="px-4 py-3 rounded-full border"
-              placeholder="Prénom"
-              required
-            />
 
-            <input
-              name="nom"
-              className="px-4 py-3 rounded-full border"
-              placeholder="Nom"
-              required
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <input
-              name="email"
-              type="email"
-              className="px-4 py-3 rounded-full border"
-              placeholder="Email"
-              required
-            />
-
-            <input
-              name="telephone"
-              type="tel"
-              className="px-4 py-3 rounded-full border"
-              placeholder="Téléphone"
-              required
-            />
-            <input
-              type="text"
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              className="hidden"
-            />
-          </div>
-
-          <select
-            name="typeProjet"
-            value={projectType}
-            onChange={(e) => setProjectType(e.target.value)}
-            className="px-4 py-3 rounded-full border bg-white"
-            required
-          >
-            <option value="">Type de projet</option>
-            <option value="tatouage">Tatouage</option>
-            <option value="illustration">Illustration</option>
-            <option value="collaboration">Collaboration</option>
-          </select>
-
-          {projectType === "tatouage" && (
-            <>
-              <select
-                name="zoneCorps"
-                className="px-4 py-3 rounded-full border bg-white"
-                required
-              >
-                <option value="">Zone du corps</option>
-                <option>Bras</option>
-                <option>Jambe</option>
-                <option>Dos</option>
-                <option>Poitrine</option>
-                <option>Main</option>
-                <option>Cou</option>
-                <option>Autre</option>
-              </select>
-
-              <select
-                name="taille"
-                className="px-4 py-3 rounded-full border bg-white"
-                required
-              >
-                <option value="">Taille approximative</option>
-                <option>Petite (5-10 cm)</option>
-                <option>Moyenne (10-15 cm)</option>
-                <option>Grande (15-25 cm)</option>
-                <option>Très grande (+25 cm)</option>
-              </select>
-            </>
-          )}
-
-          <textarea
-            name="description"
-            className="px-4 py-4 rounded-3xl border min-h-[180px]"
-            placeholder="Décrivez votre projet..."
-            required
-          />
-
-          <div className="flex items-center justify-end gap-3 text-sm">
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="hover:scale-110 transition cursor-pointer w-4 h-4 bg-green-500 checked:bg-green-700 rounded focus:ring-0"
-            />
-
-            <p className="text-brownBlack">
-              J’ai lu et accepté les{" "}
-              <button
-                type="button"
-                onClick={() => setShowTerms(true)}
-                className="underline font-semibold cursor-pointer hover:scale-105 transition"
-              >
-                conditions générales
-              </button>
-              .
-            </p>
-          </div>
-
-          <button
-            disabled={!acceptedTerms || isSubmitting}
-            className="w-fit justify-self-end px-6 py-2 rounded-full bg-darkBrown text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer hover:opacity-90 transition"
-            type="submit"
-          >
-            {isSubmitting ? "Envoi en cours..." : data?.buttonText || "Envoyer"}
-          </button>
-        </form>
-
-           {data?.decorImage && !isEditing && (
-          <img
-            src={data.decorImage}
-            alt="Décoration"
-            className=" w-[300px] laptop:w-[500px] object-cover pointer-events-none"
-          />
-        )}
-        {submitSuccess && (
-          <p className="mt-3 text-green-700">{data?.successMessage || ""}</p>
-        )}
-        {submitError && <p className="mt-3 text-red-700">{submitError}</p>}
-
-        </div>
         <svg
           viewBox="0 0 590.34 74.98"
           className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto block"

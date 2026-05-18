@@ -3,18 +3,13 @@ import { useEffect } from "react";
 import { AdminPanel } from "./components/AdminPanel";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
-import { LogoutPopup } from "./components/LogoutPopup";
+import { NotificationToast } from "./components/NotificationToast";
 import AppRoutes from "./routes/AppRoutes";
 import { useAuthStore } from "./stores/authStore";
 import ScrollToTop from "./components/ScrollToTopp";
 
 function App() {
-  const {
-    checkTokenExpiration,
-    showLogoutPopup,
-    logoutMessage,
-    hideLogoutPopup,
-  } = useAuthStore();
+  const { checkTokenExpiration } = useAuthStore();
 
   useEffect(() => {
     // Check token expiration on app load
@@ -42,11 +37,7 @@ function App() {
       </main>
       <Footer />
       <AdminPanel />
-      <LogoutPopup
-        isOpen={showLogoutPopup}
-        onClose={hideLogoutPopup}
-        message={logoutMessage}
-      />
+      <NotificationToast />
     </Router>
   );
 }

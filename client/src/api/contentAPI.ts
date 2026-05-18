@@ -92,6 +92,7 @@ export interface ContactFormSectionData {
   buttonText?: PlainText;
   successMessage?: PlainText;
   termsAndConditions?: RichTextHtml;
+  decorImage?: PlainText;
 }
 
 export interface TestimonialItem {

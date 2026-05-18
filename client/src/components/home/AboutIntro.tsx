@@ -3,7 +3,6 @@ import type {
   ValuesIntroItem,
   ProfileIntroItem,
 } from "../../api/contentAPI";
-
 import { EditorField } from "../editor";
 import { NavLink } from "react-router-dom";
 import { RichTextContent } from "../RichTextContent";
@@ -21,6 +20,7 @@ interface AboutIntroProps {
     file: File,
     type: "values" | "profile",
   ) => Promise<void>;
+  faqRef: React.RefObject<HTMLElement | null>;
 }
 
 export function AboutIntro({
@@ -28,6 +28,7 @@ export function AboutIntro({
   isEditing = false,
   onChange,
   onUploadImage,
+  faqRef,
 }: AboutIntroProps) {
   const updateValues = <K extends keyof ValuesIntroItem>(
     field: K,
@@ -83,11 +84,11 @@ export function AboutIntro({
   console.log("AboutIntro render", { data });
   return (
     <section className="p-6 bg-beige rounded-2xl space-y-10 relative pb-20 laptop:pb-38">
-      <div className="w-11/12 mx-auto laptop:w-7/12 flex flex-col gap-6 laptop:gap-38">
+      <div className="w-11/12 mx-auto max-w-[1100px] flex flex-col gap-6 laptop:gap-38">
         <img
           src={data.values.valuesImage}
           alt="Values illustration"
-          className="w-full h-auto laptop:absolute top-10 left-[-130px] max-w-[600px] max-h-[700px] object-cover rounded-lg"
+          className="w-full z-10 h-auto laptop:absolute top-10 left-[-130px] max-w-[600px] max-h-[700px] object-cover rounded-lg"
         />
         {/* ================= VALUES ================= */}
         <div>
@@ -109,16 +110,9 @@ export function AboutIntro({
 
               <EditorField
                 type="plain"
-                label="CTA text"
+                label="CTA text for button of Values section"
                 value={data.values.ctaText}
                 onChange={(v) => updateValues("ctaText", v)}
-              />
-
-              <EditorField
-                type="plain"
-                label="CTA link"
-                value={data.values.ctaLink}
-                onChange={(v) => updateValues("ctaLink", v)}
               />
 
               {/* ================= VALUES IMAGE (NEW) ================= */}
@@ -176,13 +170,23 @@ export function AboutIntro({
               </div>
             </>
           ) : (
-            <div className="flex flex-col laptop:flex-row laptop:justify-between gap-6">
+            <div className="flex flex-col laptop:flex-row laptop:justify-between laptop:max-w-[900px] mx-auto relative z-20 gap-6 bg-beige laptop:p-8 rounded-2xl">
               <div className="flex flex-col gap-6">
                 <h4 className="font-tropical text-4xl">{data.values.title}</h4>
                 <RichTextContent
                   html={data.values.description}
                   className="laptop:max-w-[400px]"
                 />
+                <button
+                  onClick={() => {
+                    faqRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }}
+                  className="w-fit inline-block px-5 py-3 rounded-full border border-darkBrown text-darkBrown font-semibold  transition cursor-pointer hover:scale-105"
+                >
+                  {data.values.ctaText}
+                </button>
               </div>
               <img
                 src={data.values.illustrationImage}

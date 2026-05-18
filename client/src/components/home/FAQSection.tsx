@@ -9,6 +9,7 @@ interface FAQSectionProps {
   onChange?: (nextData: FaqSectionData) => void;
   onAddItem?: () => void;
   onRemoveItem?: (index: number) => void;
+  faqRef: React.RefObject<HTMLElement | null>;
 }
 
 export function FAQSection({
@@ -17,6 +18,7 @@ export function FAQSection({
   onChange,
   onAddItem,
   onRemoveItem,
+  faqRef,
 }: FAQSectionProps) {
   const updateField = (field: keyof FaqSectionData, value: string) => {
     onChange?.({ ...(data || { items: [] }), [field]: value });
@@ -36,7 +38,7 @@ export function FAQSection({
   };
 
   return (
-    <section className="rounded-2xl p-6 md:p-8 bg-warmWhite border border-[#e7dfd5]">
+    <section className="rounded-2xl p-6 md:p-8 bg-warmWhite border border-[#e7dfd5]" ref={faqRef}>
       {isEditing ? (
         <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
           <EditorField

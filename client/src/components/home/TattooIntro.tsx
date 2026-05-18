@@ -100,7 +100,7 @@ export function TattooIntro({
   return (
     <section className=" bg-brown text-warmWhite flex flex-col gap-6 relative pb-22">
       <div
-        className={`${isEditing || isMobile ? "flex-col w-10/12 pt-24 pb-18" : "flex-row w-7/12 justify-between pt-28 pb-48"} mx-auto flex`}
+        className={`${isEditing || isMobile ? "flex-col w-10/12 pt-24 pb-18" : "flex-row w-7/12 justify-between gap-20 pt-28 pb-48"} mx-auto flex`}
       >
         {isEditing ? (
           <div className="grid gap-4">

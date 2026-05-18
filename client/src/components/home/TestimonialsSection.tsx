@@ -36,7 +36,7 @@ export function TestimonialsSection({
   };
 
   return (
-    <section className="p-6 md:p-8 bg-lightCream">
+    <section className="p-6  pb-20 laptop:pb-[350px] bg-lightBrown relative">
       {isEditing ? (
         <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
           <EditorField
@@ -117,6 +117,7 @@ export function TestimonialsSection({
           </article>
         ))}
       </div>
+
     </section>
   );
 }

@@ -101,6 +101,7 @@ const contactFormSchema = new mongoose.Schema(
     buttonText: plainTextField(),
     successMessage: plainTextField(),
     termsAndConditions: richTextHtmlField(),
+    decorImage: plainTextField(),
   },
   { _id: false },
 );

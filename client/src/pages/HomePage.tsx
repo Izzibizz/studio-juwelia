@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { AboutIntro } from "../components/home/AboutIntro";
 import { ArtIntro } from "../components/home/ArtIntro";
 import { ContactFormSection } from "../components/home/ContactFormSection";
@@ -21,6 +21,7 @@ export const HomePage: React.FC = () => {
   const [, setSaveMessage] = useState<string | null>(null);
   const { isEditMode, registerSaveAction } = useAdminStore();
   const { isAuthenticated, token } = useAuthStore();
+  const faqRef = useRef<HTMLElement>(null);
 
   const uploadSingleImage = async (file: File, caption: string) => {
     const uploadedImages = await contentAPI.uploadImages(
@@ -227,6 +228,14 @@ export const HomePage: React.FC = () => {
           setContent((current) => ({ ...current, aboutIntro }))
         }
         onUploadImage={uploadAboutImage}
+        faqRef={faqRef}
+      />
+            <ContactFormSection
+        data={content.contactForm}
+        isEditing={isAuthenticated && isEditMode}
+        onChange={(contactForm) =>
+          setContent((current) => ({ ...current, contactForm }))
+        }
       />
       <TestimonialsSection
         data={content.testimonials}
@@ -258,13 +267,7 @@ export const HomePage: React.FC = () => {
           }))
         }
       />
-      <ContactFormSection
-        data={content.contactForm}
-        isEditing={isAuthenticated && isEditMode}
-        onChange={(contactForm) =>
-          setContent((current) => ({ ...current, contactForm }))
-        }
-      />
+
       <FAQSection
         data={content.faq}
         isEditing={isAuthenticated && isEditMode}
@@ -289,6 +292,7 @@ export const HomePage: React.FC = () => {
             },
           }))
         }
+        faqRef={faqRef}
       />
     </section>
   );

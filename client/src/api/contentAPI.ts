@@ -115,7 +115,8 @@ export interface FaqItem {
 
 export interface FaqSectionData {
   title?: PlainText;
-  images: PlainText[];
+  images: ImageGalleryItemData[];
+  imagesToDisplay: number;
   items: FaqItem[];
 }
 

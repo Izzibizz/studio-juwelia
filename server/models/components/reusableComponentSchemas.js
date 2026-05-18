@@ -38,7 +38,7 @@ const imageGalleryItemSchema = new mongoose.Schema(
     alt: plainTextField(),
     name: plainTextField(),
   },
-  { _id: true },
+  { _id: false },
 );
 
 const introSectionSchema = new mongoose.Schema(

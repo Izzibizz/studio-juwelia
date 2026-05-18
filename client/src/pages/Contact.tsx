@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { IoLogoInstagram } from "react-icons/io";
 import { MdOutlineMailOutline, MdOutlineLocationOn } from "react-icons/md";
+
 import { ContactFormSection } from "../components/home/ContactFormSection";
-import { FAQSection } from "../components/home/FAQSection";
-import { TestimonialsSection } from "../components/home/TestimonialsSection";
 import { ContentSectionEditor } from "../components/editor";
+
 import { useAdminStore } from "../stores/adminStore";
 import { useAuthStore } from "../stores/authStore";
+
 import { contactEditorSchema } from "../editorSchemas/contactEditorSchema";
+
 import { contentAPI, type ContactPageContent } from "../api/contentAPI";
 
 const defaultContactData: ContactPageContent = {
@@ -19,6 +20,7 @@ const defaultContactData: ContactPageContent = {
     ctaText: "",
     imageGallery: [],
   },
+
   contactForm: {
     title: "Book an appointment",
     subtitle: "Tell us about your tattoo idea and we’ll get back to you.",
@@ -26,14 +28,7 @@ const defaultContactData: ContactPageContent = {
     successMessage: "Merci, votre message a été envoyé.",
     termsAndConditions: "",
   },
-  testimonials: {
-    title: "Ce que disent nos clients",
-    items: [],
-  },
-  faq: {
-    title: "Questions fréquentes",
-    items: [],
-  },
+
   email: "contact@studiojuwelia.com",
   instagramName: "@studiojuwelia",
   instagramLink: "https://www.instagram.com/studiojuwelia",
@@ -44,15 +39,22 @@ const defaultContactData: ContactPageContent = {
 export const Contact: React.FC = () => {
   const [contactData, setContactData] =
     useState<ContactPageContent>(defaultContactData);
+
   const [isLoading, setIsLoading] = useState(true);
+
   const { isEditMode, registerSaveAction } = useAdminStore();
+
   const { isAuthenticated, token } = useAuthStore();
 
   useEffect(() => {
     const loadContactData = async () => {
       try {
         const data = await contentAPI.getContactPageContent();
-        setContactData({ ...defaultContactData, ...data });
+
+        setContactData({
+          ...defaultContactData,
+          ...data,
+        });
       } catch (error) {
         console.error("Failed loading contact page content:", error);
       } finally {
@@ -78,7 +80,13 @@ export const Contact: React.FC = () => {
     });
 
     return () => registerSaveAction(null);
-  }, [contactData, isAuthenticated, isEditMode, registerSaveAction, token]);
+  }, [
+    contactData,
+    isAuthenticated,
+    isEditMode,
+    registerSaveAction,
+    token,
+  ]);
 
   const mapSource = contactData.address
     ? `https://maps.google.com/maps?q=${encodeURIComponent(
@@ -92,6 +100,7 @@ export const Contact: React.FC = () => {
         <h1 className="text-4xl font-semibold">
           {contactData.intro?.title || "Contact"}
         </h1>
+
         <div
           className="prose max-w-none text-lg leading-8"
           dangerouslySetInnerHTML={{
@@ -120,11 +129,16 @@ export const Contact: React.FC = () => {
             onChange={(nextValue) =>
               setContactData((current) => ({
                 ...current,
+
                 intro: {
                   ...current.intro,
+
                   title: nextValue.title,
+
                   description: nextValue.description,
+
                   ctaText: nextValue.ctaText,
+
                   imageGallery:
                     nextValue.imageGallery.length > 0
                       ? (() => {
@@ -134,7 +148,7 @@ export const Contact: React.FC = () => {
                             return current.intro?.imageGallery ?? [];
                           }
                         })()
-                      : (current.intro?.imageGallery ?? []),
+                      : current.intro?.imageGallery ?? [],
                 },
               }))
             }
@@ -172,6 +186,7 @@ export const Contact: React.FC = () => {
               <IoLogoInstagram />
               {contactData.instagramName}
             </a>
+
             <a
               href={`mailto:${contactData.email}`}
               className="flex items-center gap-3 text-xl font-medium text-darkRed hover:text-brown"
@@ -179,12 +194,14 @@ export const Contact: React.FC = () => {
               <MdOutlineMailOutline />
               {contactData.email}
             </a>
+
             {contactData.phone && (
               <div className="flex items-center gap-3 text-xl font-medium text-darkRed">
                 <span className="font-semibold">Phone:</span>
                 <span>{contactData.phone}</span>
               </div>
             )}
+
             <a
               href={
                 contactData.address
@@ -198,6 +215,7 @@ export const Contact: React.FC = () => {
               className="flex items-start gap-3 text-xl font-medium text-darkRed hover:text-brown"
             >
               <MdOutlineLocationOn className="mt-1" />
+
               <span>{contactData.address}</span>
             </a>
           </div>
@@ -205,7 +223,9 @@ export const Contact: React.FC = () => {
 
         <div className="rounded-3xl border border-[#e7dfd5] bg-[#fff8f0] p-6 shadow-sm">
           {isLoading ? (
-            <p className="text-center text-lg text-darkBrown">Loading map…</p>
+            <p className="text-center text-lg text-darkBrown">
+              Loading map…
+            </p>
           ) : contactData.address ? (
             <iframe
               title="Studio Juwelia location"
@@ -223,24 +243,12 @@ export const Contact: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <div className="rounded-3xl border border-[#e7dfd5] bg-[#f8f4ee] p-8 shadow-sm">
-          <h2 className="text-2xl font-semibold">Prendre rendez-vous</h2>
-          <p className="mt-3 text-brown">
-            Laissez-nous un message avec votre projet et nous vous
-            recontacterons pour fixer votre séance.
-          </p>
-          <Link
-            to="/prendre-rendez-vous"
-            className="mt-6 inline-flex rounded-full bg-darkBrown px-6 py-3 text-sm font-semibold text-white hover:bg-brown"
-          >
-            Réserver maintenant
-          </Link>
-        </div>
-
         {contactData.contactForm || isAuthenticated ? (
           <ContactFormSection
-            data={contactData.contactForm ?? defaultContactData.contactForm!}
+            data={
+              contactData.contactForm ??
+              defaultContactData.contactForm!
+            }
             isEditing={isAuthenticated && isEditMode}
             onChange={(nextData) =>
               setContactData((current) => ({
@@ -251,76 +259,5 @@ export const Contact: React.FC = () => {
           />
         ) : null}
       </div>
-
-      {(contactData.testimonials?.items.length || isAuthenticated) && (
-        <TestimonialsSection
-          data={contactData.testimonials ?? defaultContactData.testimonials!}
-          isEditing={isAuthenticated && isEditMode}
-          onChange={(nextData) =>
-            setContactData((current) => ({
-              ...current,
-              testimonials: nextData,
-            }))
-          }
-          onAddItem={() =>
-            setContactData((current) => ({
-              ...current,
-              testimonials: {
-                ...current.testimonials,
-                items: [
-                  ...((current.testimonials?.items ?? []) as any),
-                  { name: "", quote: "", role: "" },
-                ],
-              },
-            }))
-          }
-          onRemoveItem={(index) =>
-            setContactData((current) => ({
-              ...current,
-              testimonials: {
-                ...current.testimonials,
-                items: (current.testimonials?.items ?? []).filter(
-                  (_, i) => i !== index,
-                ),
-              },
-            }))
-          }
-        />
-      )}
-
-      {(contactData.faq?.items.length || isAuthenticated) && (
-        <FAQSection
-          data={contactData.faq ?? defaultContactData.faq!}
-          isEditing={isAuthenticated && isEditMode}
-          onChange={(nextData) =>
-            setContactData((current) => ({
-              ...current,
-              faq: nextData,
-            }))
-          }
-          onAddItem={() =>
-            setContactData((current) => ({
-              ...current,
-              faq: {
-                ...current.faq,
-                items: [
-                  ...((current.faq?.items ?? []) as any),
-                  { question: "", answer: "" },
-                ],
-              },
-            }))
-          }
-          onRemoveItem={(index) =>
-            setContactData((current) => ({
-              ...current,
-              faq: {
-                ...current.faq,
-                items: (current.faq?.items ?? []).filter((_, i) => i !== index),
-              },
-            }))
-          }
-        />
-      )}
-    </div>
   );
 };

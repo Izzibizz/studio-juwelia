@@ -185,7 +185,7 @@ export function ContactFormSection({
                   name="typeProjet"
                   value={projectType}
                   onChange={(e) => setProjectType(e.target.value)}
-                  className="px-4 py-3 rounded-full border bg-white h-14"
+                  className="px-4 py-3 rounded-full border bg-warmWhite h-14"
                   required
                 >
                   <option value="">Type de projet</option>
@@ -203,7 +203,7 @@ export function ContactFormSection({
                 >
                   <select
                     name="zoneCorps"
-                    className="px-4 py-3 rounded-full border bg-white h-14"
+                    className="px-4 py-3 rounded-full border bg-warmWhite h-14"
                     required={projectType === "tatouage"}
                   >
                     <option value="">Zone du corps</option>
@@ -218,7 +218,7 @@ export function ContactFormSection({
 
                   <select
                     name="taille"
-                    className="px-4 py-3 rounded-full border bg-white h-14"
+                    className="px-4 py-3 rounded-full border bg-warmWhite h-14"
                     required={projectType === "tatouage"}
                   >
                     <option value="">Taille approximative</option>

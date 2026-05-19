@@ -81,7 +81,6 @@ export function AboutIntro({
     updateList((data.profile.list ?? []).filter((_, i) => i !== index));
   };
 
-  console.log("AboutIntro render", { data });
   return (
     <section className="p-6 bg-beige rounded-2xl space-y-10 relative pb-20 laptop:pb-38">
       <div className="w-11/12 mx-auto max-w-[1100px] flex flex-col gap-6 laptop:gap-38">
@@ -179,9 +178,17 @@ export function AboutIntro({
                 />
                 <button
                   onClick={() => {
-                    faqRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                    });
+                    if (faqRef.current) {
+                      const y =
+                        faqRef.current.getBoundingClientRect().top +
+                        window.pageYOffset -
+                        100;
+
+                      window.scrollTo({
+                        top: y,
+                        behavior: "smooth",
+                      });
+                    }
                   }}
                   className="w-fit inline-block px-5 py-3 rounded-full border border-darkBrown text-darkBrown font-semibold  transition cursor-pointer hover:scale-105"
                 >

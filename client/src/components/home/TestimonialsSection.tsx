@@ -1,7 +1,7 @@
 import type { TestimonialsSectionData } from "../../api/contentAPI";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { EditorField } from "../editor";
-import { RichTextContent } from "../RichTextContent";
+import { TestimonialSwiper } from "../TestimonialSwiper";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface TestimonialsSectionProps {
@@ -91,15 +91,16 @@ export function TestimonialsSection({
             </div>
           )}
 
-          <div className={`grid ${isEditing? "tablet:grid-cols-2 laptop:grid-cols-4" : "md:grid-cols-4"} gap-4`}>
-            {(data?.items ?? []).map((item, index) => (
-              <article key={index} className="p-8 rounded-4xl bg-pinkBeige">
-                {isEditing ? (
+          {isEditing ? (
+            <div className="grid tablet:grid-cols-2 laptop:grid-cols-4 gap-4">
+              {(data?.items ?? []).map((item, index) => (
+                <article key={index} className="p-8 rounded-4xl bg-pinkBeige">
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-semibold text-darkBrown">
                         Testimonial {index + 1}
                       </span>
+
                       {onRemoveItem && (
                         <button
                           type="button"
@@ -110,18 +111,21 @@ export function TestimonialsSection({
                         </button>
                       )}
                     </div>
+
                     <EditorField
                       type="rich"
                       label="Quote"
                       value={item.quote}
                       onChange={(value) => updateItem(index, "quote", value)}
                     />
+
                     <EditorField
                       type="plain"
                       label="Name"
                       value={item.name}
                       onChange={(value) => updateItem(index, "name", value)}
                     />
+
                     <EditorField
                       type="plain"
                       label="Type of Client"
@@ -131,19 +135,12 @@ export function TestimonialsSection({
                       }
                     />
                   </div>
-                ) : (
-                  <>
-                    <RichTextContent
-                      html={item.quote}
-                      className="text-brownBlack mb-3"
-                    />
-                    <p className="text-darkBrown">- {item.name}</p>
-                    <p className="text-sm text-brown">{item.typeOfClient}</p>
-                  </>
-                )}
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <TestimonialSwiper items={data?.items ?? []} />
+          )}
         </div>
         {isEditing && onAddItem && (
           <div className="flex justify-end">

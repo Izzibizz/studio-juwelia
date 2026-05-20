@@ -175,7 +175,7 @@ export function FAQSection({
   );
 
   return (
-    <section className="py-20 laptop:pb-[600px] bg-beige relative" ref={faqRef}>
+    <section className="py-20 bg-beige relative" ref={faqRef}>
       <div className="w-11/12 mx-auto max-w-[1100px] flex flex-col ">
         {isEditing ? (
           <div className="mb-6 grid gap-4 rounded-2xl border border-[#d8cfc1] bg-white/80 p-4">
@@ -454,7 +454,7 @@ export function FAQSection({
           )}
         </>
       )}
-      <svg
+     {/*  <svg
         viewBox="0 0 502.42 114.03"
         className="w-[105%] laptop:w-[100%] absolute bottom-[-2px] left-1/2 laptop:left-0 -translate-x-1/2 laptop:translate-x-0 h-auto"
         preserveAspectRatio="none"
@@ -464,7 +464,7 @@ export function FAQSection({
           d="M502.42,93.17v20.86s-502.39,0-502.39,0L0,0l45.47.28c35.8,2.03,70.68,6.81,105.32,16.04,21.28,5.66,41.28,12.77,61.14,21.97s36.79,20.05,53.86,32.92c16.87,12.72,35.86,21.05,56.2,26.9,56.53,16.28,124.32,9.99,180.44-4.95Z"
           fill="#5b2c24"
         />
-      </svg>
+      </svg> */}
     </section>
   );
 }

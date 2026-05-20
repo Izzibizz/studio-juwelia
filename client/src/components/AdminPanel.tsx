@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FiCheck, FiEdit2, FiLogOut } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useAdminStore } from "../stores/adminStore";
 
@@ -10,7 +10,17 @@ export const AdminPanel: React.FC = () => {
   const { isEditMode, saveAction, setEditMode } = useAdminStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated)
+    return (
+      <div className="fixed bottom-12 right-8 z-[40]">
+        <Link
+          to="/prendre-rendez-vous"
+          className="flex items-center justify-center gap-2 rounded-full bg-warmGreen px-8 py-6 font-juwelia text-xl text-white shadow-lg transition-all duration-200 hover:scale-105 hover:bg-white hover:text-darkBrown"
+        >
+          Prendre rendez-vous
+        </Link>
+      </div>
+    );
 
   const handleToggleEdit = async () => {
     if (!isEditMode) {

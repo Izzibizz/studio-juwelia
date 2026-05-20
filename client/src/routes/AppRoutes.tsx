@@ -11,6 +11,7 @@ import { Login } from "../components/Login";
 import { ForgotPassword } from "../components/ForgotPassword";
 import { ResetPassword } from "../components/ResetPassword";
 import { useAuthStore } from "../stores/authStore";
+import { FAQ } from "../pages/FAQ.tsx";
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
@@ -23,6 +24,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/oeuvres" element={<Art />} />
       <Route path="/tatouages" element={<Tattoos />} />
       <Route path="/prendre-rendez-vous" element={<Booking />} />
+      <Route path="/FAQ" element={<FAQ />} />
       <Route
         path="/connexion"
         element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}

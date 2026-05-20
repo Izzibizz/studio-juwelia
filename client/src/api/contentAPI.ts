@@ -118,12 +118,12 @@ export interface FaqSectionData {
   title?: PlainText;
   images: ImageGalleryItemData[];
   pageImageMap?: {
-  homepage?: string[];
-  about?: string[];
-  tattoo?: string[];
-  art?: string[];
-  contact?: string[];
-};
+    homepage?: string[];
+    about?: string[];
+    tattoo?: string[];
+    art?: string[];
+    contact?: string[];
+  };
   items: FaqItem[];
 }
 
@@ -245,18 +245,18 @@ export const defaultTattoosContent: TattoosPageContent = {
     items: [],
   },
   faq: {
-  title: "",
-  items: [],
-  images: [],
+    title: "",
+    items: [],
+    images: [],
 
-  pageImageMap: {
-    homepage: [],
-    about: [],
-    tattoo: [],
-    art: [],
-    contact: [],
+    pageImageMap: {
+      homepage: [],
+      about: [],
+      tattoo: [],
+      art: [],
+      contact: [],
+    },
   },
-},
 };
 
 interface PageDataResponse<T = Record<string, unknown>> {
@@ -349,19 +349,19 @@ export const defaultHomeContent: HomePageContent = {
     decorImage: "",
     items: [],
   },
-faq: {
-  title: "",
-  items: [],
-  images: [],
+  faq: {
+    title: "",
+    items: [],
+    images: [],
 
-  pageImageMap: {
-    homepage: [],
-    about: [],
-    tattoo: [],
-    art: [],
-    contact: [],
+    pageImageMap: {
+      homepage: [],
+      about: [],
+      tattoo: [],
+      art: [],
+      contact: [],
+    },
   },
-},
 };
 
 const mergeHomeContent = (
@@ -455,7 +455,20 @@ export const contentAPI = {
   },
 
   getContactPageContent: async (): Promise<ContactPageContent> => {
-    return getPageData<ContactPageContent>("contact");
+    const [pageData, homepageData] = await Promise.all([
+      getPageData<Partial<ContactPageContent>>("contact"),
+      getPageData<Partial<HomePageContent>>("homepage"),
+    ]);
+
+    return {
+      ...pageData,
+
+      contactForm: pageData.contactForm || homepageData.contactForm,
+
+      testimonials: pageData.testimonials || homepageData.testimonials,
+
+      faq: pageData.faq || homepageData.faq,
+    };
   },
 
   getTattoosPageContent: async (): Promise<TattoosPageContent> => {

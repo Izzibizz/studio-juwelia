@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { EditorField } from "./editor";
 import type { EditorFieldType } from "./editor";
@@ -53,13 +54,20 @@ export function EditablePageWrapper({
 
   return (
     <div className="relative">
-      {isAuthenticated && (
+      {isAuthenticated ? (
         <button
           onClick={handleEditClick}
           className="fixed top-24 right-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           {editMode ? "Cancel" : "Edit Page"}
         </button>
+      ) : (
+        <Link
+          to="/prendrez-rendez-vous"
+          className="fixed top-24 right-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+        >
+          Prendre rendez-vous
+        </Link>
       )}
 
       {editMode && isAuthenticated ? (
